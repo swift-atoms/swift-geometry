@@ -33,7 +33,7 @@ extension Geometry.Size: Hashable where Scalar: Hashable {
 
     @inlinable
     public func hash(into hasher: inout Hasher) {
-        for i in 0..<N {
+        (0..<N).forEach { i in
             hasher.combine(dimensions[i])
         }
     }
@@ -198,7 +198,7 @@ extension Geometry.Size {
     @inlinable
     public static func zip(_ a: Self, _ b: Self, _ combine: (Scalar, Scalar) -> Scalar) -> Self {
         var result = a.dimensions
-        for i in 0..<N {
+        (0..<N).forEach { i in
             result[i] = combine(a.dimensions[i], b.dimensions[i])
         }
         return Self(result)

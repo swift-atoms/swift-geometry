@@ -479,7 +479,7 @@ extension Geometry.Ellipse.Arc where Scalar: BinaryFloatingPoint & Numeric.Trans
         var total: Geometry.ArcLength = .zero
         var prev = startPoint
 
-        for i in 1...segments {
+        (1...segments).forEach { i in
             let t = Scale<1, Scalar>(Scalar(i) / Scalar(segments))
             let current = point(at: t)
             total += prev.distance(to: current)

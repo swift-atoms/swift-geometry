@@ -182,7 +182,7 @@ extension Array {
         var points: [Geometry<Scalar, Space>.Point<2>] = []
         points.reserveCapacity(segments + 1)
 
-        for i in 0...segments {
+        (0...segments).forEach { i in
             let t: Scale<1, Scalar> = .init(Scalar(i) / Scalar(segments))
             if let p = bezier.point(at: t) {
                 points.append(p)

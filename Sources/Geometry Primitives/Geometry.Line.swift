@@ -216,7 +216,7 @@ extension Geometry.Line.Segment where Scalar: FloatingPoint {
     where Scalar: AdditiveArithmetic {
         var result: [Geometry.Point<2>] = []
         let edges = ngon.edges
-        for i in 0..<N {
+        (0..<N).forEach { i in
             if let point = intersection(with: edges[i]) {
                 result.append(point)
             }

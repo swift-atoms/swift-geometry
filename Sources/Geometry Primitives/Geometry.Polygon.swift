@@ -39,7 +39,7 @@ extension Geometry.Polygon where Scalar: AdditiveArithmetic {
         guard vertices.count >= 2 else { return [] }
         var result: [Geometry.Line.Segment] = []
         result.reserveCapacity(vertices.count)
-        for i in 0..<vertices.count {
+        (0..<vertices.count).forEach { i in
             let next = (i + 1) % vertices.count
             result.append(Geometry.Line.Segment(start: vertices[i], end: vertices[next]))
         }
@@ -57,7 +57,7 @@ extension Geometry.Polygon where Scalar: SignedNumeric {
         let zeroY = Geometry.Y.zero
         var sum: Linear<Scalar, Space>.Area = Tagged(.zero)
 
-        for i in 0..<vertices.count {
+        (0..<vertices.count).forEach { i in
             let j = (i + 1) % vertices.count
 
             let xi = vertices[i].x - zeroX
@@ -172,7 +172,7 @@ extension Geometry.Polygon where Scalar: FloatingPoint {
         var inside = false
         var j = vertices.endIndex - 1
 
-        for i in 0..<vertices.count {
+        (0..<vertices.count).forEach { i in
             let vi = vertices[i]
             let vj = vertices[j]
 
@@ -311,7 +311,7 @@ extension Geometry where Scalar: FloatingPoint {
         guard polygon.vertices.count >= 2 else { return .zero }
 
         var sum: Length = .zero
-        for i in 0..<polygon.vertices.count {
+        (0..<polygon.vertices.count).forEach { i in
             let j = (i + 1) % polygon.vertices.count
             sum += polygon.vertices[i].distance(to: polygon.vertices[j])
         }
@@ -331,7 +331,7 @@ extension Geometry where Scalar: FloatingPoint {
         let zeroX = X.zero
         let zeroY = Y.zero
 
-        for i in 0..<polygon.vertices.count {
+        (0..<polygon.vertices.count).forEach { i in
             let j = (i + 1) % polygon.vertices.count
 
             let xi = polygon.vertices[i].x - zeroX

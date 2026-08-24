@@ -393,7 +393,7 @@ struct `Geometry.Bezier - Ellipse Approximation` {
         )
         let beziers = Geometry<Double, Void>.Bezier.approximating(ellipse)
 
-        for i in 0..<3 {
+        (0..<3).forEach { i in
             let end = beziers[i].endPoint!
             let start = beziers[i + 1].startPoint!
             #expect(isApprox(end.x, start.x))

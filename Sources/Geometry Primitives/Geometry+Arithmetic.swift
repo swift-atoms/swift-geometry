@@ -8,7 +8,7 @@ public func * <Scalar: FloatingPoint, Space, let N: Int>(
     rhs: Scale<1, Scalar>
 ) -> Geometry<Scalar, Space>.Size<N> {
     var result = lhs.dimensions
-    for i in 0..<N {
+    (0..<N).forEach { i in
         result[i] = lhs.dimensions[i] * rhs.value
     }
     return Geometry<Scalar, Space>.Size<N>(result)
@@ -28,7 +28,7 @@ public func / <Scalar: FloatingPoint, Space, let N: Int>(
     rhs: Scale<1, Scalar>
 ) -> Geometry<Scalar, Space>.Size<N> {
     var result = lhs.dimensions
-    for i in 0..<N {
+    (0..<N).forEach { i in
         result[i] = lhs.dimensions[i] / rhs.value
     }
     return Geometry<Scalar, Space>.Size<N>(result)
@@ -41,7 +41,7 @@ public func * <Scalar: FloatingPoint, Space, let N: Int>(
     rhs: Scale<N, Scalar>
 ) -> Geometry<Scalar, Space>.Size<N> {
     var result = lhs.dimensions
-    for i in 0..<N {
+    (0..<N).forEach { i in
         result[i] = lhs.dimensions[i] * rhs.factors[i]
     }
     return Geometry<Scalar, Space>.Size<N>(result)
@@ -63,7 +63,7 @@ public func / <Scalar: FloatingPoint, Space, let N: Int>(
     rhs: Scale<N, Scalar>
 ) -> Geometry<Scalar, Space>.Size<N> {
     var result = lhs.dimensions
-    for i in 0..<N {
+    (0..<N).forEach { i in
         result[i] = lhs.dimensions[i] / rhs.factors[i]
     }
     return Geometry<Scalar, Space>.Size<N>(result)

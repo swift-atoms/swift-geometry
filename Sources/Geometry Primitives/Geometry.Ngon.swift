@@ -35,7 +35,7 @@ extension Geometry.Ngon: Hashable where Scalar: Hashable {
 
     @inlinable
     public func hash(into hasher: inout Hasher) {
-        for i in 0..<N {
+        (0..<N).forEach { i in
             hasher.combine(vertices[i])
         }
     }
@@ -87,7 +87,7 @@ extension Geometry.Ngon {
     public init?(vertices array: [Geometry.Point<2>]) {
         guard array.count == N, let first = array.first else { return nil }
         var verts = InlineArray<N, Geometry.Point<2>>(repeating: first)
-        for i in 1..<N {
+        (1..<N).forEach { i in
             verts[i] = array[i]
         }
         self.init(verts)
@@ -100,7 +100,7 @@ extension Geometry.Ngon {
     public var vertexArray: [Geometry.Point<2>] {
         var result: [Geometry.Point<2>] = []
         result.reserveCapacity(N)
-        for i in 0..<N {
+        (0..<N).forEach { i in
             result.append(vertices[i])
         }
         return result
@@ -116,12 +116,6 @@ extension Geometry {
         @inlinable
         public init(_ segments: InlineArray<N, Line.Segment>) {
             self.segments = segments
-        }
-
-        @inlinable
-        public subscript(index: Int) -> Line.Segment {
-            get { segments[index] }
-            set { segments[index] = newValue }
         }
     }
 }
@@ -145,7 +139,7 @@ extension Geometry.Edges: Hashable where Scalar: Hashable {
 
     @inlinable
     public func hash(into hasher: inout Hasher) {
-        for i in 0..<N {
+        (0..<N).forEach { i in
             hasher.combine(segments[i])
         }
     }
@@ -205,7 +199,7 @@ extension Geometry.Ngon where Scalar: AdditiveArithmetic {
     public var edges: Geometry.Edges<N> {
         let first = Geometry.Line.Segment(start: vertices[0], end: vertices[1 % N])
         var result = InlineArray<N, Geometry.Line.Segment>(repeating: first)
-        for i in 0..<N {
+        (0..<N).forEach { i in
             let next = (i + 1) % N
             result[i] = Geometry.Line.Segment(start: vertices[i], end: vertices[next])
         }
@@ -221,7 +215,7 @@ extension Geometry.Ngon where Scalar: SignedNumeric {
         let zeroX = Geometry.X.zero
         let zeroY = Geometry.Y.zero
         var sum: Linear<Scalar, Space>.Area = .zero
-        for i in 0..<N {
+        (0..<N).forEach { i in
             let j = (i + 1) % N
 
             let xi = vertices[i].x - zeroX
@@ -264,7 +258,7 @@ extension Geometry.Ngon where Scalar: FloatingPoint {
         var minY = vertices[0].y
         var maxY = vertices[0].y
 
-        for i in 1..<N {
+        (1..<N).forEach { i in
             minX = min(minX, vertices[i].x)
             maxX = max(maxX, vertices[i].x)
             minY = min(minY, vertices[i].y)
@@ -326,7 +320,7 @@ extension Geometry.Ngon where Scalar: SignedNumeric & Comparable {
     @inlinable
     public var reversed: Self {
         var newVerts = vertices
-        for i in 0..<(N / 2) {
+        (0..<(N / 2)).forEach { i in
             let j = N - 1 - i
             let temp = newVerts[i]
             newVerts[i] = newVerts[j]
@@ -344,7 +338,7 @@ extension Geometry.Ngon where Scalar: FloatingPoint {
         var inside = false
         var j = N - 1
 
-        for i in 0..<N {
+        (0..<N).forEach { i in
             let vi = vertices[i]
             let vj = vertices[j]
 
@@ -370,7 +364,7 @@ extension Geometry.Ngon where Scalar: FloatingPoint {
     @inlinable
     public func translated(by vector: Geometry.Vector<2>) -> Self {
         var newVerts = vertices
-        for i in 0..<N {
+        (0..<N).forEach { i in
             newVerts[i] = vertices[i] + vector
         }
         return Self(newVerts)
@@ -385,7 +379,7 @@ extension Geometry.Ngon where Scalar: FloatingPoint {
     @inlinable
     public func scaled(by factor: Scale<1, Scalar>, about point: Geometry.Point<2>) -> Self {
         var newVerts = vertices
-        for i in 0..<N {
+        (0..<N).forEach { i in
             let v = vertices[i]
 
             let dx = factor * (v.x - point.x)
@@ -407,7 +401,7 @@ extension Geometry.Ngon where Scalar == Double {
         let piOverN = Radian<Scalar>(_unchecked: piOverNValue)
         let circumradius = sideLength / (Scalar(2) * piOverN.sin.value)
         var verts = InlineArray<N, Geometry.Point<2>>(repeating: center)
-        for i in 0..<N {
+        (0..<N).forEach { i in
             let twoPi: Scalar = Scalar(2) * Scalar.pi
             let fraction: Scalar = Scalar(i) / Scalar(N)
             let angleValue: Scalar = twoPi * fraction
@@ -425,7 +419,7 @@ extension Geometry.Ngon where Scalar == Double {
         at center: Geometry.Point<2> = .zero
     ) -> Self {
         var verts = InlineArray<N, Geometry.Point<2>>(repeating: center)
-        for i in 0..<N {
+        (0..<N).forEach { i in
             let twoPi: Scalar = Scalar(2) * Scalar.pi
             let fraction: Scalar = Scalar(i) / Scalar(N)
             let angleValue: Scalar = twoPi * fraction
@@ -460,7 +454,7 @@ extension Geometry.Ngon where Scalar == Float {
         let piOverN = Radian<Scalar>(_unchecked: piOverNValue)
         let circumradius = sideLength / (Scalar(2) * piOverN.sin.value)
         var verts = InlineArray<N, Geometry.Point<2>>(repeating: center)
-        for i in 0..<N {
+        (0..<N).forEach { i in
             let twoPi: Scalar = Scalar(2) * Scalar.pi
             let fraction: Scalar = Scalar(i) / Scalar(N)
             let angleValue: Scalar = twoPi * fraction
@@ -478,7 +472,7 @@ extension Geometry.Ngon where Scalar == Float {
         at center: Geometry.Point<2> = .zero
     ) -> Self {
         var verts = InlineArray<N, Geometry.Point<2>>(repeating: center)
-        for i in 0..<N {
+        (0..<N).forEach { i in
             let twoPi: Scalar = Scalar(2) * Scalar.pi
             let fraction: Scalar = Scalar(i) / Scalar(N)
             let angleValue: Scalar = twoPi * fraction
@@ -518,7 +512,7 @@ extension Geometry where Scalar: FloatingPoint {
     @inlinable
     public static func perimeter<let N: Int>(of ngon: Ngon<N>) -> Perimeter {
         var sum: Distance = .zero
-        for i in 0..<N {
+        (0..<N).forEach { i in
             let j = (i + 1) % N
             sum += ngon.vertices[i].distance(to: ngon.vertices[j])
         }
@@ -535,7 +529,7 @@ extension Geometry where Scalar: FloatingPoint {
         var cx: Scalar = .zero
         var cy: Scalar = .zero
 
-        for i in 0..<N {
+        (0..<N).forEach { i in
             let j = (i + 1) % N
             let xi = ngon.vertices[i].x.underlying
             let yi = ngon.vertices[i].y.underlying
@@ -928,3 +922,11 @@ extension Geometry {
 
     public typealias Triangle = Ngon<3>
 }
+
+extension Geometry.Edges {
+
+        @inlinable
+        public subscript(index: Int) -> Line.Segment {
+            get { segments[index] }
+            set { segments[index] = newValue }
+        }}
