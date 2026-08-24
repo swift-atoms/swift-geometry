@@ -483,8 +483,7 @@ extension Geometry where Scalar: FloatingPoint {
     }
 
     @inlinable
-    public static func union(_ rectangle1: Orthotope<2>, _ rectangle2: Orthotope<2>) -> Orthotope<2>
-    {
+    public static func union(_ rectangle1: Orthotope<2>, _ rectangle2: Orthotope<2>) -> Orthotope<2> {
 
         Orthotope<2>(
             llx: Swift.min(rectangle1.llx, rectangle2.llx),
