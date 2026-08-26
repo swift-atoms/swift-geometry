@@ -1,4 +1,4 @@
-# Geometry Primitives
+# Geometry
 
 ![Development Status](https://img.shields.io/badge/status-active--development-blue.svg)
 
@@ -10,7 +10,7 @@ Add the dependency to your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/swift-primitives/swift-geometry-primitives.git", branch: "main")
+    .package(url: "https://github.com/swift-molecules/swift-geometry.git", branch: "main")
 ]
 ```
 
@@ -22,19 +22,19 @@ Add the umbrella product to your target:
 .target(
     name: "YourTarget",
     dependencies: [
-        .product(name: "Geometry Primitives", package: "swift-geometry-primitives")
+        .product(name: "Geometry", package: "swift-geometry")
     ]
 )
 ```
 
-For test targets, additionally depend on `Geometry Primitives Test Support`:
+For test targets, additionally depend on `Geometry Test Support`:
 
 ```swift
 .testTarget(
     name: "YourTargetTests",
     dependencies: [
-        .product(name: "Geometry Primitives", package: "swift-geometry-primitives"),
-        .product(name: "Geometry Primitives Test Support", package: "swift-geometry-primitives")
+        .product(name: "Geometry", package: "swift-geometry"),
+        .product(name: "Geometry Test Support", package: "swift-geometry")
     ]
 )
 ```

@@ -1,2 +1,2 @@
-@_exported public import Affine_Primitives_Test_Support
-@_exported public import Geometry_Primitives
+@_exported public import Affine_Test_Support
+@_exported public import Geometry
