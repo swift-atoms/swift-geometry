@@ -1,6 +1,6 @@
 import Dimension
 import Geometry
-import Geometry_Test_Support
+import Affine_Test_Support
 import Testing
 
 private enum TestSpace: Numeric.Quantized {}

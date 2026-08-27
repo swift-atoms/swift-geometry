@@ -1,5 +1,5 @@
 import Dimension
-import Geometry_Test_Support
+import Affine_Test_Support
 import Testing
 
 @testable import Affine

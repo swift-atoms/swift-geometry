@@ -269,26 +269,6 @@ extension Geometry.Orthotope where N == 2, Scalar: FloatingPoint {
 extension Geometry.Orthotope where N == 2, Scalar: FloatingPoint {
 
     @inlinable
-    public func corner(_ corner: Boundary.Corner) -> Geometry.Point<2> {
-        switch corner {
-        case .bottomLeft:
-            return Geometry.Point(x: llx, y: lly)
-
-        case .bottomRight:
-            return Geometry.Point(x: urx, y: lly)
-
-        case .topLeft:
-            return Geometry.Point(x: llx, y: ury)
-
-        case .topRight:
-            return Geometry.Point(x: urx, y: ury)
-        }
-    }
-}
-
-extension Geometry.Orthotope where N == 2, Scalar: FloatingPoint {
-
-    @inlinable
     public func with(llx newLlx: Geometry.X) -> Self {
         var copy = self
         copy.llx = newLlx
