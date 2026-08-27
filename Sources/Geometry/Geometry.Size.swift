@@ -1,5 +1,6 @@
-public import Dimension
+import Dimension
 import Linear
+public import Tagged
 
 extension Geometry {
 
@@ -107,19 +108,19 @@ extension Geometry.Size where N == 1 {
 
     @inlinable
     public var length: Geometry.Length {
-        get { Geometry.Length(dimensions[0]) }
+        get { Geometry.Length(_unchecked: dimensions[0]) }
         set { dimensions[0] = newValue.underlying }
     }
 
     @inlinable
     public var width: Geometry.Width {
-        get { Geometry.Width(dimensions[0]) }
+        get { Geometry.Width(_unchecked: dimensions[0]) }
         set { dimensions[0] = newValue.underlying }
     }
 
     @inlinable
     public var height: Geometry.Height {
-        get { Geometry.Height(dimensions[0]) }
+        get { Geometry.Height(_unchecked: dimensions[0]) }
         set { dimensions[0] = newValue.underlying }
     }
 
@@ -133,12 +134,12 @@ extension Geometry.Size where N == 1, Scalar: AdditiveArithmetic {
 
     @inlinable
     public var horizontal: Geometry.Width {
-        Geometry.Width(dimensions[0] + dimensions[0])
+        Geometry.Width(_unchecked: dimensions[0] + dimensions[0])
     }
 
     @inlinable
     public var vertical: Geometry.Height {
-        Geometry.Height(dimensions[0] + dimensions[0])
+        Geometry.Height(_unchecked: dimensions[0] + dimensions[0])
     }
 }
 
@@ -146,13 +147,13 @@ extension Geometry.Size where N == 2 {
 
     @inlinable
     public var width: Geometry.Width {
-        get { Geometry.Width(dimensions[0]) }
+        get { Geometry.Width(_unchecked: dimensions[0]) }
         set { dimensions[0] = newValue.underlying }
     }
 
     @inlinable
     public var height: Geometry.Height {
-        get { Geometry.Height(dimensions[1]) }
+        get { Geometry.Height(_unchecked: dimensions[1]) }
         set { dimensions[1] = newValue.underlying }
     }
 
@@ -166,13 +167,13 @@ extension Geometry.Size where N == 3 {
 
     @inlinable
     public var width: Geometry.Width {
-        get { .init(dimensions[0]) }
+        get { .init(_unchecked: dimensions[0]) }
         set { dimensions[0] = newValue.underlying }
     }
 
     @inlinable
     public var height: Geometry.Height {
-        get { .init(dimensions[1]) }
+        get { .init(_unchecked: dimensions[1]) }
         set { dimensions[1] = newValue.underlying }
     }
 

@@ -1,6 +1,7 @@
-public import Affine_Geometry
+public import Affine
 public import Dimension
 public import Linear
+public import Tagged
 
 extension Geometry {
 
@@ -23,7 +24,32 @@ extension Geometry.Ray: Equatable where Scalar: Equatable {}
 extension Geometry.Ray: Hashable where Scalar: Hashable {}
 
 #if !hasFeature(Embedded)
-    extension Geometry.Ray: Codable where Scalar: Codable {}
+    extension Geometry.Ray: Codable where Scalar: Codable {
+
+        private enum CodingKeys: String, CodingKey {
+            case origin, direction
+        }
+
+        public init(from decoder: any Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            var direction = try container.nestedUnkeyedContainer(forKey: .direction)
+            self.init(
+                origin: try container.decode(Geometry.Point<2>.self, forKey: .origin),
+                direction: .init(
+                    dx: .init(_unchecked: try direction.decode(Scalar.self)),
+                    dy: .init(_unchecked: try direction.decode(Scalar.self))
+                )
+            )
+        }
+
+        public func encode(to encoder: any Encoder) throws {
+            var container = encoder.container(keyedBy: CodingKeys.self)
+            try container.encode(origin, forKey: .origin)
+            var directionContainer = container.nestedUnkeyedContainer(forKey: .direction)
+            try directionContainer.encode(direction.dx.underlying)
+            try directionContainer.encode(direction.dy.underlying)
+        }
+    }
 #endif
 
 extension Geometry.Ray where Scalar: AdditiveArithmetic {
@@ -88,7 +114,10 @@ extension Geometry.Ray where Scalar: FloatingPoint {
         let vx = point.x - origin.x
         let vy = point.y - origin.y
 
-        let t: Scale<1, Scalar> = max(0, (direction.dx * vx + direction.dy * vy) / lenSq)
+        let t: Scale<1, Scalar> = max(
+            Scale(0),
+            (direction.dx * vx + direction.dy * vy) / lenSq
+        )
 
         return self.point(at: t)
     }
@@ -113,7 +142,7 @@ extension Geometry.Ray where Scalar: FloatingPoint {
         let t1: Scale<1, Scalar> = (dpx * d2y - dpy * d2x) / cross
         let t2: Scale<1, Scalar> = (dpx * d1y - dpy * d1x) / cross
 
-        guard t1 >= 0 && t2 >= 0 else { return nil }
+        guard t1.value >= 0 && t2.value >= 0 else { return nil }
 
         return point(at: t1)
     }
@@ -134,7 +163,7 @@ extension Geometry.Ray where Scalar: FloatingPoint {
 
         let t: Scale<1, Scalar> = (dpx * d2y - dpy * d2x) / cross
 
-        guard t >= 0 else { return nil }
+        guard t.value >= 0 else { return nil }
 
         return point(at: t)
     }
@@ -156,7 +185,7 @@ extension Geometry.Ray where Scalar: FloatingPoint {
         let t1: Scale<1, Scalar> = (dpx * d2y - dpy * d2x) / cross
         let t2: Scale<1, Scalar> = (dpx * d1y - dpy * d1x) / cross
 
-        guard t1 >= 0 && t2 >= 0 && t2 <= 1 else { return nil }
+        guard t1.value >= 0 && t2.value >= 0 && t2.value <= 1 else { return nil }
 
         return point(at: t1)
     }
@@ -210,12 +239,14 @@ extension Geometry where Scalar: FloatingPoint {
 
         let t: Scale<1, Scalar> = (ray.direction.dx * vx + ray.direction.dy * vy) / lenSq
 
-        guard t >= 0 else { return false }
+        guard t.value >= 0 else { return false }
 
         let projected = Self.point(of: ray, at: t)
         let distSq = point.distance.squared(to: projected)
 
-        let tolerance: Linear<Scalar, Space>.Area = Tagged(Scalar.ulpOfOne * 100)
+        let tolerance: Linear<Scalar, Space>.Area = Tagged(
+            _unchecked: Scalar.ulpOfOne * 100
+        )
         return distSq < tolerance
     }
 
@@ -230,7 +261,10 @@ extension Geometry where Scalar: FloatingPoint {
         let vx: Linear<Scalar, Space>.Dx = point.x - ray.origin.x
         let vy: Linear<Scalar, Space>.Dy = point.y - ray.origin.y
 
-        let t: Scale<1, Scalar> = max(0, (ray.direction.dx * vx + ray.direction.dy * vy) / lenSq)
+        let t: Scale<1, Scalar> = max(
+            Scale(0),
+            (ray.direction.dx * vx + ray.direction.dy * vy) / lenSq
+        )
 
         let closest = Self.point(of: ray, at: t)
         return point.distance(to: closest)

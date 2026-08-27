@@ -1,5 +1,6 @@
-public import Affine_Geometry
-import Real
+public import Affine
+public import Numeric
+public import Tagged
 
 extension Geometry {
 
@@ -190,26 +191,26 @@ extension Geometry.Path.Subpath where Scalar: BinaryFloatingPoint & Numeric.Tran
 
     @inlinable
     public func length(bezierSegments: Int = 100) -> Geometry.ArcLength {
-        var total: Geometry.ArcLength = .zero
+        var total: Scalar = .zero
         for segment in segments {
             switch segment {
             case .line(let seg):
-                total += seg.length
+                total += seg.length.underlying
 
             case .bezier(let bez):
-                total += bez.length(segments: bezierSegments)
+                total += bez.length(segments: bezierSegments).underlying
 
             case .arc(let arc):
-                total += arc.length
+                total += arc.length.underlying
 
             case .ellipticalArc(let arc):
-                total += arc.length(segments: bezierSegments)
+                total += arc.length(segments: bezierSegments).underlying
             }
         }
         if isClosed, let end = endPoint, end != startPoint {
-            total += end.distance(to: startPoint)
+            total += end.distance(to: startPoint).underlying
         }
-        return total
+        return .init(_unchecked: total)
     }
 }
 

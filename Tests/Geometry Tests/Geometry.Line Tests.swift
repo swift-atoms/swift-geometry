@@ -1,6 +1,8 @@
 import Affine
-import Affine_Test_Support
+import Dimension
 import Linear
+import Tagged
+import Tagged_Standard_Library_Integration
 import Testing
 
 @testable import Geometry
@@ -75,7 +77,7 @@ struct `Geometry.Line - Properties` {
             point: .init(x: 0, y: 0),
             direction: .init(dx: 10, dy: 10)
         )
-        let p = line.point(at: 0.5)
+        let p = line.point(at: Scale(0.5))
         #expect(p.x == 5)
         #expect(p.y == 5)
     }
@@ -366,7 +368,7 @@ struct `Geometry.Line.Segment - Parametric Points` {
             start: .init(x: 0, y: 0),
             end: .init(x: 10, y: 10)
         )
-        let point = segment.point(at: 0)
+        let point = segment.point(at: Scale(0))
         #expect(point.x == 0)
         #expect(point.y == 0)
     }
@@ -377,7 +379,7 @@ struct `Geometry.Line.Segment - Parametric Points` {
             start: .init(x: 0, y: 0),
             end: .init(x: 10, y: 10)
         )
-        let point = segment.point(at: 0.25)
+        let point = segment.point(at: Scale(0.25))
         #expect(point.x == 2.5)
         #expect(point.y == 2.5)
     }
@@ -388,7 +390,7 @@ struct `Geometry.Line.Segment - Parametric Points` {
             start: .init(x: 0, y: 0),
             end: .init(x: 10, y: 10)
         )
-        let point = segment.point(at: 1)
+        let point = segment.point(at: Scale(1))
         #expect(point.x == 10)
         #expect(point.y == 10)
     }

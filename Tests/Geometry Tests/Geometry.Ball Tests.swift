@@ -1,5 +1,6 @@
 import Dimension
-import Affine_Test_Support
+import Tagged
+import Tagged_Standard_Library_Integration
 import Testing
 
 @testable import Affine
@@ -397,7 +398,7 @@ struct `Geometry.Ball - Transformations` {
     @Test
     func `Uniform scaling about center`() {
         let circle: Geometry<Double, Void>.Circle = .init(center: .zero, radius: 5)
-        let scaled = circle.scaled(by: 2)
+        let scaled = circle.scaled(by: Scale(2))
         #expect(scaled.center.x == X(0))
         #expect(scaled.center.y == Y(0))
         #expect(scaled.radius == Distance(10))
@@ -409,7 +410,7 @@ struct `Geometry.Ball - Transformations` {
             center: .init(x: 10, y: 0),
             radius: 5
         )
-        let scaled = circle.scaled(by: 2, about: .zero)
+        let scaled = circle.scaled(by: Scale(2), about: .zero)
         #expect(scaled.center.x == X(20))
         #expect(scaled.center.y == Y(0))
         #expect(scaled.radius == Distance(10))

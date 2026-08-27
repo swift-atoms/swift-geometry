@@ -35,15 +35,15 @@ let package = Package(
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-molecules/swift-affine-geometry.git",
-            branch: "main"
-        ),
-        .package(
             url: "https://github.com/swift-atoms/swift-dimension.git",
             branch: "main"
         ),
         .package(
             url: "https://github.com/swift-atoms/swift-numeric.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-atoms/swift-tagged.git",
             branch: "main"
         ),
     ],
@@ -53,12 +53,13 @@ let package = Package(
             dependencies: [
                 .product(name: "Linear", package: "swift-linear"),
                 .product(name: "Affine", package: "swift-affine"),
-                .product(
-                    name: "Affine Geometry",
-                    package: "swift-affine-geometry"
-                ),
                 .product(name: "Dimension", package: "swift-dimension"),
-                .product(name: "Real", package: "swift-numeric"),
+                .product(name: "Numeric", package: "swift-numeric"),
+                .product(
+                    name: "Numeric Standard Library Integration",
+                    package: "swift-numeric"
+                ),
+                .product(name: "Tagged", package: "swift-tagged"),
             ]
         ),
         .target(
@@ -74,7 +75,22 @@ let package = Package(
         ),
         .testTarget(
             name: "Geometry Tests",
-            dependencies: ["Geometry"]
+            dependencies: [
+                "Geometry",
+                .product(name: "Affine", package: "swift-affine"),
+                .product(name: "Dimension", package: "swift-dimension"),
+                .product(name: "Linear", package: "swift-linear"),
+                .product(name: "Numeric", package: "swift-numeric"),
+                .product(
+                    name: "Numeric Standard Library Integration",
+                    package: "swift-numeric"
+                ),
+                .product(name: "Tagged", package: "swift-tagged"),
+                .product(
+                    name: "Tagged Standard Library Integration",
+                    package: "swift-tagged"
+                ),
+            ]
         ),
     ],
     swiftLanguageModes: [.v6]

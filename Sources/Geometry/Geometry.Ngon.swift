@@ -1,7 +1,9 @@
-public import Affine_Geometry
+public import Affine
 public import Dimension
 public import Linear
-public import Real
+import Numeric
+public import Numeric_Standard_Library_Integration
+public import Tagged
 
 extension Geometry {
 
@@ -406,8 +408,8 @@ extension Geometry.Ngon where Scalar == Double {
             let fraction: Scalar = Scalar(i) / Scalar(N)
             let angleValue: Scalar = twoPi * fraction
             let angle = Radian<Scalar>(_unchecked: angleValue)
-            let dx = Linear<Scalar, Space>.Dx(circumradius * angle.cos.value)
-            let dy = Linear<Scalar, Space>.Dy(circumradius * angle.sin.value)
+            let dx = Linear<Scalar, Space>.Dx(_unchecked: circumradius * angle.cos.value)
+            let dy = Linear<Scalar, Space>.Dy(_unchecked: circumradius * angle.sin.value)
             verts[i] = Geometry.Point(x: center.x + dx, y: center.y + dy)
         }
         return Self(verts)
@@ -424,8 +426,8 @@ extension Geometry.Ngon where Scalar == Double {
             let fraction: Scalar = Scalar(i) / Scalar(N)
             let angleValue: Scalar = twoPi * fraction
             let angle = Radian<Scalar>(_unchecked: angleValue)
-            let dx = Linear<Scalar, Space>.Dx(circumradius * angle.cos.value)
-            let dy = Linear<Scalar, Space>.Dy(circumradius * angle.sin.value)
+            let dx = Linear<Scalar, Space>.Dx(_unchecked: circumradius * angle.cos.value)
+            let dy = Linear<Scalar, Space>.Dy(_unchecked: circumradius * angle.sin.value)
             verts[i] = Geometry.Point(x: center.x + dx, y: center.y + dy)
         }
         return Self(verts)
@@ -459,8 +461,8 @@ extension Geometry.Ngon where Scalar == Float {
             let fraction: Scalar = Scalar(i) / Scalar(N)
             let angleValue: Scalar = twoPi * fraction
             let angle = Radian<Scalar>(_unchecked: angleValue)
-            let dx = Linear<Scalar, Space>.Dx(circumradius * angle.cos.value)
-            let dy = Linear<Scalar, Space>.Dy(circumradius * angle.sin.value)
+            let dx = Linear<Scalar, Space>.Dx(_unchecked: circumradius * angle.cos.value)
+            let dy = Linear<Scalar, Space>.Dy(_unchecked: circumradius * angle.sin.value)
             verts[i] = Geometry.Point(x: center.x + dx, y: center.y + dy)
         }
         return Self(verts)
@@ -477,8 +479,8 @@ extension Geometry.Ngon where Scalar == Float {
             let fraction: Scalar = Scalar(i) / Scalar(N)
             let angleValue: Scalar = twoPi * fraction
             let angle = Radian<Scalar>(_unchecked: angleValue)
-            let dx = Linear<Scalar, Space>.Dx(circumradius * angle.cos.value)
-            let dy = Linear<Scalar, Space>.Dy(circumradius * angle.sin.value)
+            let dx = Linear<Scalar, Space>.Dx(_unchecked: circumradius * angle.cos.value)
+            let dy = Linear<Scalar, Space>.Dy(_unchecked: circumradius * angle.sin.value)
             verts[i] = Geometry.Point(x: center.x + dx, y: center.y + dy)
         }
         return Self(verts)
@@ -713,7 +715,7 @@ extension Geometry.Ngon where N == 3, Scalar: FloatingPoint {
         let ox = ax + bx + cx - Scalar(2) * ccx
         let oy = ay + by + cy - Scalar(2) * ccy
 
-        return Geometry.Point(x: Geometry.X(ox), y: Geometry.Y(oy))
+        return Geometry.Point(x: Geometry.X(_unchecked: ox), y: Geometry.Y(_unchecked: oy))
     }
 }
 
@@ -856,8 +858,8 @@ extension Geometry.Ngon where N == 3, Scalar: FloatingPoint & AdditiveArithmetic
     ) -> Self {
         Self(
             a: origin,
-            b: Geometry.Point(x: origin.x + Linear<Scalar, Space>.Dx(base), y: origin.y),
-            c: Geometry.Point(x: origin.x, y: origin.y + Linear<Scalar, Space>.Dy(height))
+            b: Geometry.Point(x: origin.x + Linear<Scalar, Space>.Dx(_unchecked: base), y: origin.y),
+            c: Geometry.Point(x: origin.x, y: origin.y + Linear<Scalar, Space>.Dy(_unchecked: height))
         )
     }
 
@@ -871,10 +873,10 @@ extension Geometry.Ngon where N == 3, Scalar: FloatingPoint & AdditiveArithmetic
         let h = sideLength * Scalar(3).squareRoot() / Scalar(2)
         return Self(
             a: origin,
-            b: Geometry.Point(x: origin.x + Linear<Scalar, Space>.Dx(sideLength), y: origin.y),
+            b: Geometry.Point(x: origin.x + Linear<Scalar, Space>.Dx(_unchecked: sideLength), y: origin.y),
             c: Geometry.Point(
-                x: origin.x + Linear<Scalar, Space>.Dx(half),
-                y: origin.y + Linear<Scalar, Space>.Dy(h)
+                x: origin.x + Linear<Scalar, Space>.Dx(_unchecked: half),
+                y: origin.y + Linear<Scalar, Space>.Dy(_unchecked: h)
             )
         )
     }
@@ -892,10 +894,10 @@ extension Geometry.Ngon where N == 3, Scalar: FloatingPoint & AdditiveArithmetic
         let h = hSquared.squareRoot()
         return Self(
             a: origin,
-            b: Geometry.Point(x: origin.x + Linear<Scalar, Space>.Dx(base), y: origin.y),
+            b: Geometry.Point(x: origin.x + Linear<Scalar, Space>.Dx(_unchecked: base), y: origin.y),
             c: Geometry.Point(
-                x: origin.x + Linear<Scalar, Space>.Dx(half),
-                y: origin.y + Linear<Scalar, Space>.Dy(h)
+                x: origin.x + Linear<Scalar, Space>.Dx(_unchecked: half),
+                y: origin.y + Linear<Scalar, Space>.Dy(_unchecked: h)
             )
         )
     }
@@ -926,7 +928,7 @@ extension Geometry {
 extension Geometry.Edges {
 
         @inlinable
-        public subscript(index: Int) -> Line.Segment {
+        public subscript(index: Int) -> Geometry.Line.Segment {
             get { segments[index] }
             set { segments[index] = newValue }
         }}

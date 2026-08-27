@@ -1,5 +1,7 @@
 import Dimension
-import Affine_Test_Support
+import Numeric
+import Tagged
+import Tagged_Standard_Library_Integration
 import Testing
 
 @testable import Affine
@@ -537,7 +539,7 @@ struct `Geometry.Ngon<3> - Transformations` {
             b: .init(x: 2, y: 0),
             c: .init(x: 0, y: 2)
         )
-        let scaled = triangle.scaled(by: 2, about: triangle.a)
+        let scaled = triangle.scaled(by: Scale(2), about: triangle.a)
         #expect(scaled.a.x == 0)
         #expect(scaled.a.y == 0)
         #expect(scaled.b.x == 4)
@@ -551,8 +553,8 @@ struct `Geometry.Ngon<3> - Transformations` {
             b: .init(x: 2, y: 0),
             c: .init(x: 0, y: 2)
         )
-        let scaled = triangle.scaled(by: 2)
-        #expect(abs(scaled.area - 4 * triangle.area) < 1e-10)
+        let scaled = triangle.scaled(by: Scale(2))
+        #expect(abs(scaled.area.underlying - 4 * triangle.area.underlying) < 1e-10)
     }
 }
 

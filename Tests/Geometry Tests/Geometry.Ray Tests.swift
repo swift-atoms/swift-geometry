@@ -1,4 +1,6 @@
-import Affine_Test_Support
+import Dimension
+import Tagged
+import Tagged_Standard_Library_Integration
 import Testing
 
 @testable import Affine
@@ -110,7 +112,7 @@ struct `Geometry.Ray - Parametric Points` {
             origin: .init(x: 5, y: 10),
             direction: .init(dx: 3, dy: 4)
         )
-        let point = ray.point(at: 0)
+        let point = ray.point(at: Scale(0.0))
         #expect(point.x == 5)
         #expect(point.y == 10)
     }
@@ -121,7 +123,7 @@ struct `Geometry.Ray - Parametric Points` {
             origin: .init(x: 5, y: 10),
             direction: .init(dx: 3, dy: 4)
         )
-        let point = ray.point(at: 1)
+        let point = ray.point(at: Scale(1.0))
         #expect(point.x == 8)
         #expect(point.y == 14)
     }
@@ -132,7 +134,7 @@ struct `Geometry.Ray - Parametric Points` {
             origin: .init(x: 0, y: 0),
             direction: .init(dx: 1, dy: 0)
         )
-        let point = ray.point(at: 2)
+        let point = ray.point(at: Scale(2.0))
         #expect(point.x == 2)
         #expect(point.y == 0)
     }

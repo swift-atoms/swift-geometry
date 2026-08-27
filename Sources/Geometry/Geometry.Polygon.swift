@@ -1,6 +1,7 @@
-public import Affine_Geometry
+public import Affine
 public import Dimension
 public import Linear
+public import Tagged
 
 extension Geometry {
 
@@ -51,11 +52,11 @@ extension Geometry.Polygon where Scalar: SignedNumeric {
 
     @inlinable
     public var signedDoubleArea: Linear<Scalar, Space>.Area {
-        guard vertices.count >= 3 else { return Tagged(.zero) }
+        guard vertices.count >= 3 else { return Tagged(_unchecked: .zero) }
 
         let zeroX = Geometry.X.zero
         let zeroY = Geometry.Y.zero
-        var sum: Linear<Scalar, Space>.Area = Tagged(.zero)
+        var sum: Linear<Scalar, Space>.Area = Tagged(_unchecked: .zero)
 
         (0..<vertices.count).forEach { i in
             let j = (i + 1) % vertices.count
@@ -105,10 +106,10 @@ extension Geometry.Polygon where Scalar: FloatingPoint {
         }
 
         return Geometry.Rectangle(
-            llx: Geometry.X(minX),
-            lly: Geometry.Y(minY),
-            urx: Geometry.X(maxX),
-            ury: Geometry.Y(maxY)
+            llx: Geometry.X(_unchecked: minX),
+            lly: Geometry.Y(_unchecked: minY),
+            urx: Geometry.X(_unchecked: maxX),
+            ury: Geometry.Y(_unchecked: maxY)
         )
     }
 }
@@ -120,7 +121,7 @@ extension Geometry.Polygon where Scalar: SignedNumeric & Comparable {
         guard vertices.count >= 3 else { return true }
 
         var sign: Linear<Scalar, Space>.Area?
-        let zero: Linear<Scalar, Space>.Area = Tagged(.zero)
+        let zero: Linear<Scalar, Space>.Area = Tagged(_unchecked: .zero)
 
         for i in 0..<vertices.count {
             let j = (i + 1) % vertices.count
@@ -149,12 +150,12 @@ extension Geometry.Polygon where Scalar: SignedNumeric & Comparable {
 
     @inlinable
     public var isCounterClockwise: Bool {
-        signedDoubleArea > Tagged(.zero)
+        signedDoubleArea > Tagged(_unchecked: .zero)
     }
 
     @inlinable
     public var isClockwise: Bool {
-        signedDoubleArea < Tagged(.zero)
+        signedDoubleArea < Tagged(_unchecked: .zero)
     }
 
     @inlinable
@@ -192,7 +193,7 @@ extension Geometry.Polygon where Scalar: FloatingPoint {
 
     @inlinable
     public func isOnBoundary(_ point: Geometry.Point<2>) -> Bool {
-        let threshold = Geometry.Distance(.ulpOfOne * 100)
+        let threshold = Geometry.Distance(_unchecked: .ulpOfOne * 100)
         for edge in edges {
             if edge.distance(to: point) < threshold {
                 return true
@@ -255,7 +256,7 @@ extension Geometry.Polygon where Scalar: FloatingPoint {
 
                 let cross = (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x)
 
-                guard cross > Tagged(Scalar(0)) else { continue }
+                guard cross > Tagged(_unchecked: Scalar(0)) else { continue }
 
                 let triangle = Geometry.Triangle(a: a, b: b, c: c)
                 var isEar = true

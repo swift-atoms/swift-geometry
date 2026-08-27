@@ -1,8 +1,8 @@
-public import Affine_Geometry
-import Affine
+public import Affine
 public import Dimension
 public import Linear
-import Real
+public import Numeric
+public import Tagged
 
 extension Geometry {
 
@@ -36,7 +36,36 @@ extension Geometry.Ellipse: Equatable where Scalar: Equatable {}
 extension Geometry.Ellipse: Hashable where Scalar: Hashable {}
 
 #if !hasFeature(Embedded)
-    extension Geometry.Ellipse: Codable where Scalar: Codable {}
+    extension Geometry.Ellipse: Codable where Scalar: Codable {
+
+        private enum CodingKeys: String, CodingKey {
+            case center, semiMajor, semiMinor, rotation
+        }
+
+        public init(from decoder: any Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            self.init(
+                center: try container.decode(Geometry.Point<2>.self, forKey: .center),
+                semiMajor: .init(
+                    _unchecked: try container.decode(Scalar.self, forKey: .semiMajor)
+                ),
+                semiMinor: .init(
+                    _unchecked: try container.decode(Scalar.self, forKey: .semiMinor)
+                ),
+                rotation: .init(
+                    _unchecked: try container.decode(Scalar.self, forKey: .rotation)
+                )
+            )
+        }
+
+        public func encode(to encoder: any Encoder) throws {
+            var container = encoder.container(keyedBy: CodingKeys.self)
+            try container.encode(center, forKey: .center)
+            try container.encode(semiMajor.underlying, forKey: .semiMajor)
+            try container.encode(semiMinor.underlying, forKey: .semiMinor)
+            try container.encode(rotation.underlying, forKey: .rotation)
+        }
+    }
 #endif
 
 extension Geometry.Ellipse where Scalar: AdditiveArithmetic {
@@ -76,12 +105,12 @@ extension Geometry.Ellipse where Scalar: FloatingPoint {
 
     @inlinable
     public var majorAxis: Geometry.Length {
-        semiMajor * 2
+        Geometry.Length(_unchecked: semiMajor.underlying * 2)
     }
 
     @inlinable
     public var minorAxis: Geometry.Length {
-        semiMinor * 2
+        Geometry.Length(_unchecked: semiMinor.underlying * 2)
     }
 
     @inlinable
@@ -115,12 +144,12 @@ extension Geometry.Ellipse where Scalar: BinaryFloatingPoint & Numeric.Transcend
 
         return (
             Geometry.Point(
-                x: center.x - Geometry.Width(dx),
-                y: center.y - Geometry.Height(dy)
+                x: center.x - Geometry.Width(_unchecked: dx),
+                y: center.y - Geometry.Height(_unchecked: dy)
             ),
             Geometry.Point(
-                x: center.x + Geometry.Width(dx),
-                y: center.y + Geometry.Height(dy)
+                x: center.x + Geometry.Width(_unchecked: dx),
+                y: center.y + Geometry.Height(_unchecked: dy)
             )
         )
     }
@@ -145,7 +174,7 @@ extension Geometry.Ellipse where Scalar: FloatingPoint {
         let hTerm: Scalar = 3 * h / (10 + sqrtTerm)
         let factor: Scalar = 1 + hTerm
         let perimeter: Scalar = Scalar.pi * sum * factor
-        return Geometry.Length(perimeter)
+        return Geometry.Length(_unchecked: perimeter)
     }
 
     @inlinable
@@ -175,8 +204,8 @@ extension Geometry.Ellipse where Scalar: BinaryFloatingPoint & Numeric.Transcend
         let sinR: Scalar = rotation.sin.value
 
         return Geometry.Vector(
-            dx: Linear<Scalar, Space>.Dx(dx * cosR - dy * sinR),
-            dy: Linear<Scalar, Space>.Dy(dx * sinR + dy * cosR)
+            dx: Linear<Scalar, Space>.Dx(_unchecked: dx * cosR - dy * sinR),
+            dy: Linear<Scalar, Space>.Dy(_unchecked: dx * sinR + dy * cosR)
         )
     }
 }
@@ -378,7 +407,44 @@ extension Geometry.Ellipse.Arc: Equatable where Scalar: Equatable {}
 extension Geometry.Ellipse.Arc: Hashable where Scalar: Hashable {}
 
 #if !hasFeature(Embedded)
-    extension Geometry.Ellipse.Arc: Codable where Scalar: Codable {}
+    extension Geometry.Ellipse.Arc: Codable where Scalar: Codable {
+
+        private enum CodingKeys: String, CodingKey {
+            case center, semiMajor, semiMinor, rotation, startAngle, endAngle
+        }
+
+        public init(from decoder: any Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            self.init(
+                center: try container.decode(Geometry.Point<2>.self, forKey: .center),
+                semiMajor: .init(
+                    _unchecked: try container.decode(Scalar.self, forKey: .semiMajor)
+                ),
+                semiMinor: .init(
+                    _unchecked: try container.decode(Scalar.self, forKey: .semiMinor)
+                ),
+                rotation: .init(
+                    _unchecked: try container.decode(Scalar.self, forKey: .rotation)
+                ),
+                startAngle: .init(
+                    _unchecked: try container.decode(Scalar.self, forKey: .startAngle)
+                ),
+                endAngle: .init(
+                    _unchecked: try container.decode(Scalar.self, forKey: .endAngle)
+                )
+            )
+        }
+
+        public func encode(to encoder: any Encoder) throws {
+            var container = encoder.container(keyedBy: CodingKeys.self)
+            try container.encode(center, forKey: .center)
+            try container.encode(semiMajor.underlying, forKey: .semiMajor)
+            try container.encode(semiMinor.underlying, forKey: .semiMinor)
+            try container.encode(rotation.underlying, forKey: .rotation)
+            try container.encode(startAngle.underlying, forKey: .startAngle)
+            try container.encode(endAngle.underlying, forKey: .endAngle)
+        }
+    }
 #endif
 
 extension Geometry.Ellipse.Arc where Scalar: AdditiveArithmetic & Comparable {
@@ -442,8 +508,8 @@ extension Geometry.Ellipse.Arc where Scalar: BinaryFloatingPoint & Numeric.Trans
         let sinR = rotation.sin
 
         return Geometry.Point(
-            x: center.x + Geometry.Width(x * cosR.value - y * sinR.value),
-            y: center.y + Geometry.Height(x * sinR.value + y * cosR.value)
+            x: center.x + Geometry.Width(_unchecked: x * cosR.value - y * sinR.value),
+            y: center.y + Geometry.Height(_unchecked: x * sinR.value + y * cosR.value)
         )
     }
 
@@ -464,8 +530,8 @@ extension Geometry.Ellipse.Arc where Scalar: BinaryFloatingPoint & Numeric.Trans
         let sign: Scalar = sweep.underlying >= 0 ? 1 : -1
 
         return Geometry.Vector(
-            dx: Geometry.Dx(sign * (dx * cosR.value - dy * sinR.value)),
-            dy: Geometry.Dy(sign * (dx * sinR.value + dy * cosR.value))
+            dx: Geometry.Dx(_unchecked: sign * (dx * cosR.value - dy * sinR.value)),
+            dy: Geometry.Dy(_unchecked: sign * (dx * sinR.value + dy * cosR.value))
         )
     }
 }
@@ -532,10 +598,10 @@ extension Geometry.Ellipse.Arc where Scalar: BinaryFloatingPoint & Numeric.Trans
         }
 
         return Geometry.Rectangle(
-            llx: Geometry.X(minX),
-            lly: Geometry.Y(minY),
-            urx: Geometry.X(maxX),
-            ury: Geometry.Y(maxY)
+            llx: Geometry.X(_unchecked: minX),
+            lly: Geometry.Y(_unchecked: minY),
+            urx: Geometry.X(_unchecked: maxX),
+            ury: Geometry.Y(_unchecked: maxY)
         )
     }
 
@@ -628,9 +694,9 @@ extension Geometry.Ellipse.Arc where Scalar: BinaryFloatingPoint & Numeric.Trans
             let midX = (x1 + x2) / 2
             let midY = (y1 + y2) / 2
             self.init(
-                center: Geometry.Point(x: Geometry.X(midX), y: Geometry.Y(midY)),
-                semiMajor: Geometry.Length(rxVal),
-                semiMinor: Geometry.Length(ryVal),
+                center: Geometry.Point(x: Geometry.X(_unchecked: midX), y: Geometry.Y(_unchecked: midY)),
+                semiMajor: Geometry.Length(_unchecked: rxVal),
+                semiMinor: Geometry.Length(_unchecked: ryVal),
                 rotation: xAxisRotation,
                 startAngle: .zero,
                 endAngle: .zero
@@ -701,9 +767,9 @@ extension Geometry.Ellipse.Arc where Scalar: BinaryFloatingPoint & Numeric.Trans
 
         let endAngleVal: Scalar = startAngleVal + dTheta
         self.init(
-            center: Geometry.Point(x: Geometry.X(cx), y: Geometry.Y(cy)),
-            semiMajor: Geometry.Length(rxVal),
-            semiMinor: Geometry.Length(ryVal),
+            center: Geometry.Point(x: Geometry.X(_unchecked: cx), y: Geometry.Y(_unchecked: cy)),
+            semiMajor: Geometry.Length(_unchecked: rxVal),
+            semiMinor: Geometry.Length(_unchecked: ryVal),
             rotation: xAxisRotation,
             startAngle: Radian(_unchecked: startAngleVal),
             endAngle: Radian(_unchecked: endAngleVal)

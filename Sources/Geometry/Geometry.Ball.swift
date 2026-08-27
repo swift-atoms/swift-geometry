@@ -1,8 +1,8 @@
-public import Affine_Geometry
-import Affine
+public import Affine
 public import Dimension
 public import Linear
-import Real
+public import Numeric
+public import Tagged
 
 extension Geometry {
 
@@ -32,7 +32,26 @@ extension Geometry.Ball: Equatable where Scalar: Equatable {}
 extension Geometry.Ball: Hashable where Scalar: Hashable {}
 
 #if !hasFeature(Embedded)
-    extension Geometry.Ball: Codable where Scalar: Codable {}
+    extension Geometry.Ball: Codable where Scalar: Codable {
+
+        private enum CodingKeys: String, CodingKey {
+            case center, radius
+        }
+
+        public init(from decoder: any Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            self.init(
+                center: try container.decode(Geometry.Point<N>.self, forKey: .center),
+                radius: .init(_unchecked: try container.decode(Scalar.self, forKey: .radius))
+            )
+        }
+
+        public func encode(to encoder: any Encoder) throws {
+            var container = encoder.container(keyedBy: CodingKeys.self)
+            try container.encode(center, forKey: .center)
+            try container.encode(radius.underlying, forKey: .radius)
+        }
+    }
 #endif
 
 extension Geometry.Ball where Scalar: AdditiveArithmetic {
@@ -47,7 +66,7 @@ extension Geometry.Ball where Scalar: ExpressibleByIntegerLiteral & AdditiveArit
 
     @inlinable
     public static var unit: Self {
-        Self(center: .zero, radius: .init(1))
+        Self(center: .zero, radius: .init(_unchecked: 1))
     }
 }
 
@@ -55,7 +74,7 @@ extension Geometry.Ball where Scalar: FloatingPoint {
 
     @inlinable
     public var diameter: Geometry.Magnitude {
-        Geometry.Magnitude(radius * 2)
+        Geometry.Magnitude(.init(_unchecked: radius.underlying * 2))
     }
 }
 
@@ -63,7 +82,7 @@ extension Geometry.Ball where N == 2, Scalar: FloatingPoint {
 
     @inlinable
     public var circumference: Geometry.Circumference {
-        Geometry.Circumference(2 * Scalar.pi * radius.underlying)
+        Geometry.Circumference(_unchecked: 2 * Scalar.pi * radius.underlying)
     }
 
     @inlinable
@@ -135,8 +154,8 @@ extension Geometry.Ball where N == 2, Scalar: BinaryFloatingPoint & Numeric.Tran
         let c = angle.cos.value
         let s = angle.sin.value
         return Geometry.Vector(
-            dx: Linear<Scalar, Space>.Dx(-s),
-            dy: Linear<Scalar, Space>.Dy(c)
+            dx: Linear<Scalar, Space>.Dx(_unchecked: -s),
+            dy: Linear<Scalar, Space>.Dy(_unchecked: c)
         )
     }
 
@@ -417,8 +436,8 @@ extension Geometry.Ball where N == 2, Scalar: FloatingPoint {
         let inradius = triangle.area.underlying / semiPerimeter
 
         return Geometry.Circle(
-            center: Geometry.Point(x: Geometry.X(centerX), y: Geometry.Y(centerY)),
-            radius: Geometry.Radius(inradius)
+            center: Geometry.Point(x: Geometry.X(_unchecked: centerX), y: Geometry.Y(_unchecked: centerY)),
+            radius: Geometry.Radius(_unchecked: inradius)
         )
     }
 
@@ -452,7 +471,7 @@ extension Geometry.Ball where N == 2, Scalar: FloatingPoint {
         let uyTerm3 = cSq * (bx - ax)
         let uy = (uyTerm1 + uyTerm2 + uyTerm3) / d
 
-        let center = Geometry.Point(x: Geometry.X(ux), y: Geometry.Y(uy))
+        let center = Geometry.Point(x: Geometry.X(_unchecked: ux), y: Geometry.Y(_unchecked: uy))
         let radius = center.distance(to: v[0])
 
         return Geometry.Circle(center: center, radius: radius)

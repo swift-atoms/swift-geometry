@@ -1,6 +1,7 @@
-public import Affine_Geometry
+public import Affine
 public import Dimension
 public import Linear
+public import Tagged
 
 extension Geometry {
 
@@ -56,7 +57,9 @@ extension Geometry.Orthotope where N == 2, Scalar: FloatingPoint {
         get { center.x - halfExtents.width }
         set {
             let oldUrx = center.x + halfExtents.width
-            let newWidth: Geometry.Width = Dimension.width((oldUrx - newValue) / 2)
+            let newWidth = Geometry.Width(
+                _unchecked: (oldUrx - newValue).underlying / 2
+            )
             center = Geometry.Point(
                 x: newValue + newWidth,
                 y: center.y
@@ -70,7 +73,9 @@ extension Geometry.Orthotope where N == 2, Scalar: FloatingPoint {
         get { center.y - halfExtents.height }
         set {
             let oldUry = center.y + halfExtents.height
-            let newHeight: Geometry.Height = Dimension.height((oldUry - newValue) / 2)
+            let newHeight = Geometry.Height(
+                _unchecked: (oldUry - newValue).underlying / 2
+            )
             center = Geometry.Point(
                 x: center.x,
                 y: newValue + newHeight
@@ -84,7 +89,9 @@ extension Geometry.Orthotope where N == 2, Scalar: FloatingPoint {
         get { center.x + halfExtents.width }
         set {
             let oldLlx = center.x - halfExtents.width
-            let newWidth: Geometry.Width = Dimension.width((newValue - oldLlx) / 2)
+            let newWidth = Geometry.Width(
+                _unchecked: (newValue - oldLlx).underlying / 2
+            )
             center = Geometry.Point(
                 x: oldLlx + newWidth,
                 y: center.y
@@ -98,7 +105,9 @@ extension Geometry.Orthotope where N == 2, Scalar: FloatingPoint {
         get { center.y + halfExtents.height }
         set {
             let oldLly = center.y - halfExtents.height
-            let newHeight: Geometry.Height = Dimension.height((newValue - oldLly) / 2)
+            let newHeight = Geometry.Height(
+                _unchecked: (newValue - oldLly).underlying / 2
+            )
             center = Geometry.Point(
                 x: center.x,
                 y: oldLly + newHeight
@@ -109,14 +118,14 @@ extension Geometry.Orthotope where N == 2, Scalar: FloatingPoint {
 
     @inlinable
     public var width: Geometry.Width {
-        get { halfExtents.width * 2 }
-        set { halfExtents.width = newValue / 2 }
+        get { .init(_unchecked: halfExtents.width.underlying * 2) }
+        set { halfExtents.width = .init(_unchecked: newValue.underlying / 2) }
     }
 
     @inlinable
     public var height: Geometry.Height {
-        get { halfExtents.height * 2 }
-        set { halfExtents.height = newValue / 2 }
+        get { .init(_unchecked: halfExtents.height.underlying * 2) }
+        set { halfExtents.height = .init(_unchecked: newValue.underlying / 2) }
     }
 }
 
@@ -129,14 +138,18 @@ extension Geometry.Orthotope where N == 2, Scalar: FloatingPoint {
         urx: Geometry.X,
         ury: Geometry.Y
     ) {
+        let dx = urx - llx
+        let dy = ury - lly
+        let halfDx = Geometry.Dx(_unchecked: dx.underlying / 2)
+        let halfDy = Geometry.Dy(_unchecked: dy.underlying / 2)
         self.init(
             center: Geometry.Point(
-                x: llx + (urx - llx) / 2,
-                y: lly + (ury - lly) / 2
+                x: llx + halfDx,
+                y: lly + halfDy
             ),
             halfExtents: Geometry.Size(
-                width: Dimension.width((urx - llx) / 2),
-                height: Dimension.height((ury - lly) / 2)
+                width: Geometry.Width(_unchecked: dx.underlying / 2),
+                height: Geometry.Height(_unchecked: dy.underlying / 2)
             )
         )
     }
@@ -170,12 +183,12 @@ extension Geometry.Orthotope where N == 2, Scalar: BinaryInteger {
         let halfHeight = (ury.underlying - lly.underlying) / 2
         self.init(
             center: Geometry.Point(
-                x: Geometry.X(llx.underlying + halfWidth),
-                y: Geometry.Y(lly.underlying + halfHeight)
+                x: Geometry.X(_unchecked: llx.underlying + halfWidth),
+                y: Geometry.Y(_unchecked: lly.underlying + halfHeight)
             ),
             halfExtents: Geometry.Size(
-                width: Geometry.Width(halfWidth),
-                height: Geometry.Height(halfHeight)
+                width: Geometry.Width(_unchecked: halfWidth),
+                height: Geometry.Height(_unchecked: halfHeight)
             )
         )
     }
@@ -373,14 +386,14 @@ extension Geometry.Orthotope where N == 3, Scalar: FloatingPoint {
 
     @inlinable
     public var width: Geometry.Width {
-        get { halfExtents.width * 2 }
-        set { halfExtents.width = newValue / 2 }
+        get { .init(_unchecked: halfExtents.width.underlying * 2) }
+        set { halfExtents.width = .init(_unchecked: newValue.underlying / 2) }
     }
 
     @inlinable
     public var height: Geometry.Height {
-        get { halfExtents.height * 2 }
-        set { halfExtents.height = newValue / 2 }
+        get { .init(_unchecked: halfExtents.height.underlying * 2) }
+        set { halfExtents.height = .init(_unchecked: newValue.underlying / 2) }
     }
 
     @inlinable
@@ -411,7 +424,7 @@ extension Geometry.Orthotope where N == 3, Scalar: FloatingPoint {
         let h = halfExtents.height.underlying * 2
         let d = halfExtents.depth * 2
         return Geometry.Magnitude(
-            Linear<Scalar, Space>.Magnitude((w * w + h * h + d * d).squareRoot())
+            Linear<Scalar, Space>.Magnitude(_unchecked: (w * w + h * h + d * d).squareRoot())
         )
     }
 }
