@@ -3,7 +3,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "swift-geometry-primitives",
+    name: "swift-geometry",
     platforms: [
         .macOS(.v27),
         .iOS(.v27),
@@ -13,76 +13,57 @@ let package = Package(
     ],
     products: [
         .library(
-            name: "Geometry Primitives",
-            targets: ["Geometry Primitives"]
+            name: "Geometry",
+            targets: ["Geometry"]
         ),
         .library(
-            name: "Geometry Primitives Test Support",
-            targets: ["Geometry Primitives Test Support"]
+            name: "Geometry Test Support",
+            targets: ["Geometry Test Support"]
         ),
     ],
     dependencies: [
         .package(
-            url: "https://github.com/swift-primitives/swift-linear-primitives.git",
+            url: "https://github.com/swift-atoms/swift-linear.git",
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-primitives/swift-affine-primitives.git",
+            url: "https://github.com/swift-atoms/swift-affine.git",
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-primitives/swift-affine-geometry-primitives.git",
+            url: "https://github.com/swift-atoms/swift-dimension.git",
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-primitives/swift-dimension-primitives.git",
-            branch: "main"
-        ),
-        .package(
-            url: "https://github.com/swift-primitives/swift-boundary-primitives.git",
-            branch: "main"
-        ),
-        .package(
-            url: "https://github.com/swift-primitives/swift-numeric-primitives.git",
-            branch: "main"
-        ),
-        .package(
-            url: "https://github.com/swift-primitives/swift-pair-primitives.git",
+            url: "https://github.com/swift-atoms/swift-numeric.git",
             branch: "main"
         ),
     ],
     targets: [
         .target(
-            name: "Geometry Primitives",
+            name: "Geometry",
             dependencies: [
-                .product(name: "Linear Primitives", package: "swift-linear-primitives"),
-                .product(name: "Affine Primitives", package: "swift-affine-primitives"),
-                .product(
-                    name: "Affine Geometry Primitives",
-                    package: "swift-affine-geometry-primitives"
-                ),
-                .product(name: "Dimension Primitives", package: "swift-dimension-primitives"),
-                .product(name: "Boundary Primitives", package: "swift-boundary-primitives"),
-                .product(name: "Real Primitives", package: "swift-numeric-primitives"),
-                .product(name: "Pair Primitives", package: "swift-pair-primitives"),
+                .product(name: "Linear", package: "swift-linear"),
+                .product(name: "Dimension", package: "swift-dimension"),
+                .product(name: "Real", package: "swift-numeric"),
             ]
         ),
         .target(
-            name: "Geometry Primitives Test Support",
+            name: "Geometry Test Support",
             dependencies: [
-                "Geometry Primitives",
+                .target(name: "Geometry"),
                 .product(
-                    name: "Affine Primitives Test Support",
-                    package: "swift-affine-primitives"
+                    name: "Affine Test Support",
+                    package: "swift-affine"
                 ),
             ],
             path: "Tests/Support"
         ),
         .testTarget(
-            name: "Geometry Primitives Tests",
+            name: "Geometry Tests",
             dependencies: [
-                "Geometry Primitives",
-                "Geometry Primitives Test Support",
+                .target(name: "Geometry"),
+                .target(name: "Geometry Test Support"),
             ]
         ),
     ],

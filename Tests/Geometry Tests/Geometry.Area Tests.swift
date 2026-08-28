@@ -1,9 +1,9 @@
 import Testing
 
-@testable import Geometry_Primitives
+@testable import Geometry
 
 @Suite
-struct `Geometry.Size - Placeholder` {
+struct `Geometry.Area - Placeholder` {
     @Test
     func `Placeholder test`() {
 

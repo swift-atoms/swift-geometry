@@ -1,5 +1,5 @@
-public import Dimension_Primitives
-import Linear_Primitives
+public import Dimension
+import Linear
 
 extension Geometry {
 

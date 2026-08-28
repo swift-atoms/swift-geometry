@@ -1,7 +1,4 @@
-public import Affine_Geometry_Primitives
-import Affine_Primitives
-import Dimension_Primitives
-public import Linear_Primitives
+public import Linear
 
 public enum Geometry<Scalar: ~Copyable, Space>: ~Copyable {}
 
@@ -14,10 +11,6 @@ extension Geometry {
 }
 
 extension Geometry {
-
-    public typealias X = Affine.Continuous<Scalar, Space>.X
-
-    public typealias Y = Affine.Continuous<Scalar, Space>.Y
 
     public typealias Width = Linear<Scalar, Space>.Width
 
@@ -40,12 +33,6 @@ extension Geometry {
     public typealias Perimeter = Linear<Scalar, Space>.Magnitude
 
     public typealias ArcLength = Linear<Scalar, Space>.Magnitude
-
-    public typealias Translation = Affine.Continuous<Scalar, Space>.Translation
-
-    public typealias Transform = Affine.Continuous<Scalar, Space>.Transform
-
-    public typealias Point<let N: Int> = Affine.Continuous<Scalar, Space>.Point<N>
 
     public typealias Vector<let N: Int> = Linear<Scalar, Space>.Vector<N>
 }

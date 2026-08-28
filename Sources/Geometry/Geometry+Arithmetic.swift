@@ -1,6 +1,6 @@
-public import Dimension_Primitives
-import Linear_Primitives
-import Real_Primitives
+public import Dimension
+import Linear
+import Real
 
 @inlinable
 public func * <Scalar: FloatingPoint, Space, let N: Int>(
