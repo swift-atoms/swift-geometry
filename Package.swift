@@ -23,31 +23,19 @@ let package = Package(
     ],
     dependencies: [
         .package(
-            url: "https://github.com/swift-molecules/swift-linear.git",
+            url: "https://github.com/swift-atoms/swift-linear.git",
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-molecules/swift-affine.git",
+            url: "https://github.com/swift-atoms/swift-affine.git",
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-molecules/swift-affine-geometry.git",
+            url: "https://github.com/swift-atoms/swift-dimension.git",
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-molecules/swift-dimension.git",
-            branch: "main"
-        ),
-        .package(
-            url: "https://github.com/swift-molecules/swift-boundary.git",
-            branch: "main"
-        ),
-        .package(
-            url: "https://github.com/swift-molecules/swift-numeric.git",
-            branch: "main"
-        ),
-        .package(
-            url: "https://github.com/swift-molecules/swift-pair.git",
+            url: "https://github.com/swift-atoms/swift-numeric.git",
             branch: "main"
         ),
     ],
@@ -56,21 +44,14 @@ let package = Package(
             name: "Geometry",
             dependencies: [
                 .product(name: "Linear", package: "swift-linear"),
-                .product(name: "Affine", package: "swift-affine"),
-                .product(
-                    name: "Affine Geometry",
-                    package: "swift-affine-geometry"
-                ),
                 .product(name: "Dimension", package: "swift-dimension"),
-                .product(name: "Boundary", package: "swift-boundary"),
                 .product(name: "Real", package: "swift-numeric"),
-                .product(name: "Pair", package: "swift-pair"),
             ]
         ),
         .target(
             name: "Geometry Test Support",
             dependencies: [
-                "Geometry",
+                .target(name: "Geometry"),
                 .product(
                     name: "Affine Test Support",
                     package: "swift-affine"
@@ -81,8 +62,8 @@ let package = Package(
         .testTarget(
             name: "Geometry Tests",
             dependencies: [
-                "Geometry",
-                "Geometry Test Support",
+                .target(name: "Geometry"),
+                .target(name: "Geometry Test Support"),
             ]
         ),
     ],

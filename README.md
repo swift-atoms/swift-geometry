@@ -2,7 +2,7 @@
 
 ![Development Status](https://img.shields.io/badge/status-active--development-blue.svg)
 
-Geometric primitives — composes affine, affine-geometry, algebra-linear, dimension, format, region, and numeric primitives. Ships an umbrella product plus a Test Support product for downstream test targets.
+Affine-independent geometry concepts built from linear, dimension, and numeric types. Point-backed shapes and transforms live in the separate `swift-geometry-affine-geometry` molecule package.
 
 ## Installation
 
@@ -10,13 +10,13 @@ Add the dependency to your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/swift-molecules/swift-geometry.git", branch: "main")
+    .package(url: "https://github.com/swift-atoms/swift-geometry.git", branch: "main")
 ]
 ```
 
 > Pre-1.0: no version tags yet. APIs may change; pin a commit for reproducible builds.
 
-Add the umbrella product to your target:
+Add the atom product to your target:
 
 ```swift
 .target(
