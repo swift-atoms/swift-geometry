@@ -1,8 +1,7 @@
-public import Affine
+public import Affine_Geometry
 public import Dimension
 public import Linear
-public import Numeric
-public import Tagged
+import Real
 
 extension Geometry {
 
@@ -125,8 +124,8 @@ extension Geometry.Bezier where Scalar: FloatingPoint {
         guard let tang = tangent(at: t) else { return nil }
 
         return Geometry.Vector(
-            dx: Linear<Scalar, Space>.Dx(_unchecked: -tang.dy.underlying),
-            dy: Linear<Scalar, Space>.Dy(_unchecked: tang.dx.underlying)
+            dx: Linear<Scalar, Space>.Dx(-tang.dy.underlying),
+            dy: Linear<Scalar, Space>.Dy(tang.dx.underlying)
         )
     }
 }
@@ -285,8 +284,8 @@ extension Geometry.Bezier where Scalar: BinaryFloatingPoint & Numeric.Transcende
             let rx: Scalar = x * cosR - y * sinR
             let ry: Scalar = x * sinR + y * cosR
             return Geometry.Point(
-                x: Geometry.X(_unchecked: cx + rx),
-                y: Geometry.Y(_unchecked: cy + ry)
+                x: Geometry.X(cx + rx),
+                y: Geometry.Y(cy + ry)
             )
         }
 
@@ -370,8 +369,8 @@ extension Geometry where Scalar: FloatingPoint {
 
         guard let p = points.first else { return nil }
         return Vector(
-            dx: Linear<Scalar, Space>.Dx(_unchecked: n * p.x.underlying),
-            dy: Linear<Scalar, Space>.Dy(_unchecked: n * p.y.underlying)
+            dx: Linear<Scalar, Space>.Dx(n * p.x.underlying),
+            dy: Linear<Scalar, Space>.Dy(n * p.y.underlying)
         )
     }
 }

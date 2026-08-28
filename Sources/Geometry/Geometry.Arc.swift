@@ -1,8 +1,8 @@
-public import Affine
+public import Affine_Geometry
+import Affine
 public import Dimension
 public import Linear
-public import Numeric
-public import Tagged
+import Real
 
 extension Geometry {
 
@@ -36,34 +36,7 @@ extension Geometry.Arc: Equatable where Scalar: Equatable {}
 extension Geometry.Arc: Hashable where Scalar: Hashable {}
 
 #if !hasFeature(Embedded)
-    extension Geometry.Arc: Codable where Scalar: Codable {
-
-        private enum CodingKeys: String, CodingKey {
-            case center, radius, startAngle, endAngle
-        }
-
-        public init(from decoder: any Decoder) throws {
-            let container = try decoder.container(keyedBy: CodingKeys.self)
-            self.init(
-                center: try container.decode(Geometry.Point<2>.self, forKey: .center),
-                radius: .init(_unchecked: try container.decode(Scalar.self, forKey: .radius)),
-                startAngle: .init(
-                    _unchecked: try container.decode(Scalar.self, forKey: .startAngle)
-                ),
-                endAngle: .init(
-                    _unchecked: try container.decode(Scalar.self, forKey: .endAngle)
-                )
-            )
-        }
-
-        public func encode(to encoder: any Encoder) throws {
-            var container = encoder.container(keyedBy: CodingKeys.self)
-            try container.encode(center, forKey: .center)
-            try container.encode(radius.underlying, forKey: .radius)
-            try container.encode(startAngle.underlying, forKey: .startAngle)
-            try container.encode(endAngle.underlying, forKey: .endAngle)
-        }
-    }
+    extension Geometry.Arc: Codable where Scalar: Codable {}
 #endif
 
 extension Geometry.Arc where Scalar: BinaryFloatingPoint {
@@ -177,8 +150,8 @@ extension Geometry.Arc where Scalar: BinaryFloatingPoint & Numeric.Transcendenta
 
         let sign: Scalar = sweep.underlying >= 0 ? 1 : -1
         return Geometry.Vector(
-            dx: Linear<Scalar, Space>.Dx(_unchecked: -sign * angle.sin.value),
-            dy: Linear<Scalar, Space>.Dy(_unchecked: sign * angle.cos.value)
+            dx: Linear<Scalar, Space>.Dx(-sign * angle.sin.value),
+            dy: Linear<Scalar, Space>.Dy(sign * angle.cos.value)
         )
     }
 }

@@ -1,8 +1,6 @@
 import Dimension
 import Geometry
-import Numeric
-import Tagged
-import Tagged_Standard_Library_Integration
+import Geometry_Test_Support
 import Testing
 
 private enum TestSpace: Numeric.Quantized {}

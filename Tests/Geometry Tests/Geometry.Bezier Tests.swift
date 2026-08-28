@@ -1,6 +1,5 @@
 import Dimension
-import Tagged
-import Tagged_Standard_Library_Integration
+import Geometry_Test_Support
 import Testing
 
 @testable import Affine
@@ -145,7 +144,7 @@ struct `Geometry.Bezier - Evaluation` {
             control2: .init(x: 3, y: 2),
             to: .init(x: 4, y: 0)
         )
-        let point = bezier.point(at: Scale(0))
+        let point = bezier.point(at: 0)
         #expect(point != nil)
         #expect(isApprox(point!.x, X(0)))
         #expect(isApprox(point!.y, Y(0)))
@@ -159,7 +158,7 @@ struct `Geometry.Bezier - Evaluation` {
             control2: .init(x: 3, y: 2),
             to: .init(x: 4, y: 0)
         )
-        let point = bezier.point(at: Scale(1))
+        let point = bezier.point(at: 1)
         #expect(point != nil)
         #expect(isApprox(point!.x, X(4)))
         #expect(isApprox(point!.y, Y(0)))
@@ -171,7 +170,7 @@ struct `Geometry.Bezier - Evaluation` {
             from: .init(x: 0, y: 0),
             to: .init(x: 10, y: 10)
         )
-        let point = bezier.point(at: Scale(0.5))!
+        let point = bezier.point(at: 0.5)!
         #expect(isApprox(point.x, X(5)))
         #expect(isApprox(point.y, Y(5)))
     }
@@ -183,7 +182,7 @@ struct `Geometry.Bezier - Evaluation` {
             control: .init(x: 2, y: 4),
             to: .init(x: 4, y: 0)
         )
-        let point = bezier.point(at: Scale(0.5))!
+        let point = bezier.point(at: 0.5)!
         #expect(isApprox(point.x, X(2)))
         #expect(isApprox(point.y, Y(2)))
     }
@@ -197,7 +196,7 @@ struct `Geometry.Bezier - Derivative` {
             from: .init(x: 0, y: 0),
             to: .init(x: 10, y: 20)
         )
-        let deriv = bezier.derivative(at: Scale(0.5))!
+        let deriv = bezier.derivative(at: 0.5)!
         #expect(isApprox(deriv.dx, Dx(10)))
         #expect(isApprox(deriv.dy, Dy(20)))
     }
@@ -210,7 +209,7 @@ struct `Geometry.Bezier - Derivative` {
             control2: .init(x: 3, y: 2),
             to: .init(x: 4, y: 0)
         )
-        let tangent = bezier.tangent(at: Scale(0.5))!
+        let tangent = bezier.tangent(at: 0.5)!
         let expectedLength: Double = 1.0
         #expect(abs(tangent.length.underlying - expectedLength) < 1e-10)
     }
@@ -223,8 +222,8 @@ struct `Geometry.Bezier - Derivative` {
             control2: .init(x: 3, y: 2),
             to: .init(x: 4, y: 0)
         )
-        let tangent = bezier.tangent(at: Scale(0.5))!
-        let normal = bezier.normal(at: Scale(0.5))!
+        let tangent = bezier.tangent(at: 0.5)!
+        let normal = bezier.normal(at: 0.5)!
 
         #expect(isApproxScalar(tangent.dot(normal), 0))
     }
@@ -240,7 +239,7 @@ struct `Geometry.Bezier - Subdivision` {
             control2: .init(x: 10, y: 10),
             to: .init(x: 10, y: 0)
         )
-        let split = bezier.split(at: Scale(0.5))!
+        let split = bezier.split(at: 0.5)!
 
         #expect(isApprox(split.left.startPoint!.x, X(0)))
         #expect(isApprox(split.left.startPoint!.y, Y(0)))
@@ -248,7 +247,7 @@ struct `Geometry.Bezier - Subdivision` {
         #expect(isApprox(split.right.endPoint!.x, X(10)))
         #expect(isApprox(split.right.endPoint!.y, Y(0)))
 
-        let midpoint = bezier.point(at: Scale(0.5))!
+        let midpoint = bezier.point(at: 0.5)!
         #expect(isApprox(split.left.endPoint!.x, midpoint.x))
         #expect(isApprox(split.right.startPoint!.x, midpoint.x))
     }
@@ -334,7 +333,7 @@ struct `Geometry.Bezier - Transformations` {
             from: .init(x: 0, y: 0),
             to: .init(x: 10, y: 0)
         )
-        let scaled = bezier.scaled(by: Scale(2), about: bezier.startPoint!)
+        let scaled = bezier.scaled(by: 2, about: bezier.startPoint!)
         #expect(scaled.startPoint?.x == X(0))
         #expect(scaled.endPoint?.x == X(20))
     }

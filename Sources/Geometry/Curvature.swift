@@ -1,3 +1,5 @@
+public import Pair
+
 public enum Curvature: Sendable, Hashable, Codable, CaseIterable {
 
     case convex
@@ -19,4 +21,9 @@ extension Curvature {
     public static prefix func ! (value: Curvature) -> Curvature {
         value.opposite
     }
+}
+
+extension Curvature {
+
+    public typealias Value<Payload> = Pair<Curvature, Payload>
 }

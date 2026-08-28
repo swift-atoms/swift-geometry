@@ -1,6 +1,5 @@
 import Dimension
-import Tagged
-import Tagged_Standard_Library_Integration
+import Geometry_Test_Support
 import Testing
 
 @testable import Affine
@@ -118,14 +117,14 @@ struct `Geometry.Ellipse - Properties` {
     @Test
     func `Eccentricity of circle is zero`() {
         let ellipse: Geometry<Double, Void>.Ellipse = .circle(center: .zero, radius: 10)
-        #expect(abs(ellipse.eccentricity.value) < 1e-10)
+        #expect(abs(ellipse.eccentricity) < 1e-10)
     }
 
     @Test
     func `Eccentricity of elongated ellipse`() {
         let ellipse: Geometry<Double, Void>.Ellipse = .init(semiMajor: 5, semiMinor: 3)
 
-        #expect(abs(ellipse.eccentricity.value - 0.8) < 1e-10)
+        #expect(abs(ellipse.eccentricity - 0.8) < 1e-10)
     }
 
     @Test
@@ -375,7 +374,7 @@ struct `Geometry.Ellipse - Transformations` {
     @Test
     func `Scaling`() {
         let ellipse: Geometry<Double, Void>.Ellipse = .init(semiMajor: 10, semiMinor: 5)
-        let scaled = ellipse.scaled(by: Scale(2))
+        let scaled = ellipse.scaled(by: 2)
         #expect(scaled.semiMajor == Distance(20))
         #expect(scaled.semiMinor == Distance(10))
     }

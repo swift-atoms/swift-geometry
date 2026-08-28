@@ -17,33 +17,37 @@ let package = Package(
             targets: ["Geometry"]
         ),
         .library(
-            name: "Geometry Standard Library Integration",
-            targets: ["Geometry Standard Library Integration"]
-        ),
-        .library(
-            name: "Geometry Apple Foundation Integration",
-            targets: ["Geometry Apple Foundation Integration"]
+            name: "Geometry Test Support",
+            targets: ["Geometry Test Support"]
         ),
     ],
     dependencies: [
         .package(
-            url: "https://github.com/swift-atoms/swift-linear.git",
+            url: "https://github.com/swift-molecules/swift-linear.git",
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-atoms/swift-affine.git",
+            url: "https://github.com/swift-molecules/swift-affine.git",
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-atoms/swift-dimension.git",
+            url: "https://github.com/swift-molecules/swift-affine-geometry.git",
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-atoms/swift-numeric.git",
+            url: "https://github.com/swift-molecules/swift-dimension.git",
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-atoms/swift-tagged.git",
+            url: "https://github.com/swift-molecules/swift-boundary.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-molecules/swift-numeric.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-molecules/swift-pair.git",
             branch: "main"
         ),
     ],
@@ -53,43 +57,32 @@ let package = Package(
             dependencies: [
                 .product(name: "Linear", package: "swift-linear"),
                 .product(name: "Affine", package: "swift-affine"),
-                .product(name: "Dimension", package: "swift-dimension"),
-                .product(name: "Numeric", package: "swift-numeric"),
                 .product(
-                    name: "Numeric Standard Library Integration",
-                    package: "swift-numeric"
+                    name: "Affine Geometry",
+                    package: "swift-affine-geometry"
                 ),
-                .product(name: "Tagged", package: "swift-tagged"),
+                .product(name: "Dimension", package: "swift-dimension"),
+                .product(name: "Boundary", package: "swift-boundary"),
+                .product(name: "Real", package: "swift-numeric"),
+                .product(name: "Pair", package: "swift-pair"),
             ]
         ),
         .target(
-            name: "Geometry Standard Library Integration",
-            dependencies: ["Geometry"]
-        ),
-        .target(
-            name: "Geometry Apple Foundation Integration",
+            name: "Geometry Test Support",
             dependencies: [
                 "Geometry",
-                "Geometry Standard Library Integration",
-            ]
+                .product(
+                    name: "Affine Test Support",
+                    package: "swift-affine"
+                ),
+            ],
+            path: "Tests/Support"
         ),
         .testTarget(
             name: "Geometry Tests",
             dependencies: [
                 "Geometry",
-                .product(name: "Affine", package: "swift-affine"),
-                .product(name: "Dimension", package: "swift-dimension"),
-                .product(name: "Linear", package: "swift-linear"),
-                .product(name: "Numeric", package: "swift-numeric"),
-                .product(
-                    name: "Numeric Standard Library Integration",
-                    package: "swift-numeric"
-                ),
-                .product(name: "Tagged", package: "swift-tagged"),
-                .product(
-                    name: "Tagged Standard Library Integration",
-                    package: "swift-tagged"
-                ),
+                "Geometry Test Support",
             ]
         ),
     ],

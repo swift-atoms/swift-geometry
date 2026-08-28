@@ -1,7 +1,6 @@
-public import Affine
-public import Dimension
+public import Affine_Geometry
+import Affine
 public import Linear
-public import Tagged
 
 extension Geometry {
 
@@ -24,32 +23,7 @@ extension Geometry.Line: Equatable where Scalar: Equatable {}
 extension Geometry.Line: Hashable where Scalar: Hashable {}
 
 #if !hasFeature(Embedded)
-    extension Geometry.Line: Codable where Scalar: Codable {
-
-        private enum CodingKeys: String, CodingKey {
-            case point, direction
-        }
-
-        public init(from decoder: any Decoder) throws {
-            let container = try decoder.container(keyedBy: CodingKeys.self)
-            var direction = try container.nestedUnkeyedContainer(forKey: .direction)
-            self.init(
-                point: try container.decode(Geometry.Point<2>.self, forKey: .point),
-                direction: .init(
-                    dx: .init(_unchecked: try direction.decode(Scalar.self)),
-                    dy: .init(_unchecked: try direction.decode(Scalar.self))
-                )
-            )
-        }
-
-        public func encode(to encoder: any Encoder) throws {
-            var container = encoder.container(keyedBy: CodingKeys.self)
-            try container.encode(point, forKey: .point)
-            var directionContainer = container.nestedUnkeyedContainer(forKey: .direction)
-            try directionContainer.encode(direction.dx.underlying)
-            try directionContainer.encode(direction.dy.underlying)
-        }
-    }
+    extension Geometry.Line: Codable where Scalar: Codable {}
 #endif
 
 extension Geometry.Line where Scalar: AdditiveArithmetic {
@@ -98,8 +72,8 @@ extension Geometry.Line where Scalar: FloatingPoint {
         let dx = projected.x - other.x
         let dy = projected.y - other.y
         return Geometry.Point(
-            x: other.x + Scale(2) * dx,
-            y: other.y + Scale(2) * dy
+            x: other.x + 2 * dx,
+            y: other.y + 2 * dy
         )
     }
 
@@ -121,7 +95,7 @@ extension Geometry.Line where Scalar: FloatingPoint {
             let vy: Linear<Scalar, Space>.Dy = pt.y - seg.start.y
 
             let t: Scale<1, Scalar> = (seg.vector.dx * vx + seg.vector.dy * vy) / lenSq
-            if t.value >= 0 && t.value <= 1 {
+            if t >= 0 && t <= 1 {
                 result.append(pt)
             }
         }
@@ -190,10 +164,9 @@ extension Affine.Continuous.Point where N == 2, Scalar: FloatingPoint {
 
     @inlinable
     public init(midpointOf segment: Geometry<Scalar, Space>.Line.Segment) {
-        let half = Scale<1, Scalar>(Scalar(1) / Scalar(2))
         self.init(
-            x: segment.start.x + half * (segment.end.x - segment.start.x),
-            y: segment.start.y + half * (segment.end.y - segment.start.y)
+            x: segment.start.x + (segment.end.x - segment.start.x) / 2,
+            y: segment.start.y + (segment.end.y - segment.start.y) / 2
         )
     }
 }
@@ -207,7 +180,7 @@ extension Geometry.Line.Segment where Scalar: FloatingPoint {
 
     @inlinable
     public var length: Geometry.Length {
-        Geometry.Length(_unchecked: vector.length.underlying)
+        Geometry.Length(vector.length.underlying)
     }
 
     @inlinable
@@ -343,9 +316,7 @@ extension Geometry where Scalar: FloatingPoint {
         let t1: Scale<1, Scalar> = (dpx * d2.dy - dpy * d2.dx) / cross
         let t2: Scale<1, Scalar> = (dpx * d1.dy - dpy * d1.dx) / cross
 
-        guard t1.value >= 0 && t1.value <= 1 && t2.value >= 0 && t2.value <= 1 else {
-            return nil
-        }
+        guard t1 >= 0 && t1 <= 1 && t2 >= 0 && t2 <= 1 else { return nil }
 
         return segment1.point(at: t1)
     }
@@ -366,10 +337,7 @@ extension Geometry where Scalar: FloatingPoint {
         let wx: Linear<Scalar, Space>.Dx = point.x - segment.start.x
         let wy: Linear<Scalar, Space>.Dy = point.y - segment.start.y
 
-        let t: Scale<1, Scalar> = max(
-            Scale(0),
-            min(Scale(1), (v.dx * wx + v.dy * wy) / lenSq)
-        )
+        let t: Scale<1, Scalar> = max(0, min(1, (v.dx * wx + v.dy * wy) / lenSq))
 
         let closest = segment.point(at: t)
         let dx: Linear<Scalar, Space>.Dx = point.x - closest.x

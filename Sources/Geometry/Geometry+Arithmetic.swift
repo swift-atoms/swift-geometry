@@ -1,7 +1,6 @@
 public import Dimension
-public import Linear
-public import Numeric
-public import Tagged
+import Linear
+import Real
 
 @inlinable
 public func * <Scalar: FloatingPoint, Space, let N: Int>(
@@ -202,33 +201,6 @@ public func / <Scalar: FloatingPoint, Space>(
     rhs: Linear<Scalar, Space>.Magnitude
 ) -> Scale<1, Scalar> {
     Scale(lhs.underlying / rhs.underlying)
-}
-
-@_disfavoredOverload
-@inlinable
-public func * <Scalar: FloatingPoint, Space>(
-    lhs: Linear<Scalar, Space>.Magnitude,
-    rhs: Scale<1, Scalar>
-) -> Linear<Scalar, Space>.Magnitude {
-    Linear<Scalar, Space>.Magnitude(_unchecked: lhs.underlying * rhs.value)
-}
-
-@_disfavoredOverload
-@inlinable
-public func * <Scalar: FloatingPoint, Space>(
-    lhs: Scale<1, Scalar>,
-    rhs: Linear<Scalar, Space>.Magnitude
-) -> Linear<Scalar, Space>.Magnitude {
-    rhs * lhs
-}
-
-@_disfavoredOverload
-@inlinable
-public func / <Scalar: FloatingPoint, Space>(
-    lhs: Linear<Scalar, Space>.Magnitude,
-    rhs: Scale<1, Scalar>
-) -> Linear<Scalar, Space>.Magnitude {
-    Linear<Scalar, Space>.Magnitude(_unchecked: lhs.underlying / rhs.value)
 }
 
 @_disfavoredOverload

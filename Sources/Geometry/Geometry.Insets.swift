@@ -1,6 +1,3 @@
-public import Dimension
-public import Tagged
-
 extension Geometry {
 
     public struct Insets {
@@ -40,18 +37,18 @@ extension Geometry.Insets: Hashable where Scalar: Hashable {}
 
         public init(from decoder: any Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
-            self.top = .init(_unchecked: try container.decode(Scalar.self, forKey: .top))
-            self.leading = .init(_unchecked: try container.decode(Scalar.self, forKey: .leading))
-            self.bottom = .init(_unchecked: try container.decode(Scalar.self, forKey: .bottom))
-            self.trailing = .init(_unchecked: try container.decode(Scalar.self, forKey: .trailing))
+            self.top = try container.decode(Geometry.Height.self, forKey: .top)
+            self.leading = try container.decode(Geometry.Width.self, forKey: .leading)
+            self.bottom = try container.decode(Geometry.Height.self, forKey: .bottom)
+            self.trailing = try container.decode(Geometry.Width.self, forKey: .trailing)
         }
 
         public func encode(to encoder: any Encoder) throws {
             var container = encoder.container(keyedBy: CodingKeys.self)
-            try container.encode(top.underlying, forKey: .top)
-            try container.encode(leading.underlying, forKey: .leading)
-            try container.encode(bottom.underlying, forKey: .bottom)
-            try container.encode(trailing.underlying, forKey: .trailing)
+            try container.encode(top, forKey: .top)
+            try container.encode(leading, forKey: .leading)
+            try container.encode(bottom, forKey: .bottom)
+            try container.encode(trailing, forKey: .trailing)
         }
     }
 #endif
@@ -60,10 +57,10 @@ extension Geometry.Insets where Scalar: AdditiveArithmetic {
 
     @inlinable
     public init(all: Scalar) {
-        self.top = Geometry.Height(_unchecked: all)
-        self.leading = Geometry.Width(_unchecked: all)
-        self.bottom = Geometry.Height(_unchecked: all)
-        self.trailing = Geometry.Width(_unchecked: all)
+        self.top = Geometry.Height(all)
+        self.leading = Geometry.Width(all)
+        self.bottom = Geometry.Height(all)
+        self.trailing = Geometry.Width(all)
     }
 
     @inlinable

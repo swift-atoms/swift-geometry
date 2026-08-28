@@ -1,8 +1,6 @@
 import Dimension
-import Numeric
-import Numeric_Standard_Library_Integration
-import Tagged
-import Tagged_Standard_Library_Integration
+import Geometry_Test_Support
+import Real
 import Testing
 
 @testable import Affine
@@ -214,7 +212,7 @@ struct `Geometry.Arc - Parametric Points` {
             startAngle: .zero,
             endAngle: .pi
         )
-        let point = arc.point(at: Scale(0))
+        let point = arc.point(at: 0)
         #expect(isApprox(point.x, arc.startPoint.x))
         #expect(isApprox(point.y, arc.startPoint.y))
     }
@@ -227,7 +225,7 @@ struct `Geometry.Arc - Parametric Points` {
             startAngle: .zero,
             endAngle: .pi
         )
-        let point = arc.point(at: Scale(1))
+        let point = arc.point(at: 1)
         #expect(isApprox(point.x, arc.endPoint.x))
         #expect(isApprox(point.y, arc.endPoint.y))
     }
@@ -240,7 +238,7 @@ struct `Geometry.Arc - Parametric Points` {
             startAngle: .zero,
             endAngle: .pi
         )
-        let point = arc.point(at: Scale(0.5))
+        let point = arc.point(at: 0.5)
         #expect(isApprox(point.x, arc.midPoint.x))
         #expect(isApprox(point.y, arc.midPoint.y))
     }
@@ -256,7 +254,7 @@ struct `Geometry.Arc - Tangent` {
             startAngle: .zero,
             endAngle: .pi
         )
-        let tangent = arc.tangent(at: Scale(0))
+        let tangent = arc.tangent(at: 0)
         #expect(isApprox(tangent.dx, Dx(0)))
         #expect(isApprox(tangent.dy, Dy(1)))
     }
@@ -269,7 +267,7 @@ struct `Geometry.Arc - Tangent` {
             startAngle: .zero,
             endAngle: .pi
         )
-        let tangent = arc.tangent(at: Scale(0.5))
+        let tangent = arc.tangent(at: 0.5)
         #expect(isApprox(tangent.dx, Dx(-1)))
         #expect(isApprox(tangent.dy, Dy(0)))
     }
@@ -372,7 +370,7 @@ struct `Geometry.Arc - Transformations` {
     @Test
     func `Scaling`() {
         let arc: Geometry<Double, Void>.Arc = .semicircle(center: .zero, radius: 5)
-        let scaled = arc.scaled(by: Scale(2))
+        let scaled = arc.scaled(by: 2)
         #expect(scaled.radius == Distance(10))
         #expect(scaled.startAngle == arc.startAngle)
         #expect(scaled.endAngle == arc.endAngle)

@@ -1,7 +1,7 @@
-public import Affine
+public import Affine_Geometry
+import Affine
 import Dimension
 public import Linear
-public import Tagged
 
 public enum Geometry<Scalar: ~Copyable, Space>: ~Copyable {}
 
@@ -67,24 +67,7 @@ extension Geometry.Magnitude: Sendable where Scalar: Sendable {}
 extension Geometry.Magnitude: Equatable where Scalar: Equatable {}
 extension Geometry.Magnitude: Hashable where Scalar: Hashable {}
 #if !hasFeature(Embedded)
-    extension Geometry.Magnitude: Codable where Scalar: Codable {
-
-        private enum CodingKeys: String, CodingKey {
-            case underlying
-        }
-
-        public init(from decoder: any Decoder) throws {
-            let container = try decoder.container(keyedBy: CodingKeys.self)
-            self.init(
-                .init(_unchecked: try container.decode(Scalar.self, forKey: .underlying))
-            )
-        }
-
-        public func encode(to encoder: any Encoder) throws {
-            var container = encoder.container(keyedBy: CodingKeys.self)
-            try container.encode(underlying.underlying, forKey: .underlying)
-        }
-    }
+    extension Geometry.Magnitude: Codable where Scalar: Codable {}
 #endif
 
 extension Geometry.Magnitude: Comparable where Scalar: Comparable {
@@ -100,7 +83,7 @@ where Scalar: ExpressibleByIntegerLiteral {
 
     @inlinable
     public init(integerLiteral value: Scalar.IntegerLiteralType) {
-        self.underlying = .init(_unchecked: Scalar(integerLiteral: value))
+        self.underlying = .init(Scalar(integerLiteral: value))
     }
 }
 
@@ -108,7 +91,7 @@ extension Geometry.Magnitude: ExpressibleByFloatLiteral where Scalar: Expressibl
 
     @inlinable
     public init(floatLiteral value: Scalar.FloatLiteralType) {
-        self.underlying = .init(_unchecked: Scalar(floatLiteral: value))
+        self.underlying = .init(Scalar(floatLiteral: value))
     }
 }
 
@@ -116,12 +99,12 @@ extension Geometry.Magnitude {
 
     @inlinable
     public var width: Geometry.Width {
-        Geometry.Width(_unchecked: underlying.underlying)
+        Geometry.Width(underlying.underlying)
     }
 
     @inlinable
     public var height: Geometry.Height {
-        Geometry.Height(_unchecked: underlying.underlying)
+        Geometry.Height(underlying.underlying)
     }
 
     @inlinable
@@ -134,6 +117,6 @@ extension Geometry.Magnitude where Scalar: AdditiveArithmetic {
 
     @inlinable
     public static var zero: Self {
-        Self(Linear<Scalar, Space>.Magnitude(_unchecked: .zero))
+        Self(Linear<Scalar, Space>.Magnitude(.zero))
     }
 }

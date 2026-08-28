@@ -1,7 +1,6 @@
-public import Affine
+public import Affine_Geometry
 public import Dimension
 public import Linear
-public import Tagged
 
 extension Geometry {
 
@@ -31,28 +30,7 @@ extension Geometry.Hypercube: Equatable where Scalar: Equatable {}
 extension Geometry.Hypercube: Hashable where Scalar: Hashable {}
 
 #if !hasFeature(Embedded)
-    extension Geometry.Hypercube: Codable where Scalar: Codable {
-
-        private enum CodingKeys: String, CodingKey {
-            case center, halfSide
-        }
-
-        public init(from decoder: any Decoder) throws {
-            let container = try decoder.container(keyedBy: CodingKeys.self)
-            self.init(
-                center: try container.decode(Geometry.Point<N>.self, forKey: .center),
-                halfSide: .init(
-                    _unchecked: try container.decode(Scalar.self, forKey: .halfSide)
-                )
-            )
-        }
-
-        public func encode(to encoder: any Encoder) throws {
-            var container = encoder.container(keyedBy: CodingKeys.self)
-            try container.encode(center, forKey: .center)
-            try container.encode(halfSide.underlying, forKey: .halfSide)
-        }
-    }
+    extension Geometry.Hypercube: Codable where Scalar: Codable {}
 #endif
 
 extension Geometry.Hypercube where Scalar: AdditiveArithmetic {
@@ -67,12 +45,12 @@ extension Geometry.Hypercube where Scalar: FloatingPoint {
 
     @inlinable
     public init(center: consuming Geometry.Point<N>, side: Linear<Scalar, Space>.Magnitude) {
-        self.init(center: center, halfSide: Linear<Scalar, Space>.Magnitude(_unchecked: side.underlying / 2))
+        self.init(center: center, halfSide: Linear<Scalar, Space>.Magnitude(side.underlying / 2))
     }
 
     @inlinable
     public init(side: Linear<Scalar, Space>.Magnitude) where Scalar: AdditiveArithmetic {
-        self.init(center: .zero, halfSide: Linear<Scalar, Space>.Magnitude(_unchecked: side.underlying / 2))
+        self.init(center: .zero, halfSide: Linear<Scalar, Space>.Magnitude(side.underlying / 2))
     }
 }
 
@@ -80,7 +58,7 @@ extension Geometry.Hypercube where Scalar: ExpressibleByIntegerLiteral & Additiv
 
     @inlinable
     public static var unit: Self {
-        Self(center: .zero, halfSide: .init(_unchecked: 1))
+        Self(center: .zero, halfSide: .init(1))
     }
 }
 
@@ -88,7 +66,7 @@ extension Geometry.Hypercube where Scalar: FloatingPoint {
 
     @inlinable
     public var side: Geometry.Magnitude {
-        Geometry.Magnitude(Linear<Scalar, Space>.Magnitude(_unchecked: halfSide.underlying * 2))
+        Geometry.Magnitude(Linear<Scalar, Space>.Magnitude(halfSide.underlying * 2))
     }
 }
 
@@ -97,18 +75,18 @@ extension Geometry.Hypercube where N == 2, Scalar: FloatingPoint {
     @inlinable
     public var diagonal: Geometry.Magnitude {
         let s = halfSide.underlying * 2
-        return Geometry.Magnitude(Linear<Scalar, Space>.Magnitude(_unchecked: s * Scalar(2).squareRoot()))
+        return Geometry.Magnitude(Linear<Scalar, Space>.Magnitude(s * Scalar(2).squareRoot()))
     }
 
     @inlinable
     public var area: Geometry.Area {
         let s = halfSide.underlying * 2
-        return Geometry.Area(_unchecked: s * s)
+        return Geometry.Area(s * s)
     }
 
     @inlinable
     public var perimeter: Geometry.Perimeter {
-        Geometry.Perimeter(_unchecked: halfSide.underlying * 8)
+        Geometry.Perimeter(halfSide.underlying * 8)
     }
 
     @inlinable
@@ -146,12 +124,12 @@ extension Geometry.Hypercube where N == 2, Scalar: FloatingPoint {
 
     @inlinable
     public var width: Geometry.Width {
-        Geometry.Width(_unchecked: halfSide.underlying * 2)
+        Geometry.Width(halfSide.underlying * 2)
     }
 
     @inlinable
     public var height: Geometry.Height {
-        Geometry.Height(_unchecked: halfSide.underlying * 2)
+        Geometry.Height(halfSide.underlying * 2)
     }
 }
 
@@ -160,7 +138,7 @@ extension Geometry.Hypercube where N == 3, Scalar: FloatingPoint {
     @inlinable
     public var diagonal: Geometry.Magnitude {
         let s = halfSide.underlying * 2
-        return Geometry.Magnitude(Linear<Scalar, Space>.Magnitude(_unchecked: s * Scalar(3).squareRoot()))
+        return Geometry.Magnitude(Linear<Scalar, Space>.Magnitude(s * Scalar(3).squareRoot()))
     }
 
     @inlinable
@@ -198,7 +176,7 @@ extension Geometry.Hypercube where N == 2, Scalar: FloatingPoint {
     public func scaled(by factor: Scale<1, Scalar>) -> Self {
         Self(
             center: center,
-            halfSide: Linear<Scalar, Space>.Magnitude(_unchecked: halfSide.underlying * factor.value)
+            halfSide: Linear<Scalar, Space>.Magnitude(halfSide.underlying * factor.value)
         )
     }
 }

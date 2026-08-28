@@ -1,6 +1,4 @@
-import Dimension
-import Tagged
-import Tagged_Standard_Library_Integration
+import Geometry_Test_Support
 import Testing
 
 @testable import Affine
@@ -432,7 +430,7 @@ struct `Geometry.Polygon - Transformations` {
             .init(x: 2, y: 2),
             .init(x: 0, y: 2),
         ])
-        let scaled = polygon.scaled(by: Scale(2))!
+        let scaled = polygon.scaled(by: 2)!
         #expect(abs(scaled.area - 16) < 1e-10)
         let originalCentroid = polygon.centroid!
         let scaledCentroid = scaled.centroid!
@@ -448,7 +446,7 @@ struct `Geometry.Polygon - Transformations` {
             .init(x: 1, y: 1),
             .init(x: 0, y: 1),
         ])
-        let scaled = polygon.scaled(by: Scale(2), about: polygon.vertices[0])
+        let scaled = polygon.scaled(by: 2, about: polygon.vertices[0])
         #expect(scaled.vertices[0].x == 0)
         #expect(scaled.vertices[0].y == 0)
         #expect(scaled.vertices[1].x == 2)

@@ -1,9 +1,7 @@
 import Affine
 import Dimension
+import Geometry_Test_Support
 import Linear
-import Numeric
-import Tagged
-import Tagged_Standard_Library_Integration
 import Testing
 
 @testable import Geometry
@@ -289,13 +287,16 @@ struct `Rectangle Tests` {
     }
 
     @Test
-    func `Rectangle bounds`() {
+    func `Rectangle corners`() {
         let rect: Geometry<Double, Void>.Rectangle = .init(x: 10, y: 20, width: 100, height: 200)
 
-        #expect(rect.llx == 10)
-        #expect(rect.lly == 20)
-        #expect(rect.urx == 110)
-        #expect(rect.ury == 220)
+        let ll = rect.corner(.bottomLeft)
+        #expect(ll.x == 10)
+        #expect(ll.y == 20)
+
+        let ur = rect.corner(.topRight)
+        #expect(ur.x == 110)
+        #expect(ur.y == 220)
     }
 }
 
@@ -377,7 +378,7 @@ struct `Transform Tests` {
 
     @Test
     func `Scale transform`() {
-        let transform: Geometry<Double, Void>.Transform = .scale(Scale(2))
+        let transform: Geometry<Double, Void>.Transform = .scale(2)
         let point: Geometry<Double, Void>.Point<2> = .init(x: 10, y: 20)
         let result = transform.apply(to: point)
 
@@ -399,7 +400,7 @@ struct `Transform Tests` {
     @Test
     func `Transform concatenation`() {
         let translate: Geometry<Double, Void>.Transform = .translation(dx: 10, dy: 0)
-        let scale: Geometry<Double, Void>.Transform = .scale(Scale(2))
+        let scale: Geometry<Double, Void>.Transform = .scale(2)
 
         let combined = translate.concatenating(scale)
 
@@ -451,7 +452,7 @@ struct `Line Segment Tests` {
             end: .init(x: 10, y: 10)
         )
 
-        let quarter = segment.point(at: Scale(0.25))
+        let quarter = segment.point(at: 0.25)
         #expect(quarter.x == 2.5)
         #expect(quarter.y == 2.5)
     }
@@ -499,7 +500,7 @@ struct `Line Tests` {
             point: .init(x: 0, y: 0),
             direction: .init(dx: 10, dy: 10)
         )
-        let p = line.point(at: Scale(0.5))
+        let p = line.point(at: 0.5)
         #expect(p.x == 5)
         #expect(p.y == 5)
     }
@@ -623,11 +624,11 @@ struct `Dimension Tests` {
     @Test
     func `Length multiplication and division`() {
         let len: Geometry<Double, Void>.Length = .init(10)
-        let scaled: Geometry<Double, Void>.Length = len * Scale(2.0)
+        let scaled: Geometry<Double, Void>.Length = len * 2.0
         #expect(isApprox(scaled, Length(20)))
-        let scaled2: Geometry<Double, Void>.Length = Scale(2.0) * len
+        let scaled2: Geometry<Double, Void>.Length = 2.0 * len
         #expect(isApprox(scaled2, Length(20)))
-        let divided: Geometry<Double, Void>.Length = len / Scale(2.0)
+        let divided: Geometry<Double, Void>.Length = len / 2.0
         #expect(isApprox(divided, Length(5)))
     }
 
@@ -684,7 +685,7 @@ struct `Linear Transform Tests` {
 
     @Test
     func `Linear concatenation`() {
-        let scale = Matrix2x2.scale(Scale(2))
+        let scale = Matrix2x2.scale(2)
         let rotation = Matrix2x2.rotation(.pi.half)
         let combined = rotation * scale
 
@@ -726,7 +727,7 @@ struct `Scale Transform Tests` {
 
     @Test
     func `Scale uniform`() {
-        let uniform = Scale<2, Double>.uniform(Scale(3))
+        let uniform = Scale<2, Double>.uniform(3)
         #expect(uniform.x == 3)
         #expect(uniform.y == 3)
     }
