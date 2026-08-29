@@ -1,5 +1,4 @@
-public import Dimension
-public import Dimension_Tagged
+public import Spatial
 public import Tagged
 
 extension Geometry {

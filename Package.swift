@@ -31,11 +31,11 @@ let package = Package(
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-atoms/swift-dimension.git",
+            url: "https://github.com/swift-atoms/swift-spatial.git",
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-molecules/swift-dimension-tagged.git",
+            url: "https://github.com/swift-atoms/swift-scale.git",
             branch: "main"
         ),
         .package(
@@ -52,11 +52,8 @@ let package = Package(
             name: "Geometry",
             dependencies: [
                 .product(name: "Linear", package: "swift-linear"),
-                .product(name: "Dimension", package: "swift-dimension"),
-                .product(
-                    name: "Dimension Tagged",
-                    package: "swift-dimension-tagged"
-                ),
+                .product(name: "Spatial", package: "swift-spatial"),
+                .product(name: "Scale", package: "swift-scale"),
                 .product(name: "Real", package: "swift-numeric"),
                 .product(name: "Tagged", package: "swift-tagged"),
             ]

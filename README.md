@@ -2,7 +2,7 @@
 
 ![Development Status](https://img.shields.io/badge/status-active--development-blue.svg)
 
-Affine-independent geometry concepts built from linear, dimension, and numeric types. Point-backed shapes and transforms live in the separate `swift-geometry-affine-geometry` molecule package.
+Affine-independent geometry concepts built from linear, spatial, and numeric types. Point-backed shapes and transforms live in the separate `swift-geometry-affine-geometry` molecule package.
 
 ## Installation
 

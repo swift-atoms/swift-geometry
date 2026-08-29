@@ -1,5 +1,5 @@
-public import Dimension
 public import Linear
+public import Spatial
 
 extension Geometry {
 

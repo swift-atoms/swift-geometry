@@ -1,6 +1,6 @@
-public import Dimension
 public import Linear
 public import Real
+public import Scale
 
 @inlinable
 public func * <Scalar: FloatingPoint, Space, let N: Int>(
