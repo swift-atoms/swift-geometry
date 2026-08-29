@@ -1,6 +1,6 @@
 public import Dimension
-import Linear
-import Real
+public import Linear
+public import Real
 
 @inlinable
 public func * <Scalar: FloatingPoint, Space, let N: Int>(
@@ -244,7 +244,7 @@ public func + <Scalar: BinaryFloatingPoint, Space: Numeric.Quantized>(
     lhs: Geometry<Scalar, Space>.Height,
     rhs: Geometry<Scalar, Space>.Height
 ) -> Geometry<Scalar, Space>.Height where Space.Scalar == Scalar {
-    ._quantize(lhs.underlying + rhs.underlying, in: Space.self)
+    .init(lhs.underlying + rhs.underlying)
 }
 
 @inlinable
@@ -252,7 +252,7 @@ public func - <Scalar: BinaryFloatingPoint, Space: Numeric.Quantized>(
     lhs: Geometry<Scalar, Space>.Height,
     rhs: Geometry<Scalar, Space>.Height
 ) -> Geometry<Scalar, Space>.Height where Space.Scalar == Scalar {
-    ._quantize(lhs.underlying - rhs.underlying, in: Space.self)
+    .init(lhs.underlying - rhs.underlying)
 }
 
 @inlinable
@@ -260,7 +260,7 @@ public func + <Scalar: BinaryFloatingPoint, Space: Numeric.Quantized>(
     lhs: Geometry<Scalar, Space>.Width,
     rhs: Geometry<Scalar, Space>.Width
 ) -> Geometry<Scalar, Space>.Width where Space.Scalar == Scalar {
-    ._quantize(lhs.underlying + rhs.underlying, in: Space.self)
+    .init(lhs.underlying + rhs.underlying)
 }
 
 @inlinable
@@ -268,7 +268,7 @@ public func - <Scalar: BinaryFloatingPoint, Space: Numeric.Quantized>(
     lhs: Geometry<Scalar, Space>.Width,
     rhs: Geometry<Scalar, Space>.Width
 ) -> Geometry<Scalar, Space>.Width where Space.Scalar == Scalar {
-    ._quantize(lhs.underlying - rhs.underlying, in: Space.self)
+    .init(lhs.underlying - rhs.underlying)
 }
 
 @_disfavoredOverload
@@ -312,7 +312,7 @@ public func * <Scalar: BinaryFloatingPoint, Space: Numeric.Quantized>(
     lhs: Geometry<Scalar, Space>.Height,
     rhs: Scale<1, Scalar>
 ) -> Geometry<Scalar, Space>.Height where Space.Scalar == Scalar {
-    ._quantize(lhs.underlying * rhs.value, in: Space.self)
+    .init(lhs.underlying * rhs.value)
 }
 
 @inlinable
@@ -328,7 +328,7 @@ public func * <Scalar: BinaryFloatingPoint, Space: Numeric.Quantized>(
     lhs: Geometry<Scalar, Space>.Width,
     rhs: Scale<1, Scalar>
 ) -> Geometry<Scalar, Space>.Width where Space.Scalar == Scalar {
-    ._quantize(lhs.underlying * rhs.value, in: Space.self)
+    .init(lhs.underlying * rhs.value)
 }
 
 @inlinable
