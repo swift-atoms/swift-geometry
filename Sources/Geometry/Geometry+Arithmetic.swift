@@ -1,5 +1,5 @@
 public import Linear
-public import Real
+public import Numeric
 public import Scale
 
 @inlinable

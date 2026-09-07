@@ -12,14 +12,10 @@ let package = Package(
         .visionOS(.v27),
     ],
     products: [
-        .library(
-            name: "Geometry",
-            targets: ["Geometry"]
-        ),
-        .library(
-            name: "Geometry Test Support",
-            targets: ["Geometry Test Support"]
-        ),
+        .library(name: "Geometry", targets: ["Geometry"]),
+        .library(name: "Geometry Standard Library Integration", targets: ["Geometry Standard Library Integration"]),
+        .library(name: "Geometry Foundation Library Integration", targets: ["Geometry Foundation Library Integration"]),
+        .library(name: "Geometry Test Support", targets: ["Geometry Test Support"]),
     ],
     dependencies: [
         .package(
@@ -54,18 +50,31 @@ let package = Package(
                 .product(name: "Linear", package: "swift-linear"),
                 .product(name: "Spatial", package: "swift-spatial"),
                 .product(name: "Scale", package: "swift-scale"),
-                .product(name: "Real", package: "swift-numeric"),
+                .product(name: "Numeric", package: "swift-numeric"),
                 .product(name: "Tagged", package: "swift-tagged"),
-            ]
+            ],
+            path: "Sources/Geometry"
+        ),
+        .target(
+            name: "Geometry Standard Library Integration",
+            dependencies: [
+                .target(name: "Geometry"),
+            ],
+            path: "Sources/Geometry Standard Library Integration"
+        ),
+        .target(
+            name: "Geometry Foundation Library Integration",
+            dependencies: [
+                .target(name: "Geometry"),
+                .target(name: "Geometry Standard Library Integration"),
+            ],
+            path: "Sources/Geometry Foundation Library Integration"
         ),
         .target(
             name: "Geometry Test Support",
             dependencies: [
                 .target(name: "Geometry"),
-                .product(
-                    name: "Affine Test Support",
-                    package: "swift-affine"
-                ),
+                .product(name: "Affine Test Support", package: "swift-affine"),
             ],
             path: "Tests/Support"
         ),
@@ -74,14 +83,17 @@ let package = Package(
             dependencies: [
                 .target(name: "Geometry"),
                 .target(name: "Geometry Test Support"),
-            ]
+                .target(name: "Geometry Standard Library Integration"),
+                .target(name: "Geometry Foundation Library Integration"),
+            ],
+            path: "Tests/Geometry Tests"
         ),
     ],
     swiftLanguageModes: [.v6]
 )
 
-for target in package.targets where ![.system, .binary, .plugin, .macro].contains(target.type) {
-    let ecosystem: [SwiftSetting] = [
+for target in package.targets {
+    target.swiftSettings = [
         .strictMemorySafety(),
         .enableUpcomingFeature("ExistentialAny"),
         .enableUpcomingFeature("InternalImportsByDefault"),
@@ -90,8 +102,4 @@ for target in package.targets where ![.system, .binary, .plugin, .macro].contain
         .enableExperimentalFeature("Lifetimes"),
         .enableUpcomingFeature("InferIsolatedConformances"),
     ]
-
-    let package: [SwiftSetting] = []
-
-    target.swiftSettings = (target.swiftSettings ?? []) + ecosystem + package
 }
