@@ -1,12 +1,14 @@
+import Geometry
 import Testing
 
-@testable import Geometry
+@Test(arguments: Curvature.allCases)
+func `Opposite curvature is an involution`(_ curvature: Curvature) {
+    #expect(curvature.opposite != curvature)
+    #expect(curvature.opposite.opposite == curvature)
+    #expect(!curvature == curvature.opposite)
+}
 
-@Suite
-struct `Curvature - Placeholder` {
-    @Test
-    func `Placeholder test`() {
-
-        #expect(true)
-    }
+@Test
+func `Current curvature representation distinguishes both cases`() {
+    #expect(Set(Curvature.allCases) == [.convex, .concave])
 }

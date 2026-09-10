@@ -18,12 +18,10 @@ let package = Package(
         .library(name: "Geometry Test Support", targets: ["Geometry Test Support"]),
     ],
     dependencies: [
+        .package(url: "https://github.com/swift-atoms/swift-inset.git", branch: "main"),
+        .package(url: "https://github.com/swift-atoms/swift-vector.git", branch: "main"),
         .package(
             url: "https://github.com/swift-atoms/swift-linear.git",
-            branch: "main"
-        ),
-        .package(
-            url: "https://github.com/swift-atoms/swift-affine.git",
             branch: "main"
         ),
         .package(
@@ -35,7 +33,7 @@ let package = Package(
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-atoms/swift-numeric.git",
+            url: "https://github.com/swift-atoms/swift-quantizer.git",
             branch: "main"
         ),
         .package(
@@ -48,9 +46,11 @@ let package = Package(
             name: "Geometry",
             dependencies: [
                 .product(name: "Linear", package: "swift-linear"),
+                .product(name: "Vector", package: "swift-vector"),
+                .product(name: "Inset", package: "swift-inset"),
                 .product(name: "Spatial", package: "swift-spatial"),
                 .product(name: "Scale", package: "swift-scale"),
-                .product(name: "Numeric", package: "swift-numeric"),
+                .product(name: "Quantizer", package: "swift-quantizer"),
                 .product(name: "Tagged", package: "swift-tagged"),
             ],
             path: "Sources/Geometry"
@@ -74,7 +74,6 @@ let package = Package(
             name: "Geometry Test Support",
             dependencies: [
                 .target(name: "Geometry"),
-                .product(name: "Affine Test Support", package: "swift-affine"),
             ],
             path: "Tests/Support"
         ),
@@ -82,9 +81,6 @@ let package = Package(
             name: "Geometry Tests",
             dependencies: [
                 .target(name: "Geometry"),
-                .target(name: "Geometry Test Support"),
-                .target(name: "Geometry Standard Library Integration"),
-                .target(name: "Geometry Foundation Library Integration"),
             ],
             path: "Tests/Geometry Tests"
         ),

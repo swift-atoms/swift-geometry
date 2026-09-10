@@ -1,3 +1,4 @@
+public import Vector
 public import Linear
 public import Spatial
 
@@ -5,11 +6,17 @@ extension Geometry {
 
     public struct Size<let N: Int> {
 
-        public var dimensions: InlineArray<N, Scalar>
+        @usableFromInline
+        internal var _storage: Vector::Vector<N, Scalar>
+
+        public var dimensions: InlineArray<N, Scalar> {
+            get { _storage.components }
+            set { _storage.components = newValue }
+        }
 
         @inlinable
         public init(_ dimensions: consuming InlineArray<N, Scalar>) {
-            self.dimensions = dimensions
+            self._storage = Vector::Vector(dimensions)
         }
     }
 }
@@ -20,12 +27,7 @@ extension Geometry.Size: Equatable where Scalar: Equatable {
 
     @inlinable
     public static func == (lhs: borrowing Self, rhs: borrowing Self) -> Bool {
-        for i in 0..<N {
-            if lhs.dimensions[i] != rhs.dimensions[i] {
-                return false
-            }
-        }
-        return true
+        lhs._storage == rhs._storage
     }
 }
 
@@ -33,31 +35,22 @@ extension Geometry.Size: Hashable where Scalar: Hashable {
 
     @inlinable
     public func hash(into hasher: inout Hasher) {
-        (0..<N).forEach { i in
-            hasher.combine(dimensions[i])
-        }
+        _storage.hash(into: &hasher)
     }
 }
 
 #if !hasFeature(Embedded)
-    extension Geometry.Size: Codable where Scalar: Codable {
-
-        public init(from decoder: any Decoder) throws {
-            var container = try decoder.unkeyedContainer()
-            var dimensions = InlineArray<N, Scalar>(repeating: try container.decode(Scalar.self))
-            for i in 1..<N {
-                dimensions[i] = try container.decode(Scalar.self)
-            }
-            self.dimensions = dimensions
-        }
-
-        public func encode(to encoder: any Encoder) throws {
-            var container = encoder.unkeyedContainer()
-            for i in 0..<N {
-                try container.encode(dimensions[i])
-            }
-        }
+extension Geometry.Size: Decodable where Scalar: Decodable {
+    public init(from decoder: any Decoder) throws {
+        self.init(try Vector::Vector<N, Scalar>(from: decoder).components)
     }
+}
+
+extension Geometry.Size: Encodable where Scalar: Encodable {
+    public func encode(to encoder: any Encoder) throws {
+        try _storage.encode(to: encoder)
+    }
+}
 #endif
 
 extension Geometry.Size {
@@ -76,22 +69,18 @@ extension Geometry.Size {
         _ other: borrowing Geometry<U, Space>.Size<N>,
         _ transform: (U) throws(E) -> Scalar
     ) throws(E) {
-        var dims = InlineArray<N, Scalar>(repeating: try transform(other.dimensions[0]))
-        for i in 1..<N {
-            dims[i] = try transform(other.dimensions[i])
+        let source = other.dimensions
+        let dimensions: InlineArray<N, Scalar> = try InlineArray { index throws(E) in
+            try transform(source[index])
         }
-        self.init(dims)
+        self.init(dimensions)
     }
 
     @inlinable
     public func map<Result, E: Swift.Error>(
         _ transform: (Scalar) throws(E) -> Result
     ) throws(E) -> Geometry<Result, Space>.Size<N> {
-        var result = InlineArray<N, Result>(repeating: try transform(dimensions[0]))
-        for i in 1..<N {
-            result[i] = try transform(dimensions[i])
-        }
-        return Geometry<Result, Space>.Size<N>(result)
+        try Geometry<Result, Space>.Size<N>(self, transform)
     }
 }
 

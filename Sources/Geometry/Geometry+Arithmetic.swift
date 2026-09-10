@@ -1,5 +1,5 @@
 public import Linear
-public import Numeric
+public import Quantizer
 public import Scale
 
 @inlinable
@@ -98,45 +98,6 @@ extension Geometry.Depth: Comparable where Scalar: Comparable {
     @_disfavoredOverload
     public static func < (lhs: borrowing Self, rhs: borrowing Self) -> Bool {
         lhs.value < rhs.value
-    }
-}
-
-extension Geometry.Insets where Scalar: AdditiveArithmetic {
-
-    @inlinable
-    @_disfavoredOverload
-    public static func + (lhs: borrowing Self, rhs: borrowing Self) -> Self {
-        Self(
-            top: lhs.top + rhs.top,
-            leading: lhs.leading + rhs.leading,
-            bottom: lhs.bottom + rhs.bottom,
-            trailing: lhs.trailing + rhs.trailing
-        )
-    }
-
-    @inlinable
-    @_disfavoredOverload
-    public static func - (lhs: borrowing Self, rhs: borrowing Self) -> Self {
-        Self(
-            top: lhs.top - rhs.top,
-            leading: lhs.leading - rhs.leading,
-            bottom: lhs.bottom - rhs.bottom,
-            trailing: lhs.trailing - rhs.trailing
-        )
-    }
-}
-
-extension Geometry.Insets where Scalar: SignedNumeric {
-
-    @inlinable
-    @_disfavoredOverload
-    public static prefix func - (value: borrowing Self) -> Self {
-        Self(
-            top: -value.top,
-            leading: -value.leading,
-            bottom: -value.bottom,
-            trailing: -value.trailing
-        )
     }
 }
 
@@ -240,7 +201,7 @@ public func - <Scalar: AdditiveArithmetic, Space>(
 }
 
 @inlinable
-public func + <Scalar: BinaryFloatingPoint, Space: Numeric.Quantized>(
+public func + <Scalar: BinaryFloatingPoint, Space: Quantizer::Quantized>(
     lhs: Geometry<Scalar, Space>.Height,
     rhs: Geometry<Scalar, Space>.Height
 ) -> Geometry<Scalar, Space>.Height where Space.Scalar == Scalar {
@@ -248,7 +209,7 @@ public func + <Scalar: BinaryFloatingPoint, Space: Numeric.Quantized>(
 }
 
 @inlinable
-public func - <Scalar: BinaryFloatingPoint, Space: Numeric.Quantized>(
+public func - <Scalar: BinaryFloatingPoint, Space: Quantizer::Quantized>(
     lhs: Geometry<Scalar, Space>.Height,
     rhs: Geometry<Scalar, Space>.Height
 ) -> Geometry<Scalar, Space>.Height where Space.Scalar == Scalar {
@@ -256,7 +217,7 @@ public func - <Scalar: BinaryFloatingPoint, Space: Numeric.Quantized>(
 }
 
 @inlinable
-public func + <Scalar: BinaryFloatingPoint, Space: Numeric.Quantized>(
+public func + <Scalar: BinaryFloatingPoint, Space: Quantizer::Quantized>(
     lhs: Geometry<Scalar, Space>.Width,
     rhs: Geometry<Scalar, Space>.Width
 ) -> Geometry<Scalar, Space>.Width where Space.Scalar == Scalar {
@@ -264,7 +225,7 @@ public func + <Scalar: BinaryFloatingPoint, Space: Numeric.Quantized>(
 }
 
 @inlinable
-public func - <Scalar: BinaryFloatingPoint, Space: Numeric.Quantized>(
+public func - <Scalar: BinaryFloatingPoint, Space: Quantizer::Quantized>(
     lhs: Geometry<Scalar, Space>.Width,
     rhs: Geometry<Scalar, Space>.Width
 ) -> Geometry<Scalar, Space>.Width where Space.Scalar == Scalar {
@@ -308,7 +269,7 @@ public func * <Scalar: FloatingPoint, Space>(
 }
 
 @inlinable
-public func * <Scalar: BinaryFloatingPoint, Space: Numeric.Quantized>(
+public func * <Scalar: BinaryFloatingPoint, Space: Quantizer::Quantized>(
     lhs: Geometry<Scalar, Space>.Height,
     rhs: Scale<1, Scalar>
 ) -> Geometry<Scalar, Space>.Height where Space.Scalar == Scalar {
@@ -316,7 +277,7 @@ public func * <Scalar: BinaryFloatingPoint, Space: Numeric.Quantized>(
 }
 
 @inlinable
-public func * <Scalar: BinaryFloatingPoint, Space: Numeric.Quantized>(
+public func * <Scalar: BinaryFloatingPoint, Space: Quantizer::Quantized>(
     lhs: Scale<1, Scalar>,
     rhs: Geometry<Scalar, Space>.Height
 ) -> Geometry<Scalar, Space>.Height where Space.Scalar == Scalar {
@@ -324,7 +285,7 @@ public func * <Scalar: BinaryFloatingPoint, Space: Numeric.Quantized>(
 }
 
 @inlinable
-public func * <Scalar: BinaryFloatingPoint, Space: Numeric.Quantized>(
+public func * <Scalar: BinaryFloatingPoint, Space: Quantizer::Quantized>(
     lhs: Geometry<Scalar, Space>.Width,
     rhs: Scale<1, Scalar>
 ) -> Geometry<Scalar, Space>.Width where Space.Scalar == Scalar {
@@ -332,7 +293,7 @@ public func * <Scalar: BinaryFloatingPoint, Space: Numeric.Quantized>(
 }
 
 @inlinable
-public func * <Scalar: BinaryFloatingPoint, Space: Numeric.Quantized>(
+public func * <Scalar: BinaryFloatingPoint, Space: Quantizer::Quantized>(
     lhs: Scale<1, Scalar>,
     rhs: Geometry<Scalar, Space>.Width
 ) -> Geometry<Scalar, Space>.Width where Space.Scalar == Scalar {
