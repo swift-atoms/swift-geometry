@@ -1,5 +1,3 @@
-# .github/metadata.yaml
-# Triaged by AI-assisted bulk pass (2026-04-29).
 description: "Coordinate-space-parameterized affine geometry — points, vectors, rectangles, and transforms — with compile-time space safety for Swift."
 topics:
   - primitives
