@@ -422,7 +422,7 @@ struct `Geometry.Polygon - Transformations` {
             .init(x: 1, y: 0),
             .init(x: 0, y: 1),
         ])
-        let translated = polygon.translated(by: .init(dx: 5, dy: 10), using: .cartesian)
+        let translated = polygon.translated(by: .init(dx: 5, dy: 10), using: Geometry<Double, Void>.Point<2>.cartesian)
         #expect(translated.vertices[0].x == 5)
         #expect(translated.vertices[0].y == 10)
     }

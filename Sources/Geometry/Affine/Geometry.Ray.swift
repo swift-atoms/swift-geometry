@@ -224,10 +224,10 @@ extension Geometry where Scalar: FloatingPoint {
         guard t >= 0 else { return false }
 
         let projected = Self.point(of: ray, at: t)
-        let distSq = point.distance.squared(to: projected)
+        let distance = point.distance(to: projected)
 
         let tolerance: Linear<Scalar, Space>.Area = Tagged(Scalar.ulpOfOne * 100)
-        return distSq < tolerance
+        return distance * distance < tolerance
     }
 
     @inlinable

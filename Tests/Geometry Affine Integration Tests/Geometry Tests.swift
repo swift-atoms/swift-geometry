@@ -127,7 +127,7 @@ struct `Point Tests` {
     @Test
     func `Double point translation`() {
         let point: Geometry<Double, Void>.Point<2> = .init(x: 10, y: 20)
-        let moved = point.translated(by: Displacement(components: Vector::Vector([5, 10])), using: .cartesian)
+        let moved = point.translated(by: Displacement::Displacement(components: Vector::Vector([5, 10])), using: Geometry<Double, Void>.Point<2>.cartesian)
         #expect(moved.x == 15)
         #expect(moved.y == 30)
     }
@@ -143,7 +143,7 @@ struct `Point Tests` {
     func `Point plus vector`() {
         let point: Geometry<Double, Void>.Point<2> = .init(x: 10, y: 20)
         let vector: Geo.Vector<2> = .init(dx: 5, dy: 10)
-        let result = point.translated(by: Displacement(components: Vector::Vector(vector.components)), using: .cartesian)
+        let result = point.translated(by: Displacement::Displacement(components: Vector::Vector(vector.components)), using: Geometry<Double, Void>.Point<2>.cartesian)
         #expect(result.x == 15)
         #expect(result.y == 30)
     }
@@ -295,13 +295,10 @@ struct `Rectangle Tests` {
     func `Rectangle corners`() {
         let rect: Geometry<Double, Void>.Rectangle = .init(x: 10, y: 20, width: 100, height: 200)
 
-        let ll = rect.corner(.bottomLeft)
-        #expect(ll.x == 10)
-        #expect(ll.y == 20)
-
-        let ur = rect.corner(.topRight)
-        #expect(ur.x == 110)
-        #expect(ur.y == 220)
+        #expect(rect.llx == 10)
+        #expect(rect.lly == 20)
+        #expect(rect.urx == 110)
+        #expect(rect.ury == 220)
     }
 }
 

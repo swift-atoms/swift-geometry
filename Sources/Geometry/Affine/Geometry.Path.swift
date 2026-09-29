@@ -9,7 +9,7 @@ public import Angle
 public import Trigonometry
 
 
-import Numeric
+public import Numeric
 
 extension Geometry {
 

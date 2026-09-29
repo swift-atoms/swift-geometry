@@ -11,7 +11,7 @@ public import Trigonometry
 
 public import Spatial
 public import Linear
-import Numeric
+public import Numeric
 
 extension Geometry {
 
@@ -60,7 +60,7 @@ extension Geometry.Arc where Scalar: BinaryFloatingPoint {
             center: center,
             radius: radius,
             startAngle: startAngle,
-            endAngle: startAngle + .pi
+            endAngle: startAngle + .pi.full
         )
     }
 }
@@ -101,7 +101,7 @@ extension Geometry.Arc where Scalar: AdditiveArithmetic & Comparable {
 
     @inlinable
     public var isCounterClockwise: Bool {
-        sweep > .zero
+        sweep.underlying > .zero
     }
 }
 
@@ -109,7 +109,7 @@ extension Geometry.Arc where Scalar: BinaryFloatingPoint {
 
     @inlinable
     public var isFullCircle: Bool {
-        abs(sweep) >= Radian.pi.two
+        abs(sweep.underlying) >= Radian<Scalar>.pi.two.underlying
     }
 }
 
@@ -384,9 +384,9 @@ extension Geometry.Arc where Scalar: BinaryFloatingPoint {
 
     @inlinable
     public func translated<Failure: Swift.Error>(by vector: Geometry.Vector<2>,
-        using relationship: Affine<Geometry.Point<2>, Displacement<2, Scalar>, Failure>
+        using relationship: Affine<Geometry.Point<2>, Displacement::Displacement<2, Scalar>, Failure>
     ) throws(Failure) -> Self {
-        return Self(center: try relationship.translated(center, by: Displacement(components: Vector::Vector(vector.components))), radius: radius, startAngle: startAngle, endAngle: endAngle)
+        return Self(center: try relationship.translated(center, by: Displacement::Displacement(components: Vector::Vector(vector.components))), radius: radius, startAngle: startAngle, endAngle: endAngle)
     }
 
     @inlinable

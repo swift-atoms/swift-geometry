@@ -229,7 +229,7 @@ struct `Geometry.Ellipse - Static Functions` {
     @Test
     func `Geometry.point(of:at:) at angle π`() {
         let ellipse: Geometry<Double, Void>.Ellipse = .init(semiMajor: 10, semiMinor: 5)
-        let point = Geometry.point(of: ellipse, at: .pi)
+        let point = Geometry.point(of: ellipse, at: .pi.full)
         #expect(isApprox(point.x, X(-10)))
         #expect(isApprox(point.y, Y(0)))
     }
@@ -271,7 +271,7 @@ struct `Geometry.Ellipse - Parametric Points` {
     @Test
     func `Point at parameter π`() {
         let ellipse: Geometry<Double, Void>.Ellipse = .init(semiMajor: 10, semiMinor: 5)
-        let point = ellipse.point(at: .pi)
+        let point = ellipse.point(at: .pi.full)
         #expect(isApprox(point.x, X(-10)))
         #expect(isApprox(point.y, Y(0)))
     }
@@ -369,7 +369,7 @@ struct `Geometry.Ellipse - Transformations` {
     @Test
     func `Translation`() {
         let ellipse: Geometry<Double, Void>.Ellipse = .init(semiMajor: 10, semiMinor: 5)
-        let translated = ellipse.translated(by: .init(dx: 5, dy: 10), using: .cartesian)
+        let translated = ellipse.translated(by: .init(dx: 5, dy: 10), using: Geometry<Double, Void>.Point<2>.cartesian)
         #expect(translated.center.x == X(5))
         #expect(translated.center.y == Y(10))
         #expect(translated.semiMajor == Distance(10))

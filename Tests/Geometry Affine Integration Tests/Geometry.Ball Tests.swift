@@ -293,7 +293,7 @@ struct `Geometry.Ball - Parametric Points` {
     @Test
     func `Point at angle π (leftmost)`() {
         let circle: Geometry<Double, Void>.Circle = .init(center: .zero, radius: 5)
-        let point = circle.point(at: .pi)
+        let point = circle.point(at: .pi.full)
         #expect(isApprox(point.x, X(-5)))
         #expect(isApprox(point.y, Y(0)))
     }
@@ -393,7 +393,7 @@ struct `Geometry.Ball - Transformations` {
     @Test
     func `Translation preserves radius`() {
         let circle: Geometry<Double, Void>.Circle = .init(center: .zero, radius: 5)
-        let translated = circle.translated(by: .init(dx: 10, dy: 20), using: .cartesian)
+        let translated = circle.translated(by: .init(dx: 10, dy: 20), using: Geometry<Double, Void>.Point<2>.cartesian)
         #expect(translated.center.x == X(10))
         #expect(translated.center.y == Y(20))
         #expect(translated.radius == Distance(5))

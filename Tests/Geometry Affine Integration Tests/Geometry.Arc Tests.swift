@@ -68,13 +68,13 @@ struct `Geometry.Arc - Initialization` {
             center: .init(x: 10, y: 20),
             radius: 5,
             startAngle: .zero,
-            endAngle: .pi
+            endAngle: .pi.full
         )
         #expect(arc.center.x == X(10))
         #expect(arc.center.y == Y(20))
         #expect(arc.radius == Distance(5))
         #expect(arc.startAngle == .zero)
-        #expect(isApprox(arc.endAngle, .pi))
+        #expect(isApprox(arc.endAngle, .pi.full))
     }
 
     @Test
@@ -89,7 +89,7 @@ struct `Geometry.Arc - Initialization` {
     func `Semicircle arc`() {
         let arc: Geometry<Double, Void>.Arc = .semicircle(center: .zero, radius: 5)
         #expect(arc.startAngle == .zero)
-        #expect(isApprox(arc.endAngle, .pi))
+        #expect(isApprox(arc.endAngle, .pi.full))
     }
 
     @Test
@@ -107,7 +107,7 @@ struct `Geometry.Arc - Initialization` {
             startAngle: .pi.half
         )
         #expect(isApprox(arc.startAngle, .pi.half))
-        #expect(isApprox(arc.endAngle, .pi))
+        #expect(isApprox(arc.endAngle, .pi.full))
     }
 }
 
@@ -119,9 +119,9 @@ struct `Geometry.Arc - Properties` {
             center: .zero,
             radius: 5,
             startAngle: .zero,
-            endAngle: .pi
+            endAngle: .pi.full
         )
-        #expect(isApprox(arc.sweep, .pi))
+        #expect(isApprox(arc.sweep, .pi.full))
     }
 
     @Test
@@ -130,7 +130,7 @@ struct `Geometry.Arc - Properties` {
             center: .zero,
             radius: 5,
             startAngle: .zero,
-            endAngle: .pi
+            endAngle: .pi.full
         )
         #expect(arc.isCounterClockwise)
     }
@@ -140,7 +140,7 @@ struct `Geometry.Arc - Properties` {
         let arc: Geometry<Double, Void>.Arc = .init(
             center: .zero,
             radius: 5,
-            startAngle: .pi,
+            startAngle: .pi.full,
             endAngle: .zero
         )
         #expect(!arc.isCounterClockwise)
@@ -164,7 +164,7 @@ struct `Geometry.Arc - Endpoints` {
             center: .zero,
             radius: 5,
             startAngle: .zero,
-            endAngle: .pi
+            endAngle: .pi.full
         )
         #expect(isApprox(arc.startPoint.x, X(5)))
         #expect(isApprox(arc.startPoint.y, Y(0)))
@@ -176,7 +176,7 @@ struct `Geometry.Arc - Endpoints` {
             center: .zero,
             radius: 5,
             startAngle: .zero,
-            endAngle: .pi
+            endAngle: .pi.full
         )
         #expect(isApprox(arc.endPoint.x, X(-5)))
         #expect(isApprox(arc.endPoint.y, Y(0)))
@@ -188,7 +188,7 @@ struct `Geometry.Arc - Endpoints` {
             center: .zero,
             radius: 5,
             startAngle: .zero,
-            endAngle: .pi
+            endAngle: .pi.full
         )
         #expect(isApprox(arc.midPoint.x, X(0)))
         #expect(isApprox(arc.midPoint.y, Y(5)))
@@ -200,7 +200,7 @@ struct `Geometry.Arc - Endpoints` {
             center: .init(x: 10, y: 20),
             radius: 5,
             startAngle: .zero,
-            endAngle: .pi
+            endAngle: .pi.full
         )
         #expect(isApprox(arc.startPoint.x, X(15)))
         #expect(isApprox(arc.startPoint.y, Y(20)))
@@ -215,7 +215,7 @@ struct `Geometry.Arc - Parametric Points` {
             center: .zero,
             radius: 5,
             startAngle: .zero,
-            endAngle: .pi
+            endAngle: .pi.full
         )
         let point = arc.point(at: 0)
         #expect(isApprox(point.x, arc.startPoint.x))
@@ -228,7 +228,7 @@ struct `Geometry.Arc - Parametric Points` {
             center: .zero,
             radius: 5,
             startAngle: .zero,
-            endAngle: .pi
+            endAngle: .pi.full
         )
         let point = arc.point(at: 1)
         #expect(isApprox(point.x, arc.endPoint.x))
@@ -241,7 +241,7 @@ struct `Geometry.Arc - Parametric Points` {
             center: .zero,
             radius: 5,
             startAngle: .zero,
-            endAngle: .pi
+            endAngle: .pi.full
         )
         let point = arc.point(at: 0.5)
         #expect(isApprox(point.x, arc.midPoint.x))
@@ -257,7 +257,7 @@ struct `Geometry.Arc - Tangent` {
             center: .zero,
             radius: 5,
             startAngle: .zero,
-            endAngle: .pi
+            endAngle: .pi.full
         )
         let tangent = arc.tangent(at: 0)
         #expect(isApprox(tangent.dx, Dx(0)))
@@ -270,7 +270,7 @@ struct `Geometry.Arc - Tangent` {
             center: .zero,
             radius: 5,
             startAngle: .zero,
-            endAngle: .pi
+            endAngle: .pi.full
         )
         let tangent = arc.tangent(at: 0.5)
         #expect(isApprox(tangent.dx, Dx(-1)))
@@ -366,7 +366,7 @@ struct `Geometry.Arc - Transformations` {
     @Test
     func `Translation`() {
         let arc: Geometry<Double, Void>.Arc = .semicircle(center: .zero, radius: 5)
-        let translated = arc.translated(by: .init(dx: 10, dy: 20), using: .cartesian)
+        let translated = arc.translated(by: .init(dx: 10, dy: 20), using: Geometry<Double, Void>.Point<2>.cartesian)
         #expect(translated.center.x == X(10))
         #expect(translated.center.y == Y(20))
         #expect(translated.radius == Distance(5))
@@ -387,7 +387,7 @@ struct `Geometry.Arc - Transformations` {
             center: .zero,
             radius: 5,
             startAngle: .zero,
-            endAngle: .pi
+            endAngle: .pi.full
         )
         let reversed = arc.reversed
         #expect(reversed.startAngle == arc.endAngle)

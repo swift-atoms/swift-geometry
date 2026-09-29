@@ -311,16 +311,16 @@ extension Geometry.Orthotope where N == 2, Scalar: FloatingPoint {
 
     @inlinable
     public func translated<Failure: Swift.Error>(dx: Geometry.Width, dy: Geometry.Height,
-        using relationship: Affine<Geometry.Point<2>, Displacement<2, Scalar>, Failure>
+        using relationship: Affine<Geometry.Point<2>, Displacement::Displacement<2, Scalar>, Failure>
     ) throws(Failure) -> Self {
-        Self(center: try relationship.translated(center, by: Displacement(dx: dx.underlying, dy: dy.underlying)), halfExtents: halfExtents)
+        Self(center: try relationship.translated(center, by: Displacement::Displacement(dx: dx.underlying, dy: dy.underlying)), halfExtents: halfExtents)
     }
 
     @inlinable
     public func translated<Failure: Swift.Error>(by vector: Geometry.Vector<2>,
-        using relationship: Affine<Geometry.Point<2>, Displacement<2, Scalar>, Failure>
+        using relationship: Affine<Geometry.Point<2>, Displacement::Displacement<2, Scalar>, Failure>
     ) throws(Failure) -> Self {
-        return Self(center: try relationship.translated(center, by: Displacement(components: Vector::Vector(vector.components))), halfExtents: halfExtents)
+        return Self(center: try relationship.translated(center, by: Displacement::Displacement(components: Vector::Vector(vector.components))), halfExtents: halfExtents)
     }
 
     @inlinable

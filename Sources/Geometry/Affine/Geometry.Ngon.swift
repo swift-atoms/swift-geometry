@@ -373,9 +373,9 @@ extension Geometry.Ngon where Scalar: FloatingPoint {
 
     @inlinable
     public func translated<Failure: Swift.Error>(by vector: Geometry.Vector<2>,
-        using relationship: Affine<Geometry.Point<2>, Displacement<2, Scalar>, Failure>
+        using relationship: Affine<Geometry.Point<2>, Displacement::Displacement<2, Scalar>, Failure>
     ) throws(Failure) -> Self {
-        let offset = Displacement<2, Scalar>(components: Vector::Vector(vector.components))
+        let offset = Displacement::Displacement<2, Scalar>(components: Vector::Vector(vector.components))
         var result = vertices
         for i in 0..<N { result[i] = try relationship.translated(vertices[i], by: offset) }
         return Self(result)
@@ -937,7 +937,7 @@ extension Geometry {
 extension Geometry.Edges {
 
         @inlinable
-        public subscript(index: Int) -> Line.Segment {
+        public subscript(index: Int) -> Geometry.Line.Segment {
             get { segments[index] }
             set { segments[index] = newValue }
         }}

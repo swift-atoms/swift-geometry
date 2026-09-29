@@ -160,7 +160,7 @@ extension Geometry where Scalar: FloatingPoint {
 
     @inlinable
     public static func midpoint(of segment: Line.Segment) -> Point<2> {
-        point(on: segment, at: 0.5)
+        point(on: segment, at: Scale(Scalar(1) / 2))
     }
 
     @inlinable

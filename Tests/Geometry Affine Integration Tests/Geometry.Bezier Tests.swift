@@ -325,7 +325,7 @@ struct `Geometry.Bezier - Transformations` {
             from: .init(x: 0, y: 0),
             to: .init(x: 10, y: 10)
         )
-        let translated = bezier.translated(by: .init(dx: 5, dy: 5), using: .cartesian)
+        let translated = bezier.translated(by: .init(dx: 5, dy: 5), using: Geometry<Double, Void>.Point<2>.cartesian)
         #expect(translated.startPoint?.x == X(5))
         #expect(translated.startPoint?.y == Y(5))
         #expect(translated.endPoint?.x == X(15))

@@ -387,7 +387,7 @@ struct `Geometry.Ngon<3> - Angles` {
         )
         let angles = triangle.angles
         let sum = angles.atA + angles.atB + angles.atC
-        #expect(isApprox(sum, .pi))
+        #expect(isApprox(sum, .pi.full))
     }
 }
 
@@ -528,7 +528,7 @@ struct `Geometry.Ngon<3> - Transformations` {
             b: .init(x: 1, y: 0),
             c: .init(x: 0, y: 1)
         )
-        let translated = triangle.translated(by: .init(dx: 5, dy: 10), using: .cartesian)
+        let translated = triangle.translated(by: .init(dx: 5, dy: 10), using: Geometry<Double, Void>.Point<2>.cartesian)
         #expect(translated.a.x == 5)
         #expect(translated.a.y == 10)
         #expect(translated.b.x == 6)

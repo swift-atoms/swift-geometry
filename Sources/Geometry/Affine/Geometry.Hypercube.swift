@@ -179,9 +179,9 @@ extension Geometry.Hypercube where N == 2, Scalar: FloatingPoint {
 
     @inlinable
     public func translated<Failure: Swift.Error>(by vector: Geometry.Vector<2>,
-        using relationship: Affine<Geometry.Point<2>, Displacement<2, Scalar>, Failure>
+        using relationship: Affine<Geometry.Point<2>, Displacement::Displacement<2, Scalar>, Failure>
     ) throws(Failure) -> Self {
-        return Self(center: try relationship.translated(center, by: Displacement(components: Vector::Vector(vector.components))), halfSide: halfSide)
+        return Self(center: try relationship.translated(center, by: Displacement::Displacement(components: Vector::Vector(vector.components))), halfSide: halfSide)
     }
 
     @inlinable

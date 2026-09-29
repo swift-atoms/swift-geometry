@@ -11,7 +11,7 @@ public import Trigonometry
 
 public import Spatial
 public import Linear
-import Numeric
+public import Numeric
 
 extension Geometry {
 
@@ -249,9 +249,9 @@ extension Geometry.Bezier where Scalar: FloatingPoint {
 
     @inlinable
     public func translated<Failure: Swift.Error>(by vector: Geometry.Vector<2>,
-        using relationship: Affine<Geometry.Point<2>, Displacement<2, Scalar>, Failure>
+        using relationship: Affine<Geometry.Point<2>, Displacement::Displacement<2, Scalar>, Failure>
     ) throws(Failure) -> Self {
-        let offset = Displacement<2, Scalar>(components: Vector::Vector(vector.components))
+        let offset = Displacement::Displacement<2, Scalar>(components: Vector::Vector(vector.components))
         var result: [Geometry.Point<2>] = []
         for point in controlPoints { result.append(try relationship.translated(point, by: offset)) }
         return Self(controlPoints: result)

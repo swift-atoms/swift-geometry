@@ -11,7 +11,7 @@ public import Trigonometry
 
 public import Spatial
 public import Linear
-import Numeric
+public import Numeric
 
 extension Geometry {
 
@@ -119,7 +119,7 @@ extension Geometry.Ball where N == 2, Scalar: FloatingPoint {
 
     @inlinable
     public func containsInterior(_ point: Geometry.Point<2>) -> Bool {
-        center.distance.squared(to: point) < radius * radius
+        center.distance(to: point) < radius
     }
 
     @inlinable
@@ -207,7 +207,7 @@ extension Geometry where Scalar: FloatingPoint {
 
     @inlinable
     public static func contains(_ circle: Ball<2>, point: Point<2>) -> Bool {
-        circle.center.distance.squared(to: point) <= circle.radius * circle.radius
+        circle.center.distance(to: point) <= circle.radius
     }
 
     @inlinable
@@ -309,9 +309,9 @@ extension Geometry.Ball where N == 2, Scalar: FloatingPoint {
 
     @inlinable
     public func translated<Failure: Swift.Error>(by vector: Geometry.Vector<2>,
-        using relationship: Affine<Geometry.Point<2>, Displacement<2, Scalar>, Failure>
+        using relationship: Affine<Geometry.Point<2>, Displacement::Displacement<2, Scalar>, Failure>
     ) throws(Failure) -> Self {
-        return Self(center: try relationship.translated(center, by: Displacement(components: Vector::Vector(vector.components))), radius: radius)
+        return Self(center: try relationship.translated(center, by: Displacement::Displacement(components: Vector::Vector(vector.components))), radius: radius)
     }
 
     @inlinable

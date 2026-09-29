@@ -11,7 +11,7 @@ public import Trigonometry
 
 public import Spatial
 public import Linear
-import Numeric
+public import Numeric
 
 extension Geometry {
 
@@ -55,7 +55,7 @@ extension Geometry.Ellipse where Scalar: AdditiveArithmetic {
         semiMajor: Geometry.Length,
         semiMinor: Geometry.Length
     ) {
-        self.init(center: .zero, semiMajor: semiMajor, semiMinor: semiMinor, rotation: .zero)
+        self.init(center: .zero, semiMajor: semiMajor, semiMinor: semiMinor, rotation: Radian(_unchecked: .zero))
     }
 
     @inlinable
@@ -229,7 +229,7 @@ extension Geometry.Ellipse where Scalar: FloatingPoint {
             center: circle.center,
             semiMajor: circle.radius,
             semiMinor: circle.radius,
-            rotation: .zero
+            rotation: Radian(_unchecked: .zero)
         )
     }
 }
@@ -238,10 +238,10 @@ extension Geometry.Ellipse where Scalar: FloatingPoint {
 
     @inlinable
     public func translated<Failure: Swift.Error>(by vector: Geometry.Vector<2>,
-        using relationship: Affine<Geometry.Point<2>, Displacement<2, Scalar>, Failure>
+        using relationship: Affine<Geometry.Point<2>, Displacement::Displacement<2, Scalar>, Failure>
     ) throws(Failure) -> Self {
         return Self(
-            center: try relationship.translated(center, by: Displacement(components: Vector::Vector(vector.components))),
+            center: try relationship.translated(center, by: Displacement::Displacement(components: Vector::Vector(vector.components))),
             semiMajor: semiMajor,
             semiMinor: semiMinor,
             rotation: rotation
@@ -401,7 +401,7 @@ extension Geometry.Ellipse.Arc where Scalar: AdditiveArithmetic & Comparable {
 
     @inlinable
     public var isCounterClockwise: Bool {
-        sweep > .zero
+        sweep.underlying > .zero
     }
 }
 
@@ -409,7 +409,7 @@ extension Geometry.Ellipse.Arc where Scalar: BinaryFloatingPoint & Numeric.Trans
 
     @inlinable
     public var isFullEllipse: Bool {
-        abs(sweep) >= Radian.pi.two
+        abs(sweep.underlying) >= Radian<Scalar>.pi.two.underlying
     }
 }
 
@@ -856,10 +856,10 @@ extension Geometry.Ellipse.Arc where Scalar: FloatingPoint {
 
     @inlinable
     public func translated<Failure: Swift.Error>(by vector: Geometry.Vector<2>,
-        using relationship: Affine<Geometry.Point<2>, Displacement<2, Scalar>, Failure>
+        using relationship: Affine<Geometry.Point<2>, Displacement::Displacement<2, Scalar>, Failure>
     ) throws(Failure) -> Self {
         return Self(
-            center: try relationship.translated(center, by: Displacement(components: Vector::Vector(vector.components))),
+            center: try relationship.translated(center, by: Displacement::Displacement(components: Vector::Vector(vector.components))),
             semiMajor: semiMajor,
             semiMinor: semiMinor,
             rotation: rotation,

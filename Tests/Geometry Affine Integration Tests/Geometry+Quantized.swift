@@ -8,7 +8,7 @@ import Spatial
 import Geometry_Test_Support
 import Testing
 
-private enum TestSpace: Quantizer.Quantized {}
+private enum TestSpace: Quantizer::Quantized {}
 
 extension TestSpace {
     typealias Scalar = Double

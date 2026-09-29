@@ -38,8 +38,8 @@ extension Geometry {
         public func map<Result, E: Swift.Error>(_ transform: (Scalar) throws(E) -> Result) throws(E) -> Geometry<Result, Space>.Point<N> {
             try .init(self, transform)
         }
-        public func translated<Failure: Swift.Error>(by offset: Displacement<N, Scalar>,
-            using relationship: Affine<Self, Displacement<N, Scalar>, Failure>) throws(Failure) -> Self {
+        public func translated<Failure: Swift.Error>(by offset: Displacement::Displacement<N, Scalar>,
+            using relationship: Affine<Self, Displacement::Displacement<N, Scalar>, Failure>) throws(Failure) -> Self {
             try relationship.translated(self, by: offset)
         }
     }
@@ -62,7 +62,7 @@ extension Geometry.Point: Decodable where Scalar: Decodable {
 extension Geometry.Point where Scalar: AdditiveArithmetic {
     public static var zero: Self { .init(InlineArray(repeating: .zero)) }
     /// Explicitly chooses componentwise Cartesian addition on the canonical Point.
-    public static var cartesian: Affine<Self, Displacement<N, Scalar>, Never> {
+    public static var cartesian: Affine<Self, Displacement::Displacement<N, Scalar>, Never> {
         let canonical = Point::Point<N, Scalar>.cartesian
         return .init(
             translating: { point, delta in .init(.init(_unchecked: canonical.translated(point.position.underlying, by: delta))) },
