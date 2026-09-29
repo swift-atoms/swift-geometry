@@ -24,7 +24,7 @@ let package = Package(
         .package(url: "https://github.com/swift-atoms/swift-inset.git", branch: "main"),
         .package(url: "https://github.com/swift-atoms/swift-vector.git", branch: "main"),
         .package(
-            url: "https://github.com/swift-molecules/swift-linear.git",
+            url: "https://github.com/swift-atoms/swift-linear.git",
             branch: "main"
         ),
         .package(
@@ -43,7 +43,7 @@ let package = Package(
             url: "https://github.com/swift-atoms/swift-tagged.git",
             branch: "main"
         ),
-        .package(url: "https://github.com/swift-atoms/swift-affine.git", branch: "main", traits: ["Tagged", "Vector"]),
+        .package(url: "https://github.com/swift-atoms/swift-affine.git", branch: "main", traits: [.trait(name: "Tagged", condition: .when(traits: ["Affine"])), .trait(name: "Vector", condition: .when(traits: ["Affine"]))]),
         .package(url: "https://github.com/swift-atoms/swift-point.git", branch: "main", traits: [.trait(name: "Affine", condition: .when(traits: ["Affine"]))]),
         .package(url: "https://github.com/swift-atoms/swift-coordinate.git", branch: "main"),
         .package(url: "https://github.com/swift-atoms/swift-displacement.git", branch: "main"),
@@ -54,7 +54,7 @@ let package = Package(
         .package(url: "https://github.com/swift-atoms/swift-magnitude.git", branch: "main"),
         .package(url: "https://github.com/swift-atoms/swift-angle.git", branch: "main"),
         .package(url: "https://github.com/swift-atoms/swift-trigonometry.git", branch: "main"),
-        .package(url: "https://github.com/swift-molecules/swift-numeric.git", branch: "main"),
+        .package(url: "https://github.com/swift-atoms/swift-numeric.git", branch: "main"),
     ],
     targets: [
         .target(
