@@ -63,7 +63,7 @@ let package = Package(
                 .product(name: "Linear", package: "swift-linear"),
                 .product(name: "Vector", package: "swift-vector"),
                 .product(name: "Inset", package: "swift-inset"),
-                .product(name: "Spatial", package: "swift-spatial"),
+                .product(name: "Space", package: "swift-spatial"),
                 .product(name: "Scale", package: "swift-scale"),
                 .product(name: "Quantizer", package: "swift-quantizer"),
                 .product(name: "Tagged", package: "swift-tagged"),
@@ -111,7 +111,7 @@ let package = Package(
             ],
             path: "Tests/Geometry Tests"
         ),
-        .testTarget(name: "Geometry Affine Integration Tests", dependencies: [.target(name: "Geometry"), .target(name: "Geometry Test Support"), .product(name: "Affine", package: "swift-affine", condition: .when(traits: ["Affine"])), .product(name: "Spatial", package: "swift-spatial", condition: .when(traits: ["Affine"])), .product(name: "Linear", package: "swift-linear", condition: .when(traits: ["Affine"])), .product(name: "Numeric", package: "swift-numeric", condition: .when(traits: ["Affine"])), .product(name: "Quantizer", package: "swift-quantizer", condition: .when(traits: ["Affine"])), .product(name: "Scale", package: "swift-scale", condition: .when(traits: ["Affine"])), .product(name: "Displacement", package: "swift-displacement", condition: .when(traits: ["Affine"])), .product(name: "Vector", package: "swift-vector", condition: .when(traits: ["Affine"])), .product(name: "Segment", package: "swift-segment", condition: .when(traits: ["Affine"]))], path: "Tests/Geometry Affine Integration Tests"),
+        .testTarget(name: "Geometry Affine Integration Tests", dependencies: [.target(name: "Geometry"), .target(name: "Geometry Test Support"), .product(name: "Affine", package: "swift-affine", condition: .when(traits: ["Affine"])), .product(name: "Space", package: "swift-spatial", condition: .when(traits: ["Affine"])), .product(name: "Linear", package: "swift-linear", condition: .when(traits: ["Affine"])), .product(name: "Numeric", package: "swift-numeric", condition: .when(traits: ["Affine"])), .product(name: "Quantizer", package: "swift-quantizer", condition: .when(traits: ["Affine"])), .product(name: "Scale", package: "swift-scale", condition: .when(traits: ["Affine"])), .product(name: "Displacement", package: "swift-displacement", condition: .when(traits: ["Affine"])), .product(name: "Vector", package: "swift-vector", condition: .when(traits: ["Affine"])), .product(name: "Segment", package: "swift-segment", condition: .when(traits: ["Affine"]))], path: "Tests/Geometry Affine Integration Tests"),
     ],
     swiftLanguageModes: [.v6]
 )

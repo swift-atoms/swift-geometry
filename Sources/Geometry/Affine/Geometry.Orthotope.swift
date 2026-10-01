@@ -9,7 +9,7 @@ public import Angle
 public import Trigonometry
 
 
-public import Spatial
+public import Space
 public import Linear
 
 extension Geometry {
@@ -66,7 +66,7 @@ extension Geometry.Orthotope where N == 2, Scalar: FloatingPoint {
         get { center.x - halfExtents.width }
         set {
             let oldUrx = center.x + halfExtents.width
-            let newWidth: Geometry.Width = Spatial::width((oldUrx - newValue) / 2)
+            let newWidth: Geometry.Width = Space::width((oldUrx - newValue) / 2)
             center = Geometry.Point(
                 x: newValue + newWidth,
                 y: center.y
@@ -80,7 +80,7 @@ extension Geometry.Orthotope where N == 2, Scalar: FloatingPoint {
         get { center.y - halfExtents.height }
         set {
             let oldUry = center.y + halfExtents.height
-            let newHeight: Geometry.Height = Spatial::height((oldUry - newValue) / 2)
+            let newHeight: Geometry.Height = Space::height((oldUry - newValue) / 2)
             center = Geometry.Point(
                 x: center.x,
                 y: newValue + newHeight
@@ -94,7 +94,7 @@ extension Geometry.Orthotope where N == 2, Scalar: FloatingPoint {
         get { center.x + halfExtents.width }
         set {
             let oldLlx = center.x - halfExtents.width
-            let newWidth: Geometry.Width = Spatial::width((newValue - oldLlx) / 2)
+            let newWidth: Geometry.Width = Space::width((newValue - oldLlx) / 2)
             center = Geometry.Point(
                 x: oldLlx + newWidth,
                 y: center.y
@@ -108,7 +108,7 @@ extension Geometry.Orthotope where N == 2, Scalar: FloatingPoint {
         get { center.y + halfExtents.height }
         set {
             let oldLly = center.y - halfExtents.height
-            let newHeight: Geometry.Height = Spatial::height((newValue - oldLly) / 2)
+            let newHeight: Geometry.Height = Space::height((newValue - oldLly) / 2)
             center = Geometry.Point(
                 x: center.x,
                 y: oldLly + newHeight
@@ -145,8 +145,8 @@ extension Geometry.Orthotope where N == 2, Scalar: FloatingPoint {
                 y: lly + (ury - lly) / 2
             ),
             halfExtents: Geometry.Size(
-                width: Spatial::width((urx - llx) / 2),
-                height: Spatial::height((ury - lly) / 2)
+                width: Space::width((urx - llx) / 2),
+                height: Space::height((ury - lly) / 2)
             )
         )
     }

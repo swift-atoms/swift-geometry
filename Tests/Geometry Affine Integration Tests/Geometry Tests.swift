@@ -5,7 +5,7 @@ import Scale
 import Quantizer
 @testable import Geometry
 import Affine
-import Spatial
+import Space
 import Geometry_Test_Support
 import Linear
 import Testing

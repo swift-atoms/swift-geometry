@@ -1,6 +1,6 @@
 public import Vector
 public import Linear
-public import Spatial
+public import Space
 
 extension Geometry {
 

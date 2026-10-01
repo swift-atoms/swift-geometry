@@ -5,15 +5,15 @@
 @_exported public import Orthotope
 @_exported public import Segment
 public import Vector
-public import Spatial
+public import Space
 public import Scale
 public import Linear
 public import Tagged
 
 extension Geometry {
-    public typealias X = Spatial::Coordinate.X<Space>.Value<Scalar>
-    public typealias Y = Spatial::Coordinate.Y<Space>.Value<Scalar>
-    public typealias Z = Spatial::Coordinate.Z<Space>.Value<Scalar>
+    public typealias X = Space::Coordinate.X<Space>.Value<Scalar>
+    public typealias Y = Space::Coordinate.Y<Space>.Value<Scalar>
+    public typealias Z = Space::Coordinate.Z<Space>.Value<Scalar>
 
     /// A geometry-domain position backed by the canonical Point value.
     /// Space remains part of stored Tagged identity; no implicit affine transform is installed.
