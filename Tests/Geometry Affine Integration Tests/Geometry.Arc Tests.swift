@@ -446,4 +446,52 @@ struct `Geometry.Arc - Functorial Map` {
         #expect(mapped.radius == expectedRadius)
     }
 }
+
+@Suite
+struct `Geometry.Arc - Bezier segment limit` {
+    static let quarter = Double.pi / 2
+
+    static let counts: [(start: Double, end: Double, segments: Int)] = [
+        (0, quarter, 1),
+        (0, -quarter, 1),
+        (0, 4 * quarter, 4),
+        (0, -4 * quarter, 4),
+        (0, 5 * quarter, 5),
+        (0, -5 * quarter, 5),
+        (0, quarter * 4095.5, 4096),
+        (0, 0, 0),
+        (0, quarter * 4096.5, 0),
+        (0, 1e12, 0),
+        (0, .infinity, 0),
+        (0, -.infinity, 0),
+        (.infinity, .infinity, 0),
+        (-.infinity, 0, 0),
+        (0, .nan, 0),
+        (-Double.greatestFiniteMagnitude, Double.greatestFiniteMagnitude, 0),
+    ]
+
+    static func arc(_ start: Double, _ end: Double) -> Geometry<Double, Void>.Arc {
+        .init(center: .zero, radius: 5, startAngle: Radian(_unchecked: start), endAngle: Radian(_unchecked: end))
+    }
+
+    @Test
+    func `segment demand follows quarter turns up to the 4096 limit and is empty beyond it or when non-finite`() {
+        for c in Self.counts {
+            #expect([Geometry<Double, Void>.Bezier](arc: Self.arc(c.start, c.end)).count == c.segments, "\(c.start) to \(c.end)")
+        }
+    }
+
+    @Test
+    func `the limit is 4096 segments`() {
+        #expect(Geometry<Double, Void>.arcBezierSegmentLimit == 4096)
+    }
+
+    @Test(arguments: [5.0, -5.0])
+    func `a two-and-a-half-turn arc keeps its multi-turn endpoint`(_ quarters: Double) {
+        let arc = Self.arc(0, quarters * Self.quarter)
+        let last = [Geometry<Double, Void>.Bezier](arc: arc).last!
+        #expect(isApprox(last.endPoint!.x, arc.endPoint.x))
+        #expect(isApprox(last.endPoint!.y, arc.endPoint.y))
+    }
+}
 #endif

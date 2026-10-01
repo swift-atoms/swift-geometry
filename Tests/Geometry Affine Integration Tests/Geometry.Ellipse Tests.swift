@@ -404,4 +404,43 @@ struct `Geometry.Ellipse - Functorial Map` {
         #expect(mapped.semiMinor == expectedMinor)
     }
 }
+
+@Suite
+struct `Geometry.Ellipse.Arc - Bezier segment limit` {
+    static let quarter = Double.pi / 2
+
+    static let counts: [(start: Double, end: Double, segments: Int)] = [
+        (0, quarter, 1),
+        (0, -quarter, 1),
+        (0, 4 * quarter, 4),
+        (0, -4 * quarter, 4),
+        (0, 5 * quarter, 5),
+        (0, -5 * quarter, 5),
+        (0, quarter * 4095.5, 4096),
+        (0, 0, 0),
+        (0, quarter * 4096.5, 0),
+        (0, 1e12, 0),
+        (0, .infinity, 0),
+        (0, -.infinity, 0),
+        (.infinity, .infinity, 0),
+        (-.infinity, 0, 0),
+        (0, .nan, 0),
+        (-Double.greatestFiniteMagnitude, Double.greatestFiniteMagnitude, 0),
+    ]
+
+    @Test
+    func `segment demand follows quarter turns up to the 4096 limit and is empty beyond it or when non-finite`() {
+        for c in Self.counts {
+            let arc = Geometry<Double, Void>.Ellipse.Arc(
+                center: .zero,
+                semiMajor: 5,
+                semiMinor: 3,
+                rotation: .zero,
+                startAngle: Radian(_unchecked: c.start),
+                endAngle: Radian(_unchecked: c.end)
+            )
+            #expect([Geometry<Double, Void>.Bezier](ellipticalArc: arc).count == c.segments, "\(c.start) to \(c.end)")
+        }
+    }
+}
 #endif

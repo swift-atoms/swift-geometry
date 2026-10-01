@@ -40,6 +40,11 @@ extension Geometry {
     }
 }
 
+extension Geometry {
+
+    public static var arcBezierSegmentLimit: Int { 4096 }
+}
+
 extension Geometry.Arc: Sendable where Scalar: Sendable {}
 extension Geometry.Arc: Equatable where Scalar: Equatable {}
 extension Geometry.Arc: Hashable where Scalar: Hashable {}
@@ -291,7 +296,17 @@ extension Array {
 
         let maxAngle = Scalar.pi / 2
 
-        let segmentCount = Int((abs(sweepRaw) / maxAngle).rounded(.up))
+        let segmentDemand = (abs(sweepRaw) / maxAngle).rounded(.up)
+        guard arc.startAngle.underlying.isFinite,
+            arc.endAngle.underlying.isFinite,
+            sweepRaw.isFinite,
+            segmentDemand <= Scalar(Geometry<Scalar, Space>.arcBezierSegmentLimit)
+        else {
+            self = []
+            return
+        }
+
+        let segmentCount = Int(segmentDemand)
         let segmentAngle = sweepRaw / Scalar(segmentCount)
 
         var beziers: [Geometry<Scalar, Space>.Bezier] = []

@@ -750,7 +750,17 @@ extension Array {
 
         let maxAngle = Scalar.pi / 2
 
-        let segmentCount = Int((abs(sweepRaw) / maxAngle).rounded(.up))
+        let segmentDemand = (abs(sweepRaw) / maxAngle).rounded(.up)
+        guard arc.startAngle.underlying.isFinite,
+            arc.endAngle.underlying.isFinite,
+            sweepRaw.isFinite,
+            segmentDemand <= Scalar(Geometry<Scalar, Space>.arcBezierSegmentLimit)
+        else {
+            self = []
+            return
+        }
+
+        let segmentCount = Int(segmentDemand)
         let segmentAngle = sweepRaw / Scalar(segmentCount)
 
         var beziers: [Geometry<Scalar, Space>.Bezier] = []
