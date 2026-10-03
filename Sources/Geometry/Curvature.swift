@@ -1,4 +1,4 @@
-public enum Curvature: Sendable, Hashable, Codable, CaseIterable {
+public enum Curvature: Sendable, Hashable, CaseIterable {
 
     case convex
 
@@ -20,3 +20,7 @@ extension Curvature {
         value.opposite
     }
 }
+
+#if !hasFeature(Embedded)
+    extension Curvature: Codable {}
+#endif
