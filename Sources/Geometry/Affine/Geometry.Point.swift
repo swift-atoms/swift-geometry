@@ -7,7 +7,7 @@
 public import Vector
 public import Space
 public import Scale
-public import Linear
+import Linear
 public import Tagged
 
 extension Geometry {

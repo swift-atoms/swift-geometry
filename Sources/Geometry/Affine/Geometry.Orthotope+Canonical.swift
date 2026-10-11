@@ -1,7 +1,7 @@
 #if Affine
 public import Orthotope
 public import Size
-public import Vector
+import Vector
 public import Magnitude
 public import Tagged
 

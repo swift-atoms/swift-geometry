@@ -1,6 +1,6 @@
 public import Vector
 public import Linear
-public import Space
+import Space
 
 extension Geometry {
 
@@ -8,11 +8,6 @@ extension Geometry {
 
         @usableFromInline
         internal var _storage: Vector::Vector<N, Scalar>
-
-        public var dimensions: InlineArray<N, Scalar> {
-            get { _storage.components }
-            set { _storage.components = newValue }
-        }
 
         @inlinable
         public init(_ dimensions: consuming InlineArray<N, Scalar>) {
@@ -54,6 +49,11 @@ extension Geometry.Size: Encodable where Scalar: Encodable {
 #endif
 
 extension Geometry.Size {
+
+    public var dimensions: InlineArray<N, Scalar> {
+        get { _storage.components }
+        set { _storage.components = newValue }
+    }
 
     @inlinable
     public subscript(index: Int) -> Scalar {

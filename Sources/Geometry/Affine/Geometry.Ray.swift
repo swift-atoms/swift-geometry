@@ -1,12 +1,12 @@
 #if Affine
-public import Affine
-public import Displacement
-public import Point
-public import Vector
+import Affine
+import Displacement
+import Point
+import Vector
 public import Tagged
 public import Scale
-public import Angle
-public import Trigonometry
+import Angle
+import Trigonometry
 
 
 public import Space
