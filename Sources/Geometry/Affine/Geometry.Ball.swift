@@ -308,7 +308,7 @@ extension Geometry where Scalar: FloatingPoint {
 extension Geometry.Ball where N == 2, Scalar: FloatingPoint {
 
     @inlinable
-    public func translated<Failure: Swift.Error>(by vector: Geometry.Vector<2>,
+    public func translated<Failure: Swift::Error>(by vector: Geometry.Vector<2>,
         using relationship: Affine<Geometry.Point<2>, Displacement::Displacement<2, Scalar>, Failure>
     ) throws(Failure) -> Self {
         return Self(center: try relationship.translated(center, by: Displacement::Displacement(components: Vector::Vector(vector.components))), radius: radius)
@@ -337,7 +337,7 @@ extension Geometry.Ball where N == 2, Scalar: FloatingPoint {
 extension Geometry.Ball {
 
     @inlinable
-    public func map<Result, E: Swift.Error>(
+    public func map<Result, E: Swift::Error>(
         _ transform: (Scalar) throws(E) -> Result
     ) throws(E) -> Geometry<Result, Space>.Ball<N> {
         Geometry<Result, Space>.Ball(

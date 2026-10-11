@@ -310,14 +310,14 @@ extension Geometry.Orthotope where N == 2, Scalar: FloatingPoint {
 extension Geometry.Orthotope where N == 2, Scalar: FloatingPoint {
 
     @inlinable
-    public func translated<Failure: Swift.Error>(dx: Geometry.Width, dy: Geometry.Height,
+    public func translated<Failure: Swift::Error>(dx: Geometry.Width, dy: Geometry.Height,
         using relationship: Affine<Geometry.Point<2>, Displacement::Displacement<2, Scalar>, Failure>
     ) throws(Failure) -> Self {
         Self(center: try relationship.translated(center, by: Displacement::Displacement(dx: dx.underlying, dy: dy.underlying)), halfExtents: halfExtents)
     }
 
     @inlinable
-    public func translated<Failure: Swift.Error>(by vector: Geometry.Vector<2>,
+    public func translated<Failure: Swift::Error>(by vector: Geometry.Vector<2>,
         using relationship: Affine<Geometry.Point<2>, Displacement::Displacement<2, Scalar>, Failure>
     ) throws(Failure) -> Self {
         return Self(center: try relationship.translated(center, by: Displacement::Displacement(components: Vector::Vector(vector.components))), halfExtents: halfExtents)
@@ -430,7 +430,7 @@ extension Geometry.Orthotope where N == 3, Scalar: FloatingPoint {
 extension Geometry.Orthotope {
 
     @inlinable
-    public func map<Result, E: Swift.Error>(
+    public func map<Result, E: Swift::Error>(
         _ transform: (Scalar) throws(E) -> Result
     ) throws(E) -> Geometry<Result, Space>.Orthotope<N> {
         Geometry<Result, Space>.Orthotope(
@@ -477,10 +477,10 @@ extension Geometry where Scalar: FloatingPoint {
     public static func union(_ rectangle1: Orthotope<2>, _ rectangle2: Orthotope<2>) -> Orthotope<2> {
 
         Orthotope<2>(
-            llx: Swift.min(rectangle1.llx, rectangle2.llx),
-            lly: Swift.min(rectangle1.lly, rectangle2.lly),
-            urx: Swift.max(rectangle1.urx, rectangle2.urx),
-            ury: Swift.max(rectangle1.ury, rectangle2.ury)
+            llx: Swift::min(rectangle1.llx, rectangle2.llx),
+            lly: Swift::min(rectangle1.lly, rectangle2.lly),
+            urx: Swift::max(rectangle1.urx, rectangle2.urx),
+            ury: Swift::max(rectangle1.ury, rectangle2.ury)
         )
     }
 
@@ -492,10 +492,10 @@ extension Geometry where Scalar: FloatingPoint {
         guard intersects(rectangle1, rectangle2) else { return nil }
 
         return Orthotope<2>(
-            llx: Swift.max(rectangle1.llx, rectangle2.llx),
-            lly: Swift.max(rectangle1.lly, rectangle2.lly),
-            urx: Swift.min(rectangle1.urx, rectangle2.urx),
-            ury: Swift.min(rectangle1.ury, rectangle2.ury)
+            llx: Swift::max(rectangle1.llx, rectangle2.llx),
+            lly: Swift::max(rectangle1.lly, rectangle2.lly),
+            urx: Swift::min(rectangle1.urx, rectangle2.urx),
+            ury: Swift::min(rectangle1.ury, rectangle2.ury)
         )
     }
 }

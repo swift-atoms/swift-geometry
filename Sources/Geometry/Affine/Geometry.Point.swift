@@ -31,14 +31,14 @@ extension Geometry {
             get { position.underlying[index] }
             set { var values = coordinates; values[index] = newValue; coordinates = values }
         }
-        public init<U, E: Swift.Error>(_ other: Geometry<U, Space>.Point<N>, _ transform: (U) throws(E) -> Scalar) throws(E) {
+        public init<U, E: Swift::Error>(_ other: Geometry<U, Space>.Point<N>, _ transform: (U) throws(E) -> Scalar) throws(E) {
             let values: InlineArray<N, Scalar> = try InlineArray { (i: Int) throws(E) in try transform(other[i]) }
             self.init(values)
         }
-        public func map<Result, E: Swift.Error>(_ transform: (Scalar) throws(E) -> Result) throws(E) -> Geometry<Result, Space>.Point<N> {
+        public func map<Result, E: Swift::Error>(_ transform: (Scalar) throws(E) -> Result) throws(E) -> Geometry<Result, Space>.Point<N> {
             try .init(self, transform)
         }
-        public func translated<Failure: Swift.Error>(by offset: Displacement::Displacement<N, Scalar>,
+        public func translated<Failure: Swift::Error>(by offset: Displacement::Displacement<N, Scalar>,
             using relationship: Affine<Self, Displacement::Displacement<N, Scalar>, Failure>) throws(Failure) -> Self {
             try relationship.translated(self, by: offset)
         }

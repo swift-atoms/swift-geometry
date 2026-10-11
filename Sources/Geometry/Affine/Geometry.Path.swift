@@ -253,7 +253,7 @@ extension Geometry.Path {
 extension Geometry.Path.Segment {
 
     @inlinable
-    public func map<Result, E: Swift.Error>(
+    public func map<Result, E: Swift::Error>(
         _ transform: (Scalar) throws(E) -> Result
     ) throws(E) -> Geometry<Result, Space>.Path.Segment {
         switch self {
@@ -275,7 +275,7 @@ extension Geometry.Path.Segment {
 extension Geometry.Path.Subpath {
 
     @inlinable
-    public func map<Result, E: Swift.Error>(
+    public func map<Result, E: Swift::Error>(
         _ transform: (Scalar) throws(E) -> Result
     ) throws(E) -> Geometry<Result, Space>.Path.Subpath {
         .init(
@@ -294,7 +294,7 @@ extension Geometry.Path.Subpath {
 extension Geometry.Path {
 
     @inlinable
-    public func map<Result, E: Swift.Error>(
+    public func map<Result, E: Swift::Error>(
         _ transform: (Scalar) throws(E) -> Result
     ) throws(E) -> Geometry<Result, Space>.Path {
         .init(

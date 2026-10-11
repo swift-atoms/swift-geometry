@@ -61,7 +61,7 @@ extension Geometry.Depth: Strideable where Scalar: Strideable {
 extension Geometry.Depth {
 
     @inlinable
-    public init<U, E: Swift.Error>(
+    public init<U, E: Swift::Error>(
         _ other: borrowing Geometry<U, Space>.Depth,
         _ transform: (U) throws(E) -> Scalar
     ) throws(E) {
@@ -69,7 +69,7 @@ extension Geometry.Depth {
     }
 
     @inlinable
-    public func map<Result, E: Swift.Error>(
+    public func map<Result, E: Swift::Error>(
         _ transform: (Scalar) throws(E) -> Result
     ) throws(E) -> Geometry<Result, Space>.Depth {
         Geometry<Result, Space>.Depth(try transform(value))

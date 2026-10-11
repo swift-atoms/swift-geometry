@@ -65,7 +65,7 @@ extension Geometry.Size {
 extension Geometry.Size {
 
     @inlinable
-    public init<U, E: Swift.Error>(
+    public init<U, E: Swift::Error>(
         _ other: borrowing Geometry<U, Space>.Size<N>,
         _ transform: (U) throws(E) -> Scalar
     ) throws(E) {
@@ -77,7 +77,7 @@ extension Geometry.Size {
     }
 
     @inlinable
-    public func map<Result, E: Swift.Error>(
+    public func map<Result, E: Swift::Error>(
         _ transform: (Scalar) throws(E) -> Result
     ) throws(E) -> Geometry<Result, Space>.Size<N> {
         try Geometry<Result, Space>.Size<N>(self, transform)

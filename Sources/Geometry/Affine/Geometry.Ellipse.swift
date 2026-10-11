@@ -237,7 +237,7 @@ extension Geometry.Ellipse where Scalar: FloatingPoint {
 extension Geometry.Ellipse where Scalar: FloatingPoint {
 
     @inlinable
-    public func translated<Failure: Swift.Error>(by vector: Geometry.Vector<2>,
+    public func translated<Failure: Swift::Error>(by vector: Geometry.Vector<2>,
         using relationship: Affine<Geometry.Point<2>, Displacement::Displacement<2, Scalar>, Failure>
     ) throws(Failure) -> Self {
         return Self(
@@ -324,7 +324,7 @@ extension Geometry where Scalar: BinaryFloatingPoint & Numeric.Transcendental {
 extension Geometry.Ellipse {
 
     @inlinable
-    public init<U, E: Swift.Error>(
+    public init<U, E: Swift::Error>(
         _ other: borrowing Geometry<U, Space>.Ellipse,
         _ transform: (U) throws(E) -> Scalar
     ) throws(E) {
@@ -337,7 +337,7 @@ extension Geometry.Ellipse {
     }
 
     @inlinable
-    public func map<Result, E: Swift.Error>(
+    public func map<Result, E: Swift::Error>(
         _ transform: (Scalar) throws(E) -> Result
     ) throws(E) -> Geometry<Result, Space>.Ellipse {
         .init(
@@ -865,7 +865,7 @@ extension Array {
 extension Geometry.Ellipse.Arc where Scalar: FloatingPoint {
 
     @inlinable
-    public func translated<Failure: Swift.Error>(by vector: Geometry.Vector<2>,
+    public func translated<Failure: Swift::Error>(by vector: Geometry.Vector<2>,
         using relationship: Affine<Geometry.Point<2>, Displacement::Displacement<2, Scalar>, Failure>
     ) throws(Failure) -> Self {
         return Self(
@@ -906,7 +906,7 @@ extension Geometry.Ellipse.Arc where Scalar: FloatingPoint {
 extension Geometry.Ellipse.Arc {
 
     @inlinable
-    public init<U, E: Swift.Error>(
+    public init<U, E: Swift::Error>(
         _ other: borrowing Geometry<U, Space>.Ellipse.Arc,
         _ transform: (U) throws(E) -> Scalar
     ) throws(E) {
@@ -921,7 +921,7 @@ extension Geometry.Ellipse.Arc {
     }
 
     @inlinable
-    public func map<Result, E: Swift.Error>(
+    public func map<Result, E: Swift::Error>(
         _ transform: (Scalar) throws(E) -> Result
     ) throws(E) -> Geometry<Result, Space>.Ellipse.Arc {
         .init(

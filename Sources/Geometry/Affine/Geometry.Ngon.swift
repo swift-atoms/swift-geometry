@@ -372,7 +372,7 @@ extension Geometry.Ngon where Scalar: FloatingPoint {
 extension Geometry.Ngon where Scalar: FloatingPoint {
 
     @inlinable
-    public func translated<Failure: Swift.Error>(by vector: Geometry.Vector<2>,
+    public func translated<Failure: Swift::Error>(by vector: Geometry.Vector<2>,
         using relationship: Affine<Geometry.Point<2>, Displacement::Displacement<2, Scalar>, Failure>
     ) throws(Failure) -> Self {
         let offset = Displacement::Displacement<2, Scalar>(components: Vector::Vector(vector.components))
@@ -567,7 +567,7 @@ extension Geometry.Ngon {
 extension Geometry.Ngon {
 
     @inlinable
-    public init<U, E: Swift.Error>(
+    public init<U, E: Swift::Error>(
         _ other: borrowing Geometry<U, Space>.Ngon<N>,
         _ transform: (U) throws(E) -> Scalar
     ) throws(E) {
@@ -580,7 +580,7 @@ extension Geometry.Ngon {
     }
 
     @inlinable
-    public func map<Result, E: Swift.Error>(
+    public func map<Result, E: Swift::Error>(
         _ transform: (Scalar) throws(E) -> Result
     ) throws(E) -> Geometry<Result, Space>.Ngon<N> {
         let first = try vertices[0].map(transform)

@@ -398,7 +398,7 @@ extension Array {
 extension Geometry.Arc where Scalar: BinaryFloatingPoint {
 
     @inlinable
-    public func translated<Failure: Swift.Error>(by vector: Geometry.Vector<2>,
+    public func translated<Failure: Swift::Error>(by vector: Geometry.Vector<2>,
         using relationship: Affine<Geometry.Point<2>, Displacement::Displacement<2, Scalar>, Failure>
     ) throws(Failure) -> Self {
         return Self(center: try relationship.translated(center, by: Displacement::Displacement(components: Vector::Vector(vector.components))), radius: radius, startAngle: startAngle, endAngle: endAngle)
@@ -423,7 +423,7 @@ extension Geometry.Arc where Scalar: BinaryFloatingPoint {
 extension Geometry.Arc {
 
     @inlinable
-    public init<U, E: Swift.Error>(
+    public init<U, E: Swift::Error>(
         _ other: borrowing Geometry<U, Space>.Arc,
         _ transform: (U) throws(E) -> Scalar
     ) throws(E) {
@@ -436,7 +436,7 @@ extension Geometry.Arc {
     }
 
     @inlinable
-    public func map<Result, E: Swift.Error>(
+    public func map<Result, E: Swift::Error>(
         _ transform: (Scalar) throws(E) -> Result
     ) throws(E) -> Geometry<Result, Space>.Arc {
         .init(
