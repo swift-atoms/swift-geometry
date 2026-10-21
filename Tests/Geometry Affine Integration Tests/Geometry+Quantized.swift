@@ -1,115 +1,115 @@
 #if Affine
-import Vector
-import Displacement
-import Scale
-import Quantizer
-@testable import Geometry
-import Space
-import Geometry_Test_Support
-import Testing
+    import Vector
+    import Displacement
+    import Scale
+    import Quantizer
+    @testable import Geometry
+    import Space
+    import Geometry_Test_Support
+    import Testing
 
-private enum TestSpace: Quantizer::Quantized {}
+    private enum TestSpace: Quantizer::Quantized {}
 
-extension TestSpace {
-    typealias Scalar = Double
-    static var quantum: Double { 0.01 }
-}
+    extension TestSpace {
+        typealias Scalar = Double
+        static var quantum: Double { 0.01 }
+    }
 
-private typealias QGeometry = Geometry<Double, TestSpace>
-
-@Suite
-struct `Geometry+Quantized` {
+    private typealias QGeometry = Geometry<Double, TestSpace>
 
     @Suite
-    struct `Rectangle` {
+    struct `Geometry+Quantized` {
 
-        @Test
-        func `computed corners are quantized`() {
-            let rect = QGeometry.Rectangle(
-                x: .init(84.0),
-                y: .init(100.0),
-                width: .init(65.4),
-                height: .init(43.6)
-            )
+        @Suite
+        struct `Rectangle` {
 
-            #expect(rect.llx.ticks == 8400)
-            #expect(rect.urx.ticks == 14940)
-            #expect(rect.lly.ticks == 10000)
-            #expect(rect.ury.ticks == 14360)
-        }
+            @Test
+            func `computed corners are quantized`() {
+                let rect = QGeometry.Rectangle(
+                    x: .init(84.0),
+                    y: .init(100.0),
+                    width: .init(65.4),
+                    height: .init(43.6)
+                )
 
-        @Test
-        func `adjacent rectangles align exactly`() {
-            let startY: QGeometry.Y = .init(84.0)
-            let rowHeight: QGeometry.Height = .init(21.8)
+                #expect(rect.llx.ticks == 8400)
+                #expect(rect.urx.ticks == 14940)
+                #expect(rect.lly.ticks == 10000)
+                #expect(rect.ury.ticks == 14360)
+            }
 
-            let row1 = QGeometry.Rectangle(
-                x: .init(0),
-                y: startY,
-                width: .init(100),
-                height: rowHeight
-            )
-            let row2 = QGeometry.Rectangle(
-                x: .init(0),
-                y: row1.ury,
-                width: .init(100),
-                height: rowHeight
-            )
-            let row3 = QGeometry.Rectangle(
-                x: .init(0),
-                y: row2.ury,
-                width: .init(100),
-                height: rowHeight
-            )
+            @Test
+            func `adjacent rectangles align exactly`() {
+                let startY: QGeometry.Y = .init(84.0)
+                let rowHeight: QGeometry.Height = .init(21.8)
 
-            let spanHeight: QGeometry.Height = .init(65.4)
-            let span = QGeometry.Rectangle(
-                x: .init(0),
-                y: startY,
-                width: .init(100),
-                height: spanHeight
-            )
+                let row1 = QGeometry.Rectangle(
+                    x: .init(0),
+                    y: startY,
+                    width: .init(100),
+                    height: rowHeight
+                )
+                let row2 = QGeometry.Rectangle(
+                    x: .init(0),
+                    y: row1.ury,
+                    width: .init(100),
+                    height: rowHeight
+                )
+                let row3 = QGeometry.Rectangle(
+                    x: .init(0),
+                    y: row2.ury,
+                    width: .init(100),
+                    height: rowHeight
+                )
 
-            #expect(row3.ury.ticks == span.ury.ticks)
-        }
+                let spanHeight: QGeometry.Height = .init(65.4)
+                let span = QGeometry.Rectangle(
+                    x: .init(0),
+                    y: startY,
+                    width: .init(100),
+                    height: spanHeight
+                )
 
-        @Test
-        func `accumulated row heights match span`() {
-            let startY: QGeometry.Y = .init(84.0)
-            let rowHeight: QGeometry.Height = .init(21.8)
+                #expect(row3.ury.ticks == span.ury.ticks)
+            }
 
-            let row1 = QGeometry.Rectangle(
-                x: .init(0),
-                y: startY,
-                width: .init(100),
-                height: rowHeight
-            )
-            let row2 = QGeometry.Rectangle(
-                x: .init(0),
-                y: row1.ury,
-                width: .init(100),
-                height: rowHeight
-            )
-            let row3 = QGeometry.Rectangle(
-                x: .init(0),
-                y: row2.ury,
-                width: .init(100),
-                height: rowHeight
-            )
+            @Test
+            func `accumulated row heights match span`() {
+                let startY: QGeometry.Y = .init(84.0)
+                let rowHeight: QGeometry.Height = .init(21.8)
 
-            #expect(row1.ury.ticks == 10580)
-            #expect(row2.ury.ticks == 12760)
-            #expect(row3.ury.ticks == 14940)
+                let row1 = QGeometry.Rectangle(
+                    x: .init(0),
+                    y: startY,
+                    width: .init(100),
+                    height: rowHeight
+                )
+                let row2 = QGeometry.Rectangle(
+                    x: .init(0),
+                    y: row1.ury,
+                    width: .init(100),
+                    height: rowHeight
+                )
+                let row3 = QGeometry.Rectangle(
+                    x: .init(0),
+                    y: row2.ury,
+                    width: .init(100),
+                    height: rowHeight
+                )
 
-            let spanHeight: QGeometry.Height = .init(65.4)
-            let span = QGeometry.Rectangle(
-                x: .init(0),
-                y: startY,
-                width: .init(100),
-                height: spanHeight
-            )
-            #expect(span.ury.ticks == 14940)
+                #expect(row1.ury.ticks == 10580)
+                #expect(row2.ury.ticks == 12760)
+                #expect(row3.ury.ticks == 14940)
+
+                let spanHeight: QGeometry.Height = .init(65.4)
+                let span = QGeometry.Rectangle(
+                    x: .init(0),
+                    y: startY,
+                    width: .init(100),
+                    height: spanHeight
+                )
+                #expect(span.ury.ticks == 14940)
+            }
         }
     }
-}
 #endif

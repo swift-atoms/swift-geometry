@@ -1,6 +1,6 @@
-public import Vector
 public import Linear
 import Space
+public import Vector
 
 extension Geometry {
 
@@ -35,17 +35,17 @@ extension Geometry.Size: Hashable where Scalar: Hashable {
 }
 
 #if !hasFeature(Embedded)
-extension Geometry.Size: Decodable where Scalar: Decodable {
-    public init(from decoder: any Decoder) throws {
-        self.init(try Vector::Vector<N, Scalar>(from: decoder).components)
+    extension Geometry.Size: Decodable where Scalar: Decodable {
+        public init(from decoder: any Decoder) throws {
+            self.init(try Vector::Vector<N, Scalar>(from: decoder).components)
+        }
     }
-}
 
-extension Geometry.Size: Encodable where Scalar: Encodable {
-    public func encode(to encoder: any Encoder) throws {
-        try _storage.encode(to: encoder)
+    extension Geometry.Size: Encodable where Scalar: Encodable {
+        public func encode(to encoder: any Encoder) throws {
+            try _storage.encode(to: encoder)
+        }
     }
-}
 #endif
 
 extension Geometry.Size {

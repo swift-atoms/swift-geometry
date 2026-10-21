@@ -1,3 +1,4 @@
+import Foundation
 import Geometry
 import Testing
 
@@ -32,7 +33,10 @@ struct `Size behavior before atom migration` {
     @Test func `empty mapping never evaluates a scalar`() {
         let empty = Geometry<Int, Void>.Size<0>([])
         var visits = 0
-        let result = empty.map { value in visits += 1; return String(value) }
+        let result = empty.map { value in
+            visits += 1
+            return String(value)
+        }
         #expect(result.dimensions.count == 0)
         #expect(visits == 0)
     }
@@ -48,8 +52,6 @@ struct `Size behavior before atom migration` {
         #expect(Set([value, value, copy]).count == 2)
     }
 }
-
-import Foundation
 
 @Test func `legacy size coding delegates exact dimension to Vector`() throws {
     typealias S = Geometry<Int, Void>.Size<2>

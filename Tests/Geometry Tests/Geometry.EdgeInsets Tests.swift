@@ -1,5 +1,5 @@
-import Geometry
 import Foundation
+import Geometry
 import Testing
 
 @Test func `Geometry inset is exactly the atom without wrapper conversion`() throws {
