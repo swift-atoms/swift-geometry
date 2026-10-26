@@ -28,7 +28,7 @@ let package = Package(
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-atoms/swift-spatial.git",
+            url: "https://github.com/swift-atoms/swift-space.git",
             branch: "main"
         ),
         .package(
@@ -67,7 +67,7 @@ let package = Package(
                 .product(name: "Linear", package: "swift-linear"),
                 .product(name: "Vector", package: "swift-vector"),
                 .product(name: "Inset", package: "swift-inset"),
-                .product(name: "Space", package: "swift-spatial"),
+                .product(name: "Space", package: "swift-space"),
                 .product(name: "Scale", package: "swift-scale"),
                 .product(name: "Quantizer", package: "swift-quantizer"),
                 .product(name: "Tagged", package: "swift-tagged"),
@@ -119,7 +119,7 @@ let package = Package(
             name: "Geometry Affine Integration Tests",
             dependencies: [
                 .target(name: "Geometry"), .target(name: "Geometry Test Support"), .product(name: "Affine", package: "swift-affine", condition: .when(traits: ["Affine"])),
-                .product(name: "Space", package: "swift-spatial", condition: .when(traits: ["Affine"])), .product(name: "Linear", package: "swift-linear", condition: .when(traits: ["Affine"])),
+                .product(name: "Space", package: "swift-space", condition: .when(traits: ["Affine"])), .product(name: "Linear", package: "swift-linear", condition: .when(traits: ["Affine"])),
                 .product(name: "Numeric", package: "swift-numeric", condition: .when(traits: ["Affine"])),
                 .product(name: "Quantizer", package: "swift-quantizer", condition: .when(traits: ["Affine"])), .product(name: "Scale", package: "swift-scale", condition: .when(traits: ["Affine"])),
                 .product(name: "Displacement", package: "swift-displacement", condition: .when(traits: ["Affine"])),
