@@ -29,7 +29,8 @@ let package = Package(
         ),
         .package(
             url: "https://github.com/swift-atoms/swift-space.git",
-            branch: "main"
+            branch: "main",
+            traits: ["Quantizer", "Scale"]
         ),
         .package(
             url: "https://github.com/swift-atoms/swift-scale.git",
