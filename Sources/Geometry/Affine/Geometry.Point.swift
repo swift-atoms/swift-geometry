@@ -79,7 +79,7 @@
     extension Geometry.Point where Scalar: FloatingPoint {
         public func distance(to other: Self) -> Geometry.Length {
             var squared: Scalar = .zero
-            for i in 0..<N {
+            (0..<N).forEach { i in
                 let d = other[i] - self[i]
                 squared += d * d
             }

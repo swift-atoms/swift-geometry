@@ -181,7 +181,7 @@
         ) -> [Point<2>] {
             var result: [Point<2>] = []
             let edges = ngon.edges
-            for i in 0..<N {
+            (0..<N).forEach { i in
                 if let point = intersection(segment, edges[i]) {
                     result.append(point)
                 }
