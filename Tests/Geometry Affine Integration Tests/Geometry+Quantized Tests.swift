@@ -17,9 +17,15 @@
 
     private typealias QGeometry = Geometry<Double, TestSpace>
 
-    @Suite
-    struct `Geometry+Quantized` {
+enum `Geometry+Quantized Tests` {}
 
+extension `Geometry+Quantized Tests` {
+        @Suite
+        struct `Geometry+Quantized` {
+        }
+}
+
+    extension `Geometry+Quantized Tests`.`Geometry+Quantized` {
         @Suite
         struct `Rectangle` {
 

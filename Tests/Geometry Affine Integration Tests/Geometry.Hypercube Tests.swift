@@ -6,12 +6,16 @@
     @testable import Geometry
     import Testing
 
-    @Suite
-    struct `Geometry.Hypercube - Placeholder` {
-        @Test
-        func `Placeholder test`() {
+enum `Geometry.Hypercube Tests` {}
 
-            #expect(true)
+extension `Geometry.Hypercube Tests` {
+        @Suite
+        struct `Geometry.Hypercube - Placeholder` {
+            @Test
+            func `Placeholder test`() {
+
+                #expect(true)
+            }
         }
-    }
+}
 #endif

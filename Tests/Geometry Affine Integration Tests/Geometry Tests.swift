@@ -82,20 +82,24 @@
         }
     }
 
-    @Suite
-    struct `Geometry Unit Tests` {
-        @Test
-        func `Double conforms to Geometry Unit`() {
-            let point: Geometry<Double, Void>.Point<2> = .init(x: 10, y: 20)
-            #expect(point.x == 10)
-        }
+enum `Geometry Tests` {}
 
-        @Test
-        func `Custom type conforms to Geometry Unit`() {
-            let point: Geometry<TestUnit, Void>.Point<2> = .init(x: 10, y: 20)
-            #expect(point.x == 10)
+extension `Geometry Tests` {
+        @Suite
+        struct `Geometry Unit Tests` {
+            @Test
+            func `Double conforms to Geometry Unit`() {
+                let point: Geometry<Double, Void>.Point<2> = .init(x: 10, y: 20)
+                #expect(point.x == 10)
+            }
+
+            @Test
+            func `Custom type conforms to Geometry Unit`() {
+                let point: Geometry<TestUnit, Void>.Point<2> = .init(x: 10, y: 20)
+                #expect(point.x == 10)
+            }
         }
-    }
+}
 
     @Suite
     struct `Point Tests` {
@@ -355,49 +359,51 @@
         }
     }
 
-    @Suite
-    struct `Line Segment Tests` {
-        @Test
-        func `Line segment length`() {
-            let segment: Geometry<Double, Void>.LineSegment = .init(
-                start: .init(x: 0, y: 0),
-                end: .init(x: 3, y: 4)
-            )
-            #expect(Geometry.length(of: segment) == 5)
-        }
+extension `Geometry Tests` {
+        @Suite
+        struct `Line Segment Tests` {
+            @Test
+            func `Line segment length`() {
+                let segment: Geometry<Double, Void>.LineSegment = .init(
+                    start: .init(x: 0, y: 0),
+                    end: .init(x: 3, y: 4)
+                )
+                #expect(Geometry.length(of: segment) == 5)
+            }
 
-        @Test
-        func `Line segment midpoint`() {
-            let segment: Geometry<Double, Void>.LineSegment = .init(
-                start: .init(x: 0, y: 0),
-                end: .init(x: 10, y: 10)
-            )
-            #expect(Geometry.midpoint(of: segment).x == 5)
-            #expect(Geometry.midpoint(of: segment).y == 5)
-        }
+            @Test
+            func `Line segment midpoint`() {
+                let segment: Geometry<Double, Void>.LineSegment = .init(
+                    start: .init(x: 0, y: 0),
+                    end: .init(x: 10, y: 10)
+                )
+                #expect(Geometry.midpoint(of: segment).x == 5)
+                #expect(Geometry.midpoint(of: segment).y == 5)
+            }
 
-        @Test
-        func `Line segment point at parameter`() {
-            let segment: Geometry<Double, Void>.LineSegment = .init(
-                start: .init(x: 0, y: 0),
-                end: .init(x: 10, y: 10)
-            )
+            @Test
+            func `Line segment point at parameter`() {
+                let segment: Geometry<Double, Void>.LineSegment = .init(
+                    start: .init(x: 0, y: 0),
+                    end: .init(x: 10, y: 10)
+                )
 
-            let quarter = Geometry.point(on: segment, at: 0.25)
-            #expect(quarter.x == 2.5)
-            #expect(quarter.y == 2.5)
-        }
+                let quarter = Geometry.point(on: segment, at: 0.25)
+                #expect(quarter.x == 2.5)
+                #expect(quarter.y == 2.5)
+            }
 
-        @Test
-        func `Line segment vector`() {
-            let segment: Geometry<Double, Void>.LineSegment = .init(
-                start: .init(x: 10, y: 20),
-                end: .init(x: 30, y: 50)
-            )
-            #expect(Geometry.vector(of: segment).dx == 20)
-            #expect(Geometry.vector(of: segment).dy == 30)
+            @Test
+            func `Line segment vector`() {
+                let segment: Geometry<Double, Void>.LineSegment = .init(
+                    start: .init(x: 10, y: 20),
+                    end: .init(x: 30, y: 50)
+                )
+                #expect(Geometry.vector(of: segment).dx == 20)
+                #expect(Geometry.vector(of: segment).dy == 30)
+            }
         }
-    }
+}
 
     @Suite
     struct `Line Tests` {
@@ -578,83 +584,87 @@
         }
     }
 
-    @Suite
-    struct `Linear Transform Tests` {
-        typealias Matrix2x2 = Linear<Double, Void>.Matrix<2, 2>
+extension `Geometry Tests` {
+        @Suite
+        struct `Linear Transform Tests` {
+            typealias Matrix2x2 = Linear<Double, Void>.Matrix<2, 2>
 
-        @Test
-        func `Linear identity`() {
-            let identity = Matrix2x2.identity
-            #expect(identity.a == 1)
-            #expect(identity.b == 0)
-            #expect(identity.c == 0)
-            #expect(identity.d == 1)
+            @Test
+            func `Linear identity`() {
+                let identity = Matrix2x2.identity
+                #expect(identity.a == 1)
+                #expect(identity.b == 0)
+                #expect(identity.c == 0)
+                #expect(identity.d == 1)
+            }
+
+            @Test
+            func `Linear concatenation`() {
+                let scale = Matrix2x2.scale(2)
+                let rotation = Matrix2x2.rotation(.pi.half)
+                let combined = rotation * scale
+
+                #expect(abs(combined.a) < 1e-10)
+                #expect(abs(combined.b + 2) < 1e-10)
+                #expect(abs(combined.c - 2) < 1e-10)
+                #expect(abs(combined.d) < 1e-10)
+            }
+
+            @Test
+            func `Linear determinant`() {
+                let identity = Matrix2x2.identity
+                #expect(identity.determinant == 1)
+
+                let scale = Matrix2x2.scale(x: 2, y: 3)
+                #expect(scale.determinant == 6)
+            }
+
+            @Test
+            func `Linear inversion`() {
+                let scale = Matrix2x2.scale(x: 2, y: 4)
+                let inverted = scale.inverse!
+                #expect(inverted.a == 0.5)
+                #expect(inverted.d == 0.25)
+
+                let singular = Matrix2x2(a: 1, b: 1, c: 1, d: 1)
+                #expect(singular.inverse == nil)
+            }
         }
+}
 
-        @Test
-        func `Linear concatenation`() {
-            let scale = Matrix2x2.scale(2)
-            let rotation = Matrix2x2.rotation(.pi.half)
-            let combined = rotation * scale
+extension `Geometry Tests` {
+        @Suite
+        struct `Scale Transform Tests` {
+            @Test
+            func `Scale identity`() {
+                let identity = Scale<2, Double>.identity
+                #expect(identity.x == 1)
+                #expect(identity.y == 1)
+            }
 
-            #expect(abs(combined.a) < 1e-10)
-            #expect(abs(combined.b + 2) < 1e-10)
-            #expect(abs(combined.c - 2) < 1e-10)
-            #expect(abs(combined.d) < 1e-10)
+            @Test
+            func `Scale uniform`() {
+                let uniform = Scale<2, Double>.uniform(3)
+                #expect(uniform.x == 3)
+                #expect(uniform.y == 3)
+            }
+
+            @Test
+            func `Scale composition`() {
+                let a = Scale<2, Double>(x: 2, y: 3)
+                let b = Scale<2, Double>(x: 4, y: 5)
+                let combined = a.concatenating(b)
+                #expect(combined.x == 8)
+                #expect(combined.y == 15)
+            }
+
+            @Test
+            func `Scale inversion`() {
+                let scale = Scale<2, Double>(x: 2, y: 4)
+                let inverted = scale.inverted
+                #expect(inverted.x == 0.5)
+                #expect(inverted.y == 0.25)
+            }
         }
-
-        @Test
-        func `Linear determinant`() {
-            let identity = Matrix2x2.identity
-            #expect(identity.determinant == 1)
-
-            let scale = Matrix2x2.scale(x: 2, y: 3)
-            #expect(scale.determinant == 6)
-        }
-
-        @Test
-        func `Linear inversion`() {
-            let scale = Matrix2x2.scale(x: 2, y: 4)
-            let inverted = scale.inverse!
-            #expect(inverted.a == 0.5)
-            #expect(inverted.d == 0.25)
-
-            let singular = Matrix2x2(a: 1, b: 1, c: 1, d: 1)
-            #expect(singular.inverse == nil)
-        }
-    }
-
-    @Suite
-    struct `Scale Transform Tests` {
-        @Test
-        func `Scale identity`() {
-            let identity = Scale<2, Double>.identity
-            #expect(identity.x == 1)
-            #expect(identity.y == 1)
-        }
-
-        @Test
-        func `Scale uniform`() {
-            let uniform = Scale<2, Double>.uniform(3)
-            #expect(uniform.x == 3)
-            #expect(uniform.y == 3)
-        }
-
-        @Test
-        func `Scale composition`() {
-            let a = Scale<2, Double>(x: 2, y: 3)
-            let b = Scale<2, Double>(x: 4, y: 5)
-            let combined = a.concatenating(b)
-            #expect(combined.x == 8)
-            #expect(combined.y == 15)
-        }
-
-        @Test
-        func `Scale inversion`() {
-            let scale = Scale<2, Double>(x: 2, y: 4)
-            let inverted = scale.inverted
-            #expect(inverted.x == 0.5)
-            #expect(inverted.y == 0.25)
-        }
-    }
+}
 #endif
