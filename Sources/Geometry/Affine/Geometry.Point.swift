@@ -23,33 +23,39 @@
             @inlinable public init(_ coordinates: InlineArray<N, Scalar>) {
                 position = .init(_unchecked: Point::Point(coordinates: Vector::Vector(coordinates)))
             }
-            public var coordinates: InlineArray<N, Scalar> {
-                get { position.underlying.coordinates.components }
-                set { position = .init(_unchecked: Point::Point(coordinates: Vector::Vector(newValue))) }
-            }
-            public subscript(index: Int) -> Scalar {
-                get { position.underlying[index] }
-                set {
-                    var values = coordinates
-                    values[index] = newValue
-                    coordinates = values
-                }
-            }
             public init<U, E: Swift::Error>(_ other: Geometry<U, Space>.Point<N>, _ transform: (U) throws(E) -> Scalar) throws(E) {
                 let values: InlineArray<N, Scalar> = try InlineArray { (i: Int) throws(E) in try transform(other[i]) }
                 self.init(values)
             }
-            public func map<Result, E: Swift::Error>(_ transform: (Scalar) throws(E) -> Result) throws(E) -> Geometry<Result, Space>.Point<N> {
-                try .init(self, transform)
-            }
-            public func translated<Failure: Swift::Error>(
-                by offset: Displacement::Displacement<N, Scalar>,
-                using relationship: Affine<Self, Displacement::Displacement<N, Scalar>, Failure>
-            ) throws(Failure) -> Self {
-                try relationship.translated(self, by: offset)
-            }
         }
     }
+
+extension Geometry.Point {
+        public var coordinates: InlineArray<N, Scalar> {
+            get { position.underlying.coordinates.components }
+            set { position = .init(_unchecked: Point::Point(coordinates: Vector::Vector(newValue))) }
+        }
+
+        public subscript(index: Int) -> Scalar {
+            get { position.underlying[index] }
+            set {
+                var values = coordinates
+                values[index] = newValue
+                coordinates = values
+            }
+        }
+
+        public func map<Result, E: Swift::Error>(_ transform: (Scalar) throws(E) -> Result) throws(E) -> Geometry<Result, Space>.Point<N> {
+            try .init(self, transform)
+        }
+
+        public func translated<Failure: Swift::Error>(
+            by offset: Displacement::Displacement<N, Scalar>,
+            using relationship: Affine<Self, Displacement::Displacement<N, Scalar>, Failure>
+        ) throws(Failure) -> Self {
+            try relationship.translated(self, by: offset)
+        }
+}
     extension Geometry.Point: Equatable where Scalar: Equatable {}
     extension Geometry.Point: Hashable where Scalar: Hashable {}
     extension Geometry.Point: Sendable where Scalar: Sendable {}
