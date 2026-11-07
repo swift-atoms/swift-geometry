@@ -1,4 +1,5 @@
 public import Linear
+public import Inset
 
 public enum Geometry<Scalar: ~Copyable, Space>: ~Copyable {}
 
@@ -106,4 +107,9 @@ extension Geometry.Magnitude where Scalar: AdditiveArithmetic {
     public static var zero: Self {
         Self(Linear<Scalar, Space>.Magnitude(.zero))
     }
+}
+
+extension Geometry {
+
+    public typealias Insets = Inset<2, Scalar>
 }
