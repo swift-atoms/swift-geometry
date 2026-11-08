@@ -263,7 +263,7 @@
         }
 
         @inlinable
-        package func angleIsInArc(_ angle: Radian<Scalar>) -> Bool {
+        func angleIsInArc(_ angle: Radian<Scalar>) -> Bool {
             let normAngle = angle.normalized
             let normStart = startAngle.normalized
             let normEnd = endAngle.normalized
@@ -330,7 +330,7 @@
         }
 
         @inlinable
-        package static func arcSegmentToBezier<
+        static func arcSegmentToBezier<
             Scalar: BinaryFloatingPoint & Numeric.Transcendental,
             Space
         >(

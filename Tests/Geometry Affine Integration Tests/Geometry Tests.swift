@@ -48,7 +48,7 @@
         return diff > -tolerance && diff < tolerance
     }
 
-    struct TestUnit: AdditiveArithmetic, Comparable, Codable, Hashable, ExpressibleByIntegerLiteral,
+    fileprivate struct TestUnit: AdditiveArithmetic, Comparable, Codable, Hashable, ExpressibleByIntegerLiteral,
         ExpressibleByFloatLiteral
     {
         let value: Double

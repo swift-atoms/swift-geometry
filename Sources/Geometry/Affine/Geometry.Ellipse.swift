@@ -440,7 +440,7 @@
         }
 
         @inlinable
-        package func pointAtAngle(_ angle: Radian<Scalar>) -> Geometry.Point<2> {
+        func pointAtAngle(_ angle: Radian<Scalar>) -> Geometry.Point<2> {
             let cosT = angle.cos
             let sinT = angle.sin
 
@@ -551,7 +551,7 @@
         }
 
         @inlinable
-        package func containsAngle(_ angle: Radian<Scalar>) -> Bool {
+        func containsAngle(_ angle: Radian<Scalar>) -> Bool {
             let a = angle.underlying
             let s = startAngle.underlying
             let e = endAngle.underlying
@@ -722,7 +722,7 @@
         }
 
         @inlinable
-        package static func angleBetween(ux: Scalar, uy: Scalar, vx: Scalar, vy: Scalar) -> Scalar {
+        static func angleBetween(ux: Scalar, uy: Scalar, vx: Scalar, vy: Scalar) -> Scalar {
             let dot = ux * vx + uy * vy
             let lenU = Scalar._sqrt(ux * ux + uy * uy)
             let lenV = Scalar._sqrt(vx * vx + vy * vy)
@@ -785,7 +785,7 @@
         }
 
         @inlinable
-        package static func ellipticalArcSegmentToBezier<
+        static func ellipticalArcSegmentToBezier<
             Scalar: BinaryFloatingPoint & Numeric.Transcendental,
             Space
         >(
