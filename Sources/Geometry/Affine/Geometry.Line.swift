@@ -91,15 +91,15 @@
         where Scalar: FloatingPoint {
             var result: [Geometry.Point<2>] = []
             let edges = ngon.edges
-            for i in 0..<N {
+            (0..<N).forEach { i in
 
                 let seg = edges[i]
                 let segLine = Geometry.line(extending: seg)
-                guard let pt = intersection(with: segLine) else { continue }
+                guard let pt = intersection(with: segLine) else { return }
 
                 let displacement = Geometry.vector(of: seg)
                 let lenSq = displacement.dx * displacement.dx + displacement.dy * displacement.dy
-                guard lenSq > .zero else { continue }
+                guard lenSq > .zero else { return }
 
                 let vx: Linear<Scalar, Space>.Dx = pt.x - seg.start.x
                 let vy: Linear<Scalar, Space>.Dy = pt.y - seg.start.y

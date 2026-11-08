@@ -107,7 +107,7 @@ extension Geometry.Size where Scalar: AdditiveArithmetic {
     @_disfavoredOverload
     public static func + (lhs: borrowing Self, rhs: borrowing Self) -> Self {
         var result = InlineArray<N, Scalar>(repeating: .zero)
-        for i in 0..<N {
+        (0..<N).forEach { i in
             result[i] = lhs.dimensions[i] + rhs.dimensions[i]
         }
         return Self(result)
@@ -117,7 +117,7 @@ extension Geometry.Size where Scalar: AdditiveArithmetic {
     @_disfavoredOverload
     public static func - (lhs: borrowing Self, rhs: borrowing Self) -> Self {
         var result = InlineArray<N, Scalar>(repeating: .zero)
-        for i in 0..<N {
+        (0..<N).forEach { i in
             result[i] = lhs.dimensions[i] - rhs.dimensions[i]
         }
         return Self(result)
@@ -130,7 +130,7 @@ extension Geometry.Size where Scalar: SignedNumeric {
     @_disfavoredOverload
     public static prefix func - (value: borrowing Self) -> Self {
         var result = InlineArray<N, Scalar>(repeating: .zero)
-        for i in 0..<N {
+        (0..<N).forEach { i in
             result[i] = -value.dimensions[i]
         }
         return Self(result)
