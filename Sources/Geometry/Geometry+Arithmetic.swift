@@ -8,7 +8,7 @@ public func * <Scalar: FloatingPoint, Space, let N: Int>(
     rhs: Scale<1, Scalar>
 ) -> Geometry<Scalar, Space>.Size<N> {
     var result = lhs.dimensions
-    (0..<N).forEach { i in
+    for i in 0..<N {
         result[i] = lhs.dimensions[i] * rhs.value
     }
     return Geometry<Scalar, Space>.Size<N>(result)
@@ -28,7 +28,7 @@ public func / <Scalar: FloatingPoint, Space, let N: Int>(
     rhs: Scale<1, Scalar>
 ) -> Geometry<Scalar, Space>.Size<N> {
     var result = lhs.dimensions
-    (0..<N).forEach { i in
+    for i in 0..<N {
         result[i] = lhs.dimensions[i] / rhs.value
     }
     return Geometry<Scalar, Space>.Size<N>(result)
@@ -41,7 +41,7 @@ public func * <Scalar: FloatingPoint, Space, let N: Int>(
     rhs: Scale<N, Scalar>
 ) -> Geometry<Scalar, Space>.Size<N> {
     var result = lhs.dimensions
-    (0..<N).forEach { i in
+    for i in 0..<N {
         result[i] = lhs.dimensions[i] * rhs.factors[i]
     }
     return Geometry<Scalar, Space>.Size<N>(result)
@@ -63,7 +63,7 @@ public func / <Scalar: FloatingPoint, Space, let N: Int>(
     rhs: Scale<N, Scalar>
 ) -> Geometry<Scalar, Space>.Size<N> {
     var result = lhs.dimensions
-    (0..<N).forEach { i in
+    for i in 0..<N {
         result[i] = lhs.dimensions[i] / rhs.factors[i]
     }
     return Geometry<Scalar, Space>.Size<N>(result)
@@ -107,7 +107,7 @@ extension Geometry.Size where Scalar: AdditiveArithmetic {
     @_disfavoredOverload
     public static func + (lhs: borrowing Self, rhs: borrowing Self) -> Self {
         var result = InlineArray<N, Scalar>(repeating: .zero)
-        (0..<N).forEach { i in
+        for i in 0..<N {
             result[i] = lhs.dimensions[i] + rhs.dimensions[i]
         }
         return Self(result)
@@ -117,7 +117,7 @@ extension Geometry.Size where Scalar: AdditiveArithmetic {
     @_disfavoredOverload
     public static func - (lhs: borrowing Self, rhs: borrowing Self) -> Self {
         var result = InlineArray<N, Scalar>(repeating: .zero)
-        (0..<N).forEach { i in
+        for i in 0..<N {
             result[i] = lhs.dimensions[i] - rhs.dimensions[i]
         }
         return Self(result)
@@ -130,7 +130,7 @@ extension Geometry.Size where Scalar: SignedNumeric {
     @_disfavoredOverload
     public static prefix func - (value: borrowing Self) -> Self {
         var result = InlineArray<N, Scalar>(repeating: .zero)
-        (0..<N).forEach { i in
+        for i in 0..<N {
             result[i] = -value.dimensions[i]
         }
         return Self(result)
