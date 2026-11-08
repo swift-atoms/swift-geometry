@@ -1,6 +1,5 @@
-public import Linear
 public import Inset
-
+public import Linear
 
 extension Geometry {
     public struct Magnitude {

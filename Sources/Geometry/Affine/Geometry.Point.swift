@@ -30,7 +30,7 @@
         }
     }
 
-extension Geometry.Point {
+    extension Geometry.Point {
         public var coordinates: InlineArray<N, Scalar> {
             get { position.underlying.coordinates.components }
             set { position = .init(_unchecked: Point::Point(coordinates: Vector::Vector(newValue))) }
@@ -55,7 +55,7 @@ extension Geometry.Point {
         ) throws(Failure) -> Self {
             try relationship.translated(self, by: offset)
         }
-}
+    }
     extension Geometry.Point: Equatable where Scalar: Equatable {}
     extension Geometry.Point: Hashable where Scalar: Hashable {}
     extension Geometry.Point: Sendable where Scalar: Sendable {}

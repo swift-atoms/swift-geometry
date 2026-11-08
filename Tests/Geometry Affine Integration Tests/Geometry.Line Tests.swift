@@ -34,9 +34,9 @@
         return diff > -tolerance && diff < tolerance
     }
 
-enum `Geometry.Line Tests` {}
+    enum `Geometry.Line Tests` {}
 
-extension `Geometry.Line Tests` {
+    extension `Geometry.Line Tests` {
         @Suite
         struct `Geometry.Line - Initialization` {
             @Test
@@ -63,9 +63,9 @@ extension `Geometry.Line Tests` {
                 #expect(line.direction.dy == 20)
             }
         }
-}
+    }
 
-extension `Geometry.Line Tests` {
+    extension `Geometry.Line Tests` {
         @Suite
         struct `Geometry.Line - Properties` {
             @Test
@@ -89,9 +89,9 @@ extension `Geometry.Line Tests` {
                 #expect(p.y == 5)
             }
         }
-}
+    }
 
-extension `Geometry.Line Tests` {
+    extension `Geometry.Line Tests` {
         @Suite
         struct `Geometry.Line - Static Functions` {
             @Test
@@ -183,9 +183,9 @@ extension `Geometry.Line Tests` {
                 #expect(isApprox(projection!.y, Y(2)))
             }
         }
-}
+    }
 
-extension `Geometry.Line Tests` {
+    extension `Geometry.Line Tests` {
         @Suite
         struct `Geometry.Line - Instance Methods` {
             @Test
@@ -279,9 +279,9 @@ extension `Geometry.Line Tests` {
                 #expect(line1.intersection(with: line2) == nil)
             }
         }
-}
+    }
 
-extension `Geometry.Line Tests` {
+    extension `Geometry.Line Tests` {
         @Suite
         struct `Geometry.Line.Segment - Initialization` {
             @Test
@@ -305,9 +305,9 @@ extension `Geometry.Line Tests` {
                 #expect(Geometry.length(of: segment) == 5)
             }
         }
-}
+    }
 
-extension `Geometry.Line Tests` {
+    extension `Geometry.Line Tests` {
         @Suite
         struct `Geometry.Line.Segment - Properties` {
             @Test
@@ -374,9 +374,9 @@ extension `Geometry.Line Tests` {
                 #expect(reversed.end.y == 0)
             }
         }
-}
+    }
 
-extension `Geometry.Line Tests` {
+    extension `Geometry.Line Tests` {
         @Suite
         struct `Geometry.Line.Segment - Parametric Points` {
             @Test
@@ -412,9 +412,9 @@ extension `Geometry.Line Tests` {
                 #expect(point.y == 10)
             }
         }
-}
+    }
 
-extension `Geometry.Line Tests` {
+    extension `Geometry.Line Tests` {
         @Suite
         struct `Geometry.Line.Segment - Static Functions` {
             @Test
@@ -546,9 +546,9 @@ extension `Geometry.Line Tests` {
                 #expect(isApprox(distance, Distance(5)))
             }
         }
-}
+    }
 
-extension `Geometry.Line Tests` {
+    extension `Geometry.Line Tests` {
         @Suite
         struct `Geometry interprets segment values explicitly` {
             @Test
@@ -590,9 +590,9 @@ extension `Geometry.Line Tests` {
                 #expect(isApprox(Geometry.distance(from: segment, to: point), Distance(3)))
             }
         }
-}
+    }
 
-extension `Geometry.Line Tests` {
+    extension `Geometry.Line Tests` {
         @Suite
         struct `Geometry.Line - Functorial Map` {
             @Test
@@ -625,5 +625,5 @@ extension `Geometry.Line Tests` {
                 #expect(mapped.end.y == expectedEndY)
             }
         }
-}
+    }
 #endif

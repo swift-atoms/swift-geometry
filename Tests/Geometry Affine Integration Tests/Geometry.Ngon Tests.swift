@@ -50,9 +50,9 @@
         return diff > Radian(_unchecked: -tol) && diff < Radian(_unchecked: tol)
     }
 
-enum `Geometry.Ngon Tests` {}
+    enum `Geometry.Ngon Tests` {}
 
-extension `Geometry.Ngon Tests` {
+    extension `Geometry.Ngon Tests` {
         @Suite
         struct `Geometry.Ngon<3> - Initialization` {
             @Test
@@ -94,9 +94,9 @@ extension `Geometry.Ngon Tests` {
                 #expect(triangle == nil)
             }
         }
-}
+    }
 
-extension `Geometry.Ngon Tests` {
+    extension `Geometry.Ngon Tests` {
         @Suite
         struct `Geometry.Ngon<3> - Factory Methods` {
             @Test
@@ -155,9 +155,9 @@ extension `Geometry.Ngon Tests` {
                 #expect(triangle == nil)
             }
         }
-}
+    }
 
-extension `Geometry.Ngon Tests` {
+    extension `Geometry.Ngon Tests` {
         @Suite
         struct `Geometry.Ngon<3> - Properties` {
             @Test
@@ -203,9 +203,9 @@ extension `Geometry.Ngon Tests` {
                 #expect(abs(sides.bc - 5) < 1e-10)
             }
         }
-}
+    }
 
-extension `Geometry.Ngon Tests` {
+    extension `Geometry.Ngon Tests` {
         @Suite
         struct `Geometry.Ngon<3> - Static Functions` {
             @Test
@@ -266,9 +266,9 @@ extension `Geometry.Ngon Tests` {
                 #expect(isApprox(centroid!.y, Y(2)))
             }
         }
-}
+    }
 
-extension `Geometry.Ngon Tests` {
+    extension `Geometry.Ngon Tests` {
         @Suite
         struct `Geometry.Ngon<3> - Area and Perimeter` {
             @Test
@@ -312,9 +312,9 @@ extension `Geometry.Ngon Tests` {
                 #expect(isApprox(triangle.perimeter, Distance(12)))
             }
         }
-}
+    }
 
-extension `Geometry.Ngon Tests` {
+    extension `Geometry.Ngon Tests` {
         @Suite
         struct `Geometry.Ngon<3> - Centroid` {
             @Test
@@ -329,9 +329,9 @@ extension `Geometry.Ngon Tests` {
                 #expect(isApprox(centroid.y, Y(2)))
             }
         }
-}
+    }
 
-extension `Geometry.Ngon Tests` {
+    extension `Geometry.Ngon Tests` {
         @Suite
         struct `Geometry.Ngon<3> - Circles` {
             @Test
@@ -390,9 +390,9 @@ extension `Geometry.Ngon Tests` {
                 #expect(ortho != nil)
             }
         }
-}
+    }
 
-extension `Geometry.Ngon Tests` {
+    extension `Geometry.Ngon Tests` {
         @Suite
         struct `Geometry.Ngon<3> - Angles` {
             @Test
@@ -407,9 +407,9 @@ extension `Geometry.Ngon Tests` {
                 #expect(isApprox(sum, .pi.full))
             }
         }
-}
+    }
 
-extension `Geometry.Ngon Tests` {
+    extension `Geometry.Ngon Tests` {
         @Suite
         struct `Geometry.Ngon<3> - Containment` {
             @Test
@@ -453,9 +453,9 @@ extension `Geometry.Ngon Tests` {
                 #expect(triangle.containsBarycentric(triangle.centroid))
             }
         }
-}
+    }
 
-extension `Geometry.Ngon Tests` {
+    extension `Geometry.Ngon Tests` {
         @Suite
         struct `Geometry.Ngon<3> - Barycentric Coordinates` {
             @Test
@@ -522,9 +522,9 @@ extension `Geometry.Ngon Tests` {
                 #expect(isApprox(point.y, Y(2)))
             }
         }
-}
+    }
 
-extension `Geometry.Ngon Tests` {
+    extension `Geometry.Ngon Tests` {
         @Suite
         struct `Geometry.Ngon<3> - Bounding Box` {
             @Test
@@ -541,9 +541,9 @@ extension `Geometry.Ngon Tests` {
                 #expect(bbox.ury == 7)
             }
         }
-}
+    }
 
-extension `Geometry.Ngon Tests` {
+    extension `Geometry.Ngon Tests` {
         @Suite
         struct `Geometry.Ngon<3> - Transformations` {
             @Test
@@ -585,9 +585,9 @@ extension `Geometry.Ngon Tests` {
                 #expect(abs(scaled.area - 4 * triangle.area) < 1e-10)
             }
         }
-}
+    }
 
-extension `Geometry.Ngon Tests` {
+    extension `Geometry.Ngon Tests` {
         @Suite
         struct `Geometry.Ngon<4> - Quadrilateral` {
             @Test
@@ -647,9 +647,9 @@ extension `Geometry.Ngon Tests` {
                 #expect(abs(quad.area - 12) < 1e-10)
             }
         }
-}
+    }
 
-extension `Geometry.Ngon Tests` {
+    extension `Geometry.Ngon Tests` {
         @Suite
         struct `Geometry.Ngon - Regular Polygons` {
             @Test
@@ -678,9 +678,9 @@ extension `Geometry.Ngon Tests` {
                 #expect(abs(sides.ca - 6) < 1e-9)
             }
         }
-}
+    }
 
-extension `Geometry.Ngon Tests` {
+    extension `Geometry.Ngon Tests` {
         @Suite
         struct `Geometry.Ngon - Convexity` {
             @Test
@@ -704,9 +704,9 @@ extension `Geometry.Ngon Tests` {
                 #expect(triangle.isConvex)
             }
         }
-}
+    }
 
-extension `Geometry.Ngon Tests` {
+    extension `Geometry.Ngon Tests` {
         @Suite
         struct `Geometry.Ngon - Winding` {
             @Test
@@ -742,9 +742,9 @@ extension `Geometry.Ngon Tests` {
                 #expect(triangle.isCounterClockwise != reversed.isCounterClockwise)
             }
         }
-}
+    }
 
-extension `Geometry.Ngon Tests` {
+    extension `Geometry.Ngon Tests` {
         @Suite
         struct `Geometry.Ngon - Functorial Map` {
             @Test
@@ -763,5 +763,5 @@ extension `Geometry.Ngon Tests` {
                 #expect(mapped.c.y == expectedCY)
             }
         }
-}
+    }
 #endif

@@ -59,9 +59,9 @@
         return diff > Radian(_unchecked: -tol) && diff < Radian(_unchecked: tol)
     }
 
-enum `Geometry.Ellipse Tests` {}
+    enum `Geometry.Ellipse Tests` {}
 
-extension `Geometry.Ellipse Tests` {
+    extension `Geometry.Ellipse Tests` {
         @Suite
         struct `Geometry.Ellipse - Initialization` {
             @Test
@@ -112,9 +112,9 @@ extension `Geometry.Ellipse Tests` {
                 #expect(ellipse.isCircle)
             }
         }
-}
+    }
 
-extension `Geometry.Ellipse Tests` {
+    extension `Geometry.Ellipse Tests` {
         @Suite
         struct `Geometry.Ellipse - Properties` {
             @Test
@@ -156,9 +156,9 @@ extension `Geometry.Ellipse Tests` {
                 #expect(!ellipse.isCircle)
             }
         }
-}
+    }
 
-extension `Geometry.Ellipse Tests` {
+    extension `Geometry.Ellipse Tests` {
         @Suite
         struct `Geometry.Ellipse - Foci` {
             @Test
@@ -182,9 +182,9 @@ extension `Geometry.Ellipse Tests` {
                 #expect(isApprox(foci.f2.y, Y(0)))
             }
         }
-}
+    }
 
-extension `Geometry.Ellipse Tests` {
+    extension `Geometry.Ellipse Tests` {
         @Suite
         struct `Geometry.Ellipse - Static Functions` {
             @Test
@@ -243,9 +243,9 @@ extension `Geometry.Ellipse Tests` {
                 #expect(isApprox(point.y, Y(0)))
             }
         }
-}
+    }
 
-extension `Geometry.Ellipse Tests` {
+    extension `Geometry.Ellipse Tests` {
         @Suite
         struct `Geometry.Ellipse - Area and Perimeter` {
             @Test
@@ -260,9 +260,9 @@ extension `Geometry.Ellipse Tests` {
                 #expect(isApprox(circle.perimeter, Distance(10 * .pi), tol: 0.01))
             }
         }
-}
+    }
 
-extension `Geometry.Ellipse Tests` {
+    extension `Geometry.Ellipse Tests` {
         @Suite
         struct `Geometry.Ellipse - Parametric Points` {
             @Test
@@ -297,9 +297,9 @@ extension `Geometry.Ellipse Tests` {
                 #expect(tangent.dy > Dy(0))
             }
         }
-}
+    }
 
-extension `Geometry.Ellipse Tests` {
+    extension `Geometry.Ellipse Tests` {
         @Suite
         struct `Geometry.Ellipse - Containment` {
             @Test
@@ -333,9 +333,9 @@ extension `Geometry.Ellipse Tests` {
                 #expect(!ellipse.contains(point))
             }
         }
-}
+    }
 
-extension `Geometry.Ellipse Tests` {
+    extension `Geometry.Ellipse Tests` {
         @Suite
         struct `Geometry.Ellipse - Bounding Box` {
             @Test
@@ -362,9 +362,9 @@ extension `Geometry.Ellipse Tests` {
                 #expect(isApprox(bbox.ury, Y(23)))
             }
         }
-}
+    }
 
-extension `Geometry.Ellipse Tests` {
+    extension `Geometry.Ellipse Tests` {
         @Suite
         struct `Geometry.Ellipse - Circle Conversion` {
             @Test
@@ -382,9 +382,9 @@ extension `Geometry.Ellipse Tests` {
                 #expect(circle == nil)
             }
         }
-}
+    }
 
-extension `Geometry.Ellipse Tests` {
+    extension `Geometry.Ellipse Tests` {
         @Suite
         struct `Geometry.Ellipse - Transformations` {
             @Test
@@ -412,9 +412,9 @@ extension `Geometry.Ellipse Tests` {
                 #expect(isApprox(rotated.rotation, .pi.half))
             }
         }
-}
+    }
 
-extension `Geometry.Ellipse Tests` {
+    extension `Geometry.Ellipse Tests` {
         @Suite
         struct `Geometry.Ellipse - Functorial Map` {
             @Test
@@ -427,9 +427,9 @@ extension `Geometry.Ellipse Tests` {
                 #expect(mapped.semiMinor == expectedMinor)
             }
         }
-}
+    }
 
-extension `Geometry.Ellipse Tests` {
+    extension `Geometry.Ellipse Tests` {
         @Suite
         struct `Geometry.Ellipse.Arc - Bezier segment limit` {
             static let quarter = Double.pi / 2
@@ -468,5 +468,5 @@ extension `Geometry.Ellipse Tests` {
                 }
             }
         }
-}
+    }
 #endif

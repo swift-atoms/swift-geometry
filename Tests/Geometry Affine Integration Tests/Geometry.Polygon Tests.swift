@@ -40,9 +40,9 @@
         return abs(a.underlying - b.underlying) < tol
     }
 
-enum `Geometry.Polygon Tests` {}
+    enum `Geometry.Polygon Tests` {}
 
-extension `Geometry.Polygon Tests` {
+    extension `Geometry.Polygon Tests` {
         @Suite
         struct `Geometry.Polygon - Initialization` {
             @Test
@@ -57,9 +57,9 @@ extension `Geometry.Polygon Tests` {
                 #expect(polygon.vertexCount == 4)
             }
         }
-}
+    }
 
-extension `Geometry.Polygon Tests` {
+    extension `Geometry.Polygon Tests` {
         @Suite
         struct `Geometry.Polygon - Validity` {
             @Test
@@ -81,9 +81,9 @@ extension `Geometry.Polygon Tests` {
                 #expect(!polygon.isValid)
             }
         }
-}
+    }
 
-extension `Geometry.Polygon Tests` {
+    extension `Geometry.Polygon Tests` {
         @Suite
         struct `Geometry.Polygon - Edges` {
             @Test
@@ -113,9 +113,9 @@ extension `Geometry.Polygon Tests` {
                 #expect(edges.count == 4)
             }
         }
-}
+    }
 
-extension `Geometry.Polygon Tests` {
+    extension `Geometry.Polygon Tests` {
         @Suite
         struct `Geometry.Polygon - Static Functions` {
             @Test
@@ -226,9 +226,9 @@ extension `Geometry.Polygon Tests` {
                 #expect(isApprox(centroid.y, Y(2)))
             }
         }
-}
+    }
 
-extension `Geometry.Polygon Tests` {
+    extension `Geometry.Polygon Tests` {
         @Suite
         struct `Geometry.Polygon - Area and Perimeter Properties` {
             @Test
@@ -253,9 +253,9 @@ extension `Geometry.Polygon Tests` {
                 #expect(isApprox(polygon.perimeter, Distance(4)))
             }
         }
-}
+    }
 
-extension `Geometry.Polygon Tests` {
+    extension `Geometry.Polygon Tests` {
         @Suite
         struct `Geometry.Polygon - Centroid` {
             @Test
@@ -272,9 +272,9 @@ extension `Geometry.Polygon Tests` {
                 #expect(isApprox(centroid!.y, Y(1)))
             }
         }
-}
+    }
 
-extension `Geometry.Polygon Tests` {
+    extension `Geometry.Polygon Tests` {
         @Suite
         struct `Geometry.Polygon - Bounding Box` {
             @Test
@@ -292,9 +292,9 @@ extension `Geometry.Polygon Tests` {
                 #expect(bbox.ury == 7)
             }
         }
-}
+    }
 
-extension `Geometry.Polygon Tests` {
+    extension `Geometry.Polygon Tests` {
         @Suite
         struct `Geometry.Polygon - Convexity` {
             @Test
@@ -331,9 +331,9 @@ extension `Geometry.Polygon Tests` {
                 #expect(polygon.isConvex)
             }
         }
-}
+    }
 
-extension `Geometry.Polygon Tests` {
+    extension `Geometry.Polygon Tests` {
         @Suite
         struct `Geometry.Polygon - Winding` {
             @Test
@@ -372,9 +372,9 @@ extension `Geometry.Polygon Tests` {
                 #expect(polygon.isCounterClockwise != reversed.isCounterClockwise)
             }
         }
-}
+    }
 
-extension `Geometry.Polygon Tests` {
+    extension `Geometry.Polygon Tests` {
         @Suite
         struct `Geometry.Polygon - Containment` {
             @Test
@@ -433,9 +433,9 @@ extension `Geometry.Polygon Tests` {
                 #expect(!polygon.isOnBoundary(inside))
             }
         }
-}
+    }
 
-extension `Geometry.Polygon Tests` {
+    extension `Geometry.Polygon Tests` {
         @Suite
         struct `Geometry.Polygon - Transformations` {
             @Test
@@ -481,9 +481,9 @@ extension `Geometry.Polygon Tests` {
                 #expect(scaled.vertices[2].y == 2)
             }
         }
-}
+    }
 
-extension `Geometry.Polygon Tests` {
+    extension `Geometry.Polygon Tests` {
         @Suite
         struct `Geometry.Polygon - Triangulation` {
             @Test
@@ -528,9 +528,9 @@ extension `Geometry.Polygon Tests` {
                 #expect(abs(totalArea - polygon.area) < 1e-10)
             }
         }
-}
+    }
 
-extension `Geometry.Polygon Tests` {
+    extension `Geometry.Polygon Tests` {
         @Suite
         struct `Geometry.Polygon - Functorial Map` {
             @Test
@@ -548,5 +548,5 @@ extension `Geometry.Polygon Tests` {
                 #expect(mapped.vertices[1].x == expectedX1)
             }
         }
-}
+    }
 #endif

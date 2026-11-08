@@ -60,9 +60,9 @@
         return abs(a - b) < tol
     }
 
-enum `Geometry.Arc Tests` {}
+    enum `Geometry.Arc Tests` {}
 
-extension `Geometry.Arc Tests` {
+    extension `Geometry.Arc Tests` {
         @Suite
         struct `Geometry.Arc - Initialization` {
             @Test
@@ -113,9 +113,9 @@ extension `Geometry.Arc Tests` {
                 #expect(isApprox(arc.endAngle, .pi.full))
             }
         }
-}
+    }
 
-extension `Geometry.Arc Tests` {
+    extension `Geometry.Arc Tests` {
         @Suite
         struct `Geometry.Arc - Properties` {
             @Test
@@ -160,9 +160,9 @@ extension `Geometry.Arc Tests` {
                 #expect(!half.isFullCircle)
             }
         }
-}
+    }
 
-extension `Geometry.Arc Tests` {
+    extension `Geometry.Arc Tests` {
         @Suite
         struct `Geometry.Arc - Endpoints` {
             @Test
@@ -213,9 +213,9 @@ extension `Geometry.Arc Tests` {
                 #expect(isApprox(arc.startPoint.y, Y(20)))
             }
         }
-}
+    }
 
-extension `Geometry.Arc Tests` {
+    extension `Geometry.Arc Tests` {
         @Suite
         struct `Geometry.Arc - Parametric Points` {
             @Test
@@ -257,9 +257,9 @@ extension `Geometry.Arc Tests` {
                 #expect(isApprox(point.y, arc.midPoint.y))
             }
         }
-}
+    }
 
-extension `Geometry.Arc Tests` {
+    extension `Geometry.Arc Tests` {
         @Suite
         struct `Geometry.Arc - Tangent` {
             @Test
@@ -288,9 +288,9 @@ extension `Geometry.Arc Tests` {
                 #expect(isApprox(tangent.dy, Dy(0)))
             }
         }
-}
+    }
 
-extension `Geometry.Arc Tests` {
+    extension `Geometry.Arc Tests` {
         @Suite
         struct `Geometry.Arc - Length` {
             @Test
@@ -311,9 +311,9 @@ extension `Geometry.Arc Tests` {
                 #expect(isApprox(arc.length, Distance(2 * Double.pi)))
             }
         }
-}
+    }
 
-extension `Geometry.Arc Tests` {
+    extension `Geometry.Arc Tests` {
         @Suite
         struct `Geometry.Arc - Bounding Box` {
             @Test
@@ -346,9 +346,9 @@ extension `Geometry.Arc Tests` {
                 #expect(isApprox(bbox.ury, Y(5)))
             }
         }
-}
+    }
 
-extension `Geometry.Arc Tests` {
+    extension `Geometry.Arc Tests` {
         @Suite
         struct `Geometry.Arc - Containment` {
             @Test
@@ -377,9 +377,9 @@ extension `Geometry.Arc Tests` {
                 #expect(!arc.contains(point))
             }
         }
-}
+    }
 
-extension `Geometry.Arc Tests` {
+    extension `Geometry.Arc Tests` {
         @Suite
         struct `Geometry.Arc - Transformations` {
             @Test
@@ -413,9 +413,9 @@ extension `Geometry.Arc Tests` {
                 #expect(reversed.endAngle == arc.startAngle)
             }
         }
-}
+    }
 
-extension `Geometry.Arc Tests` {
+    extension `Geometry.Arc Tests` {
         @Suite
         struct `Geometry.Arc - Bezier Conversion` {
             @Test
@@ -454,9 +454,9 @@ extension `Geometry.Arc Tests` {
                 #expect(isApprox(lastBezier.endPoint!.y, arc.endPoint.y))
             }
         }
-}
+    }
 
-extension `Geometry.Arc Tests` {
+    extension `Geometry.Arc Tests` {
         @Suite
         struct `Geometry.Arc - Functorial Map` {
             @Test
@@ -469,9 +469,9 @@ extension `Geometry.Arc Tests` {
                 #expect(mapped.radius == expectedRadius)
             }
         }
-}
+    }
 
-extension `Geometry.Arc Tests` {
+    extension `Geometry.Arc Tests` {
         @Suite
         struct `Geometry.Arc - Bezier segment limit` {
             static let quarter = Double.pi / 2
@@ -519,5 +519,5 @@ extension `Geometry.Arc Tests` {
                 #expect(isApprox(last.endPoint!.y, arc.endPoint.y))
             }
         }
-}
+    }
 #endif

@@ -65,9 +65,9 @@
         return abs(a - b) < tol
     }
 
-enum `Geometry.Ball Tests` {}
+    enum `Geometry.Ball Tests` {}
 
-extension `Geometry.Ball Tests` {
+    extension `Geometry.Ball Tests` {
         @Suite
         struct `Geometry.Ball - Initialization` {
             @Test
@@ -127,9 +127,9 @@ extension `Geometry.Ball Tests` {
                 #expect(circle == nil)
             }
         }
-}
+    }
 
-extension `Geometry.Ball Tests` {
+    extension `Geometry.Ball Tests` {
         @Suite
         struct `Geometry.Ball - Properties` {
             @Test
@@ -164,9 +164,9 @@ extension `Geometry.Ball Tests` {
                 #expect(isApproxScalar(sphere.volume, 36 * .pi))
             }
         }
-}
+    }
 
-extension `Geometry.Ball Tests` {
+    extension `Geometry.Ball Tests` {
         @Suite
         struct `Geometry.Ball - Static Functions` {
             @Test
@@ -245,9 +245,9 @@ extension `Geometry.Ball Tests` {
                 #expect(!Geometry.intersects(c1, c2))
             }
         }
-}
+    }
 
-extension `Geometry.Ball Tests` {
+    extension `Geometry.Ball Tests` {
         @Suite
         struct `Geometry.Ball - Containment` {
             @Test
@@ -280,9 +280,9 @@ extension `Geometry.Ball Tests` {
                 #expect(outer.contains(inner))
             }
         }
-}
+    }
 
-extension `Geometry.Ball Tests` {
+    extension `Geometry.Ball Tests` {
         @Suite
         struct `Geometry.Ball - Parametric Points` {
             @Test
@@ -338,9 +338,9 @@ extension `Geometry.Ball Tests` {
                 #expect(isApprox(closest.y, Y(0)))
             }
         }
-}
+    }
 
-extension `Geometry.Ball Tests` {
+    extension `Geometry.Ball Tests` {
         @Suite
         struct `Geometry.Ball - Tangent Vectors` {
             @Test
@@ -374,9 +374,9 @@ extension `Geometry.Ball Tests` {
                 #expect(isApproxScalar(dot, 0))
             }
         }
-}
+    }
 
-extension `Geometry.Ball Tests` {
+    extension `Geometry.Ball Tests` {
         @Suite
         struct `Geometry.Ball - Bounding Box` {
             @Test
@@ -402,9 +402,9 @@ extension `Geometry.Ball Tests` {
                 #expect(bbox.ury == Y(25))
             }
         }
-}
+    }
 
-extension `Geometry.Ball Tests` {
+    extension `Geometry.Ball Tests` {
         @Suite
         struct `Geometry.Ball - Transformations` {
             @Test
@@ -437,9 +437,9 @@ extension `Geometry.Ball Tests` {
                 #expect(scaled.radius == Distance(10))
             }
         }
-}
+    }
 
-extension `Geometry.Ball Tests` {
+    extension `Geometry.Ball Tests` {
         @Suite
         struct `Geometry.Ball - Line Intersection` {
             @Test
@@ -480,9 +480,9 @@ extension `Geometry.Ball Tests` {
                 #expect(intersections.isEmpty)
             }
         }
-}
+    }
 
-extension `Geometry.Ball Tests` {
+    extension `Geometry.Ball Tests` {
         @Suite
         struct `Geometry.Ball - Circle Intersection` {
             @Test
@@ -526,9 +526,9 @@ extension `Geometry.Ball Tests` {
                 #expect(c1.intersects(c2))
             }
         }
-}
+    }
 
-extension `Geometry.Ball Tests` {
+    extension `Geometry.Ball Tests` {
         @Suite
         struct `Geometry.Ball - Bezier Curves` {
             @Test
@@ -555,9 +555,9 @@ extension `Geometry.Ball Tests` {
                 #expect(isApprox(first.start.y, Y(0)))
             }
         }
-}
+    }
 
-extension `Geometry.Ball Tests` {
+    extension `Geometry.Ball Tests` {
         @Suite
         struct `Geometry.Ball - Functorial Map` {
             @Test
@@ -572,5 +572,5 @@ extension `Geometry.Ball Tests` {
                 #expect(mapped.radius == expectedRadius)
             }
         }
-}
+    }
 #endif

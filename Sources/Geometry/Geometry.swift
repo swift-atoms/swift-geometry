@@ -1,5 +1,5 @@
-public import Linear
 public import Inset
+public import Linear
 
 public enum Geometry<Scalar: ~Copyable, Space>: ~Copyable {}
 

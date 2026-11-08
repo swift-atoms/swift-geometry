@@ -52,9 +52,9 @@
         return abs(a - b) < tol
     }
 
-enum `Geometry.Bezier Tests` {}
+    enum `Geometry.Bezier Tests` {}
 
-extension `Geometry.Bezier Tests` {
+    extension `Geometry.Bezier Tests` {
         @Suite
         struct `Geometry.Bezier - Initialization` {
             @Test
@@ -101,9 +101,9 @@ extension `Geometry.Bezier Tests` {
                 #expect(bezier.controlPoints.count == 4)
             }
         }
-}
+    }
 
-extension `Geometry.Bezier Tests` {
+    extension `Geometry.Bezier Tests` {
         @Suite
         struct `Geometry.Bezier - Properties` {
             @Test
@@ -143,9 +143,9 @@ extension `Geometry.Bezier Tests` {
                 #expect(bezier.endPoint?.y == 8)
             }
         }
-}
+    }
 
-extension `Geometry.Bezier Tests` {
+    extension `Geometry.Bezier Tests` {
         @Suite
         struct `Geometry.Bezier - Evaluation` {
             @Test
@@ -199,9 +199,9 @@ extension `Geometry.Bezier Tests` {
                 #expect(isApprox(point.y, Y(2)))
             }
         }
-}
+    }
 
-extension `Geometry.Bezier Tests` {
+    extension `Geometry.Bezier Tests` {
         @Suite
         struct `Geometry.Bezier - Derivative` {
             @Test
@@ -242,9 +242,9 @@ extension `Geometry.Bezier Tests` {
                 #expect(isApproxScalar(tangent.dot(normal), 0))
             }
         }
-}
+    }
 
-extension `Geometry.Bezier Tests` {
+    extension `Geometry.Bezier Tests` {
         @Suite
         struct `Geometry.Bezier - Subdivision` {
             @Test
@@ -283,9 +283,9 @@ extension `Geometry.Bezier Tests` {
                 #expect(isApprox(points[10].x, X(4)))
             }
         }
-}
+    }
 
-extension `Geometry.Bezier Tests` {
+    extension `Geometry.Bezier Tests` {
         @Suite
         struct `Geometry.Bezier - Bounding Box` {
             @Test
@@ -303,9 +303,9 @@ extension `Geometry.Bezier Tests` {
                 #expect(bbox.ury == Y(10))
             }
         }
-}
+    }
 
-extension `Geometry.Bezier Tests` {
+    extension `Geometry.Bezier Tests` {
         @Suite
         struct `Geometry.Bezier - Length` {
             @Test
@@ -331,9 +331,9 @@ extension `Geometry.Bezier Tests` {
                 #expect(length < 30)
             }
         }
-}
+    }
 
-extension `Geometry.Bezier Tests` {
+    extension `Geometry.Bezier Tests` {
         @Suite
         struct `Geometry.Bezier - Transformations` {
             @Test
@@ -373,9 +373,9 @@ extension `Geometry.Bezier Tests` {
                 #expect(reversed.endPoint?.x == X(0))
             }
         }
-}
+    }
 
-extension `Geometry.Bezier Tests` {
+    extension `Geometry.Bezier Tests` {
         @Suite
         struct `Geometry.Bezier - Ellipse Approximation` {
             @Test
@@ -430,9 +430,9 @@ extension `Geometry.Bezier Tests` {
                 #expect(isApprox(lastEnd.y, firstStart.y))
             }
         }
-}
+    }
 
-extension `Geometry.Bezier Tests` {
+    extension `Geometry.Bezier Tests` {
         @Suite
         struct `Geometry.Bezier - Functorial Map` {
             @Test
@@ -448,5 +448,5 @@ extension `Geometry.Bezier Tests` {
                 #expect(mapped.endPoint?.x == expectedEndX)
             }
         }
-}
+    }
 #endif

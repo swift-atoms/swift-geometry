@@ -6,9 +6,9 @@
     @testable import Geometry
     import Testing
 
-enum `Geometry.Hypercube Tests` {}
+    enum `Geometry.Hypercube Tests` {}
 
-extension `Geometry.Hypercube Tests` {
+    extension `Geometry.Hypercube Tests` {
         @Suite
         struct `Geometry.Hypercube - Placeholder` {
             @Test
@@ -17,5 +17,5 @@ extension `Geometry.Hypercube Tests` {
                 #expect(true)
             }
         }
-}
+    }
 #endif

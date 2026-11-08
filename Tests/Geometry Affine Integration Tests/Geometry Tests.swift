@@ -48,7 +48,7 @@
         return diff > -tolerance && diff < tolerance
     }
 
-    fileprivate struct TestUnit: AdditiveArithmetic, Comparable, Codable, Hashable, ExpressibleByIntegerLiteral,
+    private struct TestUnit: AdditiveArithmetic, Comparable, Codable, Hashable, ExpressibleByIntegerLiteral,
         ExpressibleByFloatLiteral
     {
         let value: Double
@@ -82,9 +82,9 @@
         }
     }
 
-enum `Geometry Tests` {}
+    enum `Geometry Tests` {}
 
-extension `Geometry Tests` {
+    extension `Geometry Tests` {
         @Suite
         struct `Geometry Unit Tests` {
             @Test
@@ -99,7 +99,7 @@ extension `Geometry Tests` {
                 #expect(point.x == 10)
             }
         }
-}
+    }
 
     @Suite
     struct `Point Tests` {
@@ -359,7 +359,7 @@ extension `Geometry Tests` {
         }
     }
 
-extension `Geometry Tests` {
+    extension `Geometry Tests` {
         @Suite
         struct `Line Segment Tests` {
             @Test
@@ -403,7 +403,7 @@ extension `Geometry Tests` {
                 #expect(Geometry.vector(of: segment).dy == 30)
             }
         }
-}
+    }
 
     @Suite
     struct `Line Tests` {
@@ -584,7 +584,7 @@ extension `Geometry Tests` {
         }
     }
 
-extension `Geometry Tests` {
+    extension `Geometry Tests` {
         @Suite
         struct `Linear Transform Tests` {
             typealias Matrix2x2 = Linear<Double, Void>.Matrix<2, 2>
@@ -630,9 +630,9 @@ extension `Geometry Tests` {
                 #expect(singular.inverse == nil)
             }
         }
-}
+    }
 
-extension `Geometry Tests` {
+    extension `Geometry Tests` {
         @Suite
         struct `Scale Transform Tests` {
             @Test
@@ -666,5 +666,5 @@ extension `Geometry Tests` {
                 #expect(inverted.y == 0.25)
             }
         }
-}
+    }
 #endif

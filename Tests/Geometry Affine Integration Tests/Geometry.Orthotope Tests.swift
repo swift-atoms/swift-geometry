@@ -6,9 +6,9 @@
     @testable import Geometry
     import Testing
 
-enum `Geometry.Orthotope Tests` {}
+    enum `Geometry.Orthotope Tests` {}
 
-extension `Geometry.Orthotope Tests` {
+    extension `Geometry.Orthotope Tests` {
         @Suite
         struct `Geometry.Orthotope - Placeholder` {
             @Test
@@ -17,5 +17,5 @@ extension `Geometry.Orthotope Tests` {
                 #expect(true)
             }
         }
-}
+    }
 #endif

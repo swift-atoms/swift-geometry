@@ -35,9 +35,9 @@
         return diff > -tolerance && diff < tolerance
     }
 
-enum `Geometry.Ray Tests` {}
+    enum `Geometry.Ray Tests` {}
 
-extension `Geometry.Ray Tests` {
+    extension `Geometry.Ray Tests` {
         @Suite
         struct `Geometry.Ray - Initialization` {
             @Test
@@ -73,9 +73,9 @@ extension `Geometry.Ray Tests` {
                 #expect(ray.direction.dy == 0)
             }
         }
-}
+    }
 
-extension `Geometry.Ray Tests` {
+    extension `Geometry.Ray Tests` {
         @Suite
         struct `Geometry.Ray - Properties` {
             @Test
@@ -111,9 +111,9 @@ extension `Geometry.Ray Tests` {
                 #expect(line.direction.dy == 4)
             }
         }
-}
+    }
 
-extension `Geometry.Ray Tests` {
+    extension `Geometry.Ray Tests` {
         @Suite
         struct `Geometry.Ray - Parametric Points` {
             @Test
@@ -149,9 +149,9 @@ extension `Geometry.Ray Tests` {
                 #expect(point.y == 0)
             }
         }
-}
+    }
 
-extension `Geometry.Ray Tests` {
+    extension `Geometry.Ray Tests` {
         @Suite
         struct `Geometry.Ray - Containment` {
             @Test
@@ -193,9 +193,9 @@ extension `Geometry.Ray Tests` {
                 #expect(!ray.contains(point))
             }
         }
-}
+    }
 
-extension `Geometry.Ray Tests` {
+    extension `Geometry.Ray Tests` {
         @Suite
         struct `Geometry.Ray - Line Intersection` {
             @Test
@@ -245,9 +245,9 @@ extension `Geometry.Ray Tests` {
                 #expect(intersection == nil)
             }
         }
-}
+    }
 
-extension `Geometry.Ray Tests` {
+    extension `Geometry.Ray Tests` {
         @Suite
         struct `Geometry.Ray - Segment Intersection` {
             @Test
@@ -282,9 +282,9 @@ extension `Geometry.Ray Tests` {
                 #expect(intersection == nil)
             }
         }
-}
+    }
 
-extension `Geometry.Ray Tests` {
+    extension `Geometry.Ray Tests` {
         @Suite
         struct `Geometry.Ray - Circle Intersection` {
             @Test
@@ -345,9 +345,9 @@ extension `Geometry.Ray Tests` {
                 #expect(isApprox(intersections[0].x, X(5)))
             }
         }
-}
+    }
 
-extension `Geometry.Ray Tests` {
+    extension `Geometry.Ray Tests` {
         @Suite
         struct `Geometry.Ray - Functorial Map` {
             @Test
@@ -367,5 +367,5 @@ extension `Geometry.Ray Tests` {
                 #expect(mapped.direction.dy == expectedDy)
             }
         }
-}
+    }
 #endif
