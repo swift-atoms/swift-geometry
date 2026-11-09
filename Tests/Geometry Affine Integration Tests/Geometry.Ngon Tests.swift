@@ -473,6 +473,46 @@
             }
 
             @Test
+            func `Barycentric of vertex B`() throws {
+                let triangle: Geometry<Double, Void>.Triangle = .init(
+                    a: .init(x: 0, y: 0),
+                    b: .init(x: 4, y: 0),
+                    c: .init(x: 0, y: 3)
+                )
+                let bary = try #require(triangle.barycentric(triangle.b))
+                #expect(abs(bary.u) < 1e-10)
+                #expect(abs(bary.v - 1) < 1e-10)
+                #expect(abs(bary.w) < 1e-10)
+            }
+
+            @Test
+            func `Barycentric of vertex C`() throws {
+                let triangle: Geometry<Double, Void>.Triangle = .init(
+                    a: .init(x: 0, y: 0),
+                    b: .init(x: 4, y: 0),
+                    c: .init(x: 0, y: 3)
+                )
+                let bary = try #require(triangle.barycentric(triangle.c))
+                #expect(abs(bary.u) < 1e-10)
+                #expect(abs(bary.v) < 1e-10)
+                #expect(abs(bary.w - 1) < 1e-10)
+            }
+
+            @Test
+            func `Barycentric round-trips through point`() throws {
+                let triangle: Geometry<Double, Void>.Triangle = .init(
+                    a: .init(x: 1, y: 1),
+                    b: .init(x: 6, y: 2),
+                    c: .init(x: 3, y: 7)
+                )
+                let original: Geometry<Double, Void>.Point<2> = .init(x: 3, y: 3)
+                let bary = try #require(triangle.barycentric(original))
+                let point = triangle.point(u: bary.u, v: bary.v, w: bary.w)
+                #expect(isApprox(point.x, original.x))
+                #expect(isApprox(point.y, original.y))
+            }
+
+            @Test
             func `Barycentric of centroid`() {
                 let triangle: Geometry<Double, Void>.Triangle = .init(
                     a: .init(x: 0, y: 0),

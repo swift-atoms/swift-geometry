@@ -824,11 +824,11 @@
 
             let one: Scalar = Scalar(1)
             let invDenom: Scalar = one / denom
-            let v: Scalar = (dot11 * dot02 - dot01 * dot12) * invDenom
-            let u: Scalar = (dot00 * dot12 - dot01 * dot02) * invDenom
-            let w: Scalar = one - u - v
+            let w: Scalar = (dot11 * dot02 - dot01 * dot12) * invDenom
+            let v: Scalar = (dot00 * dot12 - dot01 * dot02) * invDenom
+            let u: Scalar = one - v - w
 
-            return (w, u, v)
+            return (u, v, w)
         }
 
         @inlinable
