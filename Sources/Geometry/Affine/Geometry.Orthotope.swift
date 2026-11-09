@@ -168,8 +168,6 @@
 
     extension Geometry.Orthotope where N == 2, Scalar: BinaryInteger {
 
-        // An integer orthotope stores its center and half extents, so an odd width or height
-        // has no exact representation; such corners are refused instead of shrunk by one.
         @inlinable
         public init?(
             llx: Geometry.X,

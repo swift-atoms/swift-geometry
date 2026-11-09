@@ -602,9 +602,6 @@
 
     extension Geometry.Ellipse.Arc where Scalar: BinaryFloatingPoint & Numeric.Transcendental {
 
-        // The SVG endpoint parameterization. Returns `nil` where SVG draws no arc: coincident
-        // endpoints (the segment is omitted) or a zero radius (a straight line). The SVG-complete
-        // form is `Geometry.Path.Segment(from:to:rx:ry:xAxisRotation:largeArcFlag:sweepFlag:)`.
         @inlinable
         public init?(
             from start: Geometry.Point<2>,

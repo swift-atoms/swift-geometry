@@ -109,8 +109,6 @@
 
     extension Geometry.Path.Segment where Scalar: BinaryFloatingPoint & Numeric.Transcendental {
 
-        // The SVG elliptical arc command: an elliptical arc, or the straight line SVG draws in
-        // its place when the endpoints coincide or a radius is zero.
         @inlinable
         public init(
             from start: Geometry.Point<2>,
@@ -121,7 +119,7 @@
             largeArcFlag: Bool,
             sweepFlag: Bool
         ) {
-            if let arc = Geometry.Ellipse.Arc(
+            let arc = Geometry.Ellipse.Arc(
                 from: start,
                 to: end,
                 rx: rx,
@@ -129,11 +127,8 @@
                 xAxisRotation: xAxisRotation,
                 largeArcFlag: largeArcFlag,
                 sweepFlag: sweepFlag
-            ) {
-                self = .ellipticalArc(arc)
-            } else {
-                self = .line(Geometry.Line.Segment(start: start, end: end))
-            }
+            )
+            self = arc.map { .ellipticalArc($0) } ?? .line(Geometry.Line.Segment(start: start, end: end))
         }
     }
 

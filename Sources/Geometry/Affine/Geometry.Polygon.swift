@@ -246,9 +246,6 @@
 
     extension Geometry.Polygon where Scalar: FloatingPoint {
 
-        // Ear clipping on the counterclockwise winding of the polygon. Returns `nil` when the
-        // polygon cannot be split into `vertexCount - 2` triangles: fewer than three vertices,
-        // two non-adjacent edges that intersect, or no ear left to clip.
         @inlinable
         public func triangulate() -> [Geometry.Triangle]? {
             guard vertices.count >= 3 else { return nil }
@@ -259,7 +256,7 @@
             let sides = edges
             for i in sides.indices {
                 for j in stride(from: i + 2, to: sides.count, by: 1)
-                where !(i == 0 && j == sides.count - 1) {
+                where (j + 1) % sides.count != i {
                     if Geometry.intersects(sides[i], sides[j]) { return nil }
                 }
             }
