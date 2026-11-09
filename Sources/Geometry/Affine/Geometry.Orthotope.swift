@@ -168,15 +168,20 @@
 
     extension Geometry.Orthotope where N == 2, Scalar: BinaryInteger {
 
+        // An integer orthotope stores its center and half extents, so an odd width or height
+        // has no exact representation; such corners are refused instead of shrunk by one.
         @inlinable
-        public init(
+        public init?(
             llx: Geometry.X,
             lly: Geometry.Y,
             urx: Geometry.X,
             ury: Geometry.Y
         ) {
-            let halfWidth = (urx.underlying - llx.underlying) / 2
-            let halfHeight = (ury.underlying - lly.underlying) / 2
+            let width = urx.underlying - llx.underlying
+            let height = ury.underlying - lly.underlying
+            guard width % 2 == 0, height % 2 == 0 else { return nil }
+            let halfWidth = width / 2
+            let halfHeight = height / 2
             self.init(
                 center: Geometry.Point(
                     x: Geometry.X(llx.underlying + halfWidth),
@@ -190,7 +195,7 @@
         }
 
         @inlinable
-        public init(
+        public init?(
             x: Geometry.X,
             y: Geometry.Y,
             width: Geometry.Width,
