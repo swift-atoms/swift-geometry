@@ -479,8 +479,13 @@
                 let end: Geo.Point<2> = .init(x: 10, y: 0)
                 let arc = try #require(
                     Geo.Ellipse.Arc(
-                        from: start, to: end, rx: 5, ry: 5,
-                        xAxisRotation: .zero, largeArcFlag: false, sweepFlag: true
+                        from: start,
+                        to: end,
+                        rx: 5,
+                        ry: 5,
+                        xAxisRotation: .zero,
+                        largeArcFlag: false,
+                        sweepFlag: true
                     )
                 )
                 #expect(isApprox(arc.center.x, X(5)))
@@ -499,14 +504,24 @@
                 let end: Geo.Point<2> = .init(x: 10, y: 0)
                 let small = try #require(
                     Geo.Ellipse.Arc(
-                        from: start, to: end, rx: 10, ry: 10,
-                        xAxisRotation: .zero, largeArcFlag: false, sweepFlag: false
+                        from: start,
+                        to: end,
+                        rx: 10,
+                        ry: 10,
+                        xAxisRotation: .zero,
+                        largeArcFlag: false,
+                        sweepFlag: false
                     )
                 )
                 let large = try #require(
                     Geo.Ellipse.Arc(
-                        from: start, to: end, rx: 10, ry: 10,
-                        xAxisRotation: .zero, largeArcFlag: true, sweepFlag: false
+                        from: start,
+                        to: end,
+                        rx: 10,
+                        ry: 10,
+                        xAxisRotation: .zero,
+                        largeArcFlag: true,
+                        sweepFlag: false
                     )
                 )
                 #expect(abs(small.sweep.underlying) < Double.pi)
@@ -519,10 +534,17 @@
 
             @Test
             func `Radii too small to reach are scaled up`() throws {
+                let start: Geo.Point<2> = .init(x: 0, y: 0)
+                let end: Geo.Point<2> = .init(x: 10, y: 0)
                 let arc = try #require(
                     Geo.Ellipse.Arc(
-                        from: .init(x: 0, y: 0), to: .init(x: 10, y: 0), rx: 1, ry: 1,
-                        xAxisRotation: .zero, largeArcFlag: false, sweepFlag: true
+                        from: start,
+                        to: end,
+                        rx: 1,
+                        ry: 1,
+                        xAxisRotation: .zero,
+                        largeArcFlag: false,
+                        sweepFlag: true
                     )
                 )
                 #expect(abs(arc.semiMajor.underlying - 5) < 1e-10)
@@ -535,13 +557,23 @@
                 let end: Geo.Point<2> = .init(x: 7, y: 5)
                 #expect(
                     Geo.Ellipse.Arc(
-                        from: start, to: end, rx: 0, ry: 4,
-                        xAxisRotation: .zero, largeArcFlag: false, sweepFlag: true
+                        from: start,
+                        to: end,
+                        rx: 0,
+                        ry: 4,
+                        xAxisRotation: .zero,
+                        largeArcFlag: false,
+                        sweepFlag: true
                     ) == nil
                 )
                 let segment = Geo.Path.Segment(
-                    from: start, to: end, rx: 0, ry: 4,
-                    xAxisRotation: .zero, largeArcFlag: false, sweepFlag: true
+                    from: start,
+                    to: end,
+                    rx: 0,
+                    ry: 4,
+                    xAxisRotation: .zero,
+                    largeArcFlag: false,
+                    sweepFlag: true
                 )
                 #expect(segment == .line(Geo.Line.Segment(start: start, end: end)))
                 #expect(segment.toBeziers().count == 1)
@@ -552,17 +584,29 @@
                 let point: Geo.Point<2> = .init(x: 3, y: 3)
                 #expect(
                     Geo.Ellipse.Arc(
-                        from: point, to: point, rx: 5, ry: 5,
-                        xAxisRotation: .zero, largeArcFlag: false, sweepFlag: true
+                        from: point,
+                        to: point,
+                        rx: 5,
+                        ry: 5,
+                        xAxisRotation: .zero,
+                        largeArcFlag: false,
+                        sweepFlag: true
                     ) == nil
                 )
             }
 
             @Test
             func `Path segment keeps a real arc`() {
+                let start: Geo.Point<2> = .init(x: 0, y: 0)
+                let end: Geo.Point<2> = .init(x: 10, y: 0)
                 let segment = Geo.Path.Segment(
-                    from: .init(x: 0, y: 0), to: .init(x: 10, y: 0), rx: 5, ry: 5,
-                    xAxisRotation: .zero, largeArcFlag: false, sweepFlag: true
+                    from: start,
+                    to: end,
+                    rx: 5,
+                    ry: 5,
+                    xAxisRotation: .zero,
+                    largeArcFlag: false,
+                    sweepFlag: true
                 )
                 guard case .ellipticalArc = segment else {
                     Issue.record("expected an elliptical arc, got \(segment)")

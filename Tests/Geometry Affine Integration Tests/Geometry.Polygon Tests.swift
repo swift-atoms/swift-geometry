@@ -531,12 +531,12 @@
             @Test
             func `Triangulate clockwise concave polygon`() throws {
                 let polygon: Geometry<Double, Void>.Polygon = .init(vertices: [
-                    .init(x: 0, y: 0),
-                    .init(x: 2, y: 2),
-                    .init(x: 4, y: 0),
-                    .init(x: 4, y: 4),
                     .init(x: 0, y: 4),
-                ].reversed())
+                    .init(x: 4, y: 4),
+                    .init(x: 4, y: 0),
+                    .init(x: 2, y: 2),
+                    .init(x: 0, y: 0),
+                ])
                 #expect(polygon.isClockwise)
                 let triangles = try #require(polygon.triangulate())
                 #expect(triangles.count == 3)
