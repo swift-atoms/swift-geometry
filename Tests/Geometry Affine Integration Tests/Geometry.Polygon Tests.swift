@@ -487,25 +487,25 @@
         @Suite
         struct `Geometry.Polygon - Triangulation` {
             @Test
-            func `Triangulate triangle`() {
+            func `Triangulate triangle`() throws {
                 let polygon: Geometry<Double, Void>.Polygon = .init(vertices: [
                     .init(x: 0, y: 0),
                     .init(x: 4, y: 0),
                     .init(x: 2, y: 3),
                 ])
-                let triangles = polygon.triangulate()
+                let triangles = try #require(polygon.triangulate())
                 #expect(triangles.count == 1)
             }
 
             @Test
-            func `Triangulate square`() {
+            func `Triangulate square`() throws {
                 let polygon: Geometry<Double, Void>.Polygon = .init(vertices: [
                     .init(x: 0, y: 0),
                     .init(x: 4, y: 0),
                     .init(x: 4, y: 4),
                     .init(x: 0, y: 4),
                 ])
-                let triangles = polygon.triangulate()
+                let triangles = try #require(polygon.triangulate())
                 #expect(triangles.count == 2)
 
                 let totalArea = triangles.reduce(0.0) { $0 + $1.area }
@@ -513,7 +513,7 @@
             }
 
             @Test
-            func `Triangulate pentagon`() {
+            func `Triangulate pentagon`() throws {
                 let polygon: Geometry<Double, Void>.Polygon = .init(vertices: [
                     .init(x: 0, y: 0),
                     .init(x: 4, y: 0),
@@ -521,11 +521,51 @@
                     .init(x: 2, y: 5),
                     .init(x: -1, y: 3),
                 ])
-                let triangles = polygon.triangulate()
+                let triangles = try #require(polygon.triangulate())
                 #expect(triangles.count == 3)
 
                 let totalArea = triangles.reduce(0.0) { $0 + $1.area }
                 #expect(abs(totalArea - polygon.area) < 1e-10)
+            }
+
+            @Test
+            func `Triangulate clockwise concave polygon`() throws {
+                let polygon: Geometry<Double, Void>.Polygon = .init(vertices: [
+                    .init(x: 0, y: 0),
+                    .init(x: 2, y: 2),
+                    .init(x: 4, y: 0),
+                    .init(x: 4, y: 4),
+                    .init(x: 0, y: 4),
+                ].reversed())
+                #expect(polygon.isClockwise)
+                let triangles = try #require(polygon.triangulate())
+                #expect(triangles.count == 3)
+
+                let totalArea = triangles.reduce(0.0) { $0 + $1.area }
+                #expect(abs(totalArea - polygon.area) < 1e-10)
+            }
+
+            @Test
+            func `Triangulate self-intersecting polygon fails`() {
+                let bowtie: Geometry<Double, Void>.Polygon = .init(vertices: [
+                    .init(x: 0, y: 0),
+                    .init(x: 4, y: 4),
+                    .init(x: 4, y: 0),
+                    .init(x: 0, y: 4),
+                ])
+                #expect(bowtie.triangulate() == nil)
+            }
+
+            @Test
+            func `Triangulate pentagram fails`() {
+                let pentagram: Geometry<Double, Void>.Polygon = .init(vertices: [
+                    .init(x: 0, y: 10),
+                    .init(x: -5.878, y: -8.09),
+                    .init(x: 9.511, y: 3.09),
+                    .init(x: -9.511, y: 3.09),
+                    .init(x: 5.878, y: -8.09),
+                ])
+                #expect(pentagram.triangulate() == nil)
             }
         }
     }
