@@ -484,8 +484,8 @@
                         rx: 5,
                         ry: 5,
                         xAxisRotation: .zero,
-                        largeArcFlag: false,
-                        sweepFlag: true
+                        extent: .minor,
+                        direction: .positive
                     )
                 )
                 #expect(isApprox(arc.center.x, X(5)))
@@ -499,7 +499,7 @@
             }
 
             @Test
-            func `Large arc flag picks the longer of the two arcs`() throws {
+            func `Major extent picks the longer of the two arcs`() throws {
                 let start: Geo.Point<2> = .init(x: 0, y: 0)
                 let end: Geo.Point<2> = .init(x: 10, y: 0)
                 let small = try #require(
@@ -509,8 +509,8 @@
                         rx: 10,
                         ry: 10,
                         xAxisRotation: .zero,
-                        largeArcFlag: false,
-                        sweepFlag: false
+                        extent: .minor,
+                        direction: .negative
                     )
                 )
                 let large = try #require(
@@ -520,8 +520,8 @@
                         rx: 10,
                         ry: 10,
                         xAxisRotation: .zero,
-                        largeArcFlag: true,
-                        sweepFlag: false
+                        extent: .major,
+                        direction: .negative
                     )
                 )
                 #expect(abs(small.sweep.underlying) < Double.pi)
@@ -543,8 +543,8 @@
                         rx: 1,
                         ry: 1,
                         xAxisRotation: .zero,
-                        largeArcFlag: false,
-                        sweepFlag: true
+                        extent: .minor,
+                        direction: .positive
                     )
                 )
                 #expect(abs(arc.semiMajor.underlying - 5) < 1e-10)
@@ -562,8 +562,8 @@
                         rx: 0,
                         ry: 4,
                         xAxisRotation: .zero,
-                        largeArcFlag: false,
-                        sweepFlag: true
+                        extent: .minor,
+                        direction: .positive
                     ) == nil
                 )
                 let segment = Geo.Path.Segment(
@@ -572,8 +572,8 @@
                     rx: 0,
                     ry: 4,
                     xAxisRotation: .zero,
-                    largeArcFlag: false,
-                    sweepFlag: true
+                    extent: .minor,
+                    direction: .positive
                 )
                 #expect(segment == .line(Geo.Line.Segment(start: start, end: end)))
                 #expect(segment.toBeziers().count == 1)
@@ -589,8 +589,8 @@
                         rx: 5,
                         ry: 5,
                         xAxisRotation: .zero,
-                        largeArcFlag: false,
-                        sweepFlag: true
+                        extent: .minor,
+                        direction: .positive
                     ) == nil
                 )
             }
@@ -605,8 +605,8 @@
                     rx: 5,
                     ry: 5,
                     xAxisRotation: .zero,
-                    largeArcFlag: false,
-                    sweepFlag: true
+                    extent: .minor,
+                    direction: .positive
                 )
                 guard case .ellipticalArc = segment else {
                     Issue.record("expected an elliptical arc, got \(segment)")

@@ -116,8 +116,8 @@
             rx: Geometry.Length,
             ry: Geometry.Length,
             xAxisRotation: Radian<Scalar>,
-            largeArcFlag: Bool,
-            sweepFlag: Bool
+            extent: Geometry.Ellipse.Arc.Extent,
+            direction: Geometry.Ellipse.Arc.Direction
         ) {
             let arc = Geometry.Ellipse.Arc(
                 from: start,
@@ -125,8 +125,8 @@
                 rx: rx,
                 ry: ry,
                 xAxisRotation: xAxisRotation,
-                largeArcFlag: largeArcFlag,
-                sweepFlag: sweepFlag
+                extent: extent,
+                direction: direction
             )
             self = arc.map { .ellipticalArc($0) } ?? .line(Geometry.Line.Segment(start: start, end: end))
         }

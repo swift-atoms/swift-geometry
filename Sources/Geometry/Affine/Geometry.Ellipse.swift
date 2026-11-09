@@ -609,8 +609,8 @@
             rx: Geometry.Length,
             ry: Geometry.Length,
             xAxisRotation: Radian<Scalar>,
-            largeArcFlag: Bool,
-            sweepFlag: Bool
+            extent: Geometry.Ellipse.Arc.Extent,
+            direction: Geometry.Ellipse.Arc.Direction
         ) {
 
             let x1 = start.x.underlying
@@ -656,7 +656,7 @@
             sq = max(0, sq)
             var sqrtVal: Scalar = Scalar._sqrt(sq)
 
-            if largeArcFlag == sweepFlag {
+            if (extent == .major) == (direction == .positive) {
                 sqrtVal = -sqrtVal
             }
 
@@ -680,9 +680,9 @@
 
             var dTheta = Self.angleBetween(ux: vx, uy: vy, vx: wx, vy: wy)
 
-            if !sweepFlag && dTheta > 0 {
+            if direction == .negative && dTheta > 0 {
                 dTheta -= Scalar.pi * 2
-            } else if sweepFlag && dTheta < 0 {
+            } else if direction == .positive && dTheta < 0 {
                 dTheta += Scalar.pi * 2
             }
 
