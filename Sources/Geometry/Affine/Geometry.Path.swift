@@ -107,6 +107,36 @@
         }
     }
 
+    extension Geometry.Path.Segment where Scalar: BinaryFloatingPoint & Numeric.Transcendental {
+
+        // The SVG elliptical arc command: an elliptical arc, or the straight line SVG draws in
+        // its place when the endpoints coincide or a radius is zero.
+        @inlinable
+        public init(
+            from start: Geometry.Point<2>,
+            to end: Geometry.Point<2>,
+            rx: Geometry.Length,
+            ry: Geometry.Length,
+            xAxisRotation: Radian<Scalar>,
+            largeArcFlag: Bool,
+            sweepFlag: Bool
+        ) {
+            if let arc = Geometry.Ellipse.Arc(
+                from: start,
+                to: end,
+                rx: rx,
+                ry: ry,
+                xAxisRotation: xAxisRotation,
+                largeArcFlag: largeArcFlag,
+                sweepFlag: sweepFlag
+            ) {
+                self = .ellipticalArc(arc)
+            } else {
+                self = .line(Geometry.Line.Segment(start: start, end: end))
+            }
+        }
+    }
+
     extension Array {
 
         @inlinable

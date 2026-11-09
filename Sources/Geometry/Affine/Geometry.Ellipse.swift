@@ -602,8 +602,11 @@
 
     extension Geometry.Ellipse.Arc where Scalar: BinaryFloatingPoint & Numeric.Transcendental {
 
+        // The SVG endpoint parameterization. Returns `nil` where SVG draws no arc: coincident
+        // endpoints (the segment is omitted) or a zero radius (a straight line). The SVG-complete
+        // form is `Geometry.Path.Segment(from:to:rx:ry:xAxisRotation:largeArcFlag:sweepFlag:)`.
         @inlinable
-        public init(
+        public init?(
             from start: Geometry.Point<2>,
             to end: Geometry.Point<2>,
             rx: Geometry.Length,
@@ -618,36 +621,12 @@
             let x2 = end.x.underlying
             let y2 = end.y.underlying
 
-            if x1 == x2 && y1 == y2 {
-
-                self.init(
-                    center: start,
-                    semiMajor: rx,
-                    semiMinor: ry,
-                    rotation: xAxisRotation,
-                    startAngle: .zero,
-                    endAngle: .zero
-                )
-                return
-            }
+            if x1 == x2 && y1 == y2 { return nil }
 
             var rxVal = abs(rx.underlying)
             var ryVal = abs(ry.underlying)
 
-            if rxVal == 0 || ryVal == 0 {
-
-                let midX = (x1 + x2) / 2
-                let midY = (y1 + y2) / 2
-                self.init(
-                    center: Geometry.Point(x: Geometry.X(midX), y: Geometry.Y(midY)),
-                    semiMajor: Geometry.Length(rxVal),
-                    semiMinor: Geometry.Length(ryVal),
-                    rotation: xAxisRotation,
-                    startAngle: .zero,
-                    endAngle: .zero
-                )
-                return
-            }
+            if rxVal == 0 || ryVal == 0 { return nil }
 
             let phi = xAxisRotation.underlying
             let cosPhi = Scalar._cos(phi)
