@@ -273,6 +273,13 @@
                 }
                 #expect(throws: Never.self) { try path.stroked(pen(2, .miter(limit: 1), .round), tolerance: 0.01) }
             }
+
+            @Test
+            func `The three errors are distinct, hashable values`() {
+                let errors: Set<Geo.Path.Error> = [.tolerance, .width, .limit, .width]
+                #expect(errors.count == 3)
+                #expect(errors.contains(.limit))
+            }
         }
     }
 #endif
