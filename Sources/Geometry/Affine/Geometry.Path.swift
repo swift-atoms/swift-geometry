@@ -334,7 +334,6 @@
         }
     }
 
-
     extension Geometry.Path.Segment where Scalar: BinaryFloatingPoint & Numeric.Transcendental {
 
         @inlinable
@@ -403,7 +402,6 @@
             transformed(by: map, to: Space.self)
         }
     }
-
 
     extension Geometry.Path.Subpath where Scalar: BinaryFloatingPoint & Numeric.Transcendental {
 
@@ -493,7 +491,6 @@
             return Self(subpaths: subpaths.map { $0.flattened(tolerance: allowance) })
         }
     }
-
 
     extension Geometry.Path.Subpath where Scalar: BinaryFloatingPoint & Numeric.Transcendental {
 
@@ -619,7 +616,6 @@
             rule.contains(winding(around: point))
         }
     }
-
 
     extension Geometry.Path.Subpath where Scalar: BinaryFloatingPoint & Numeric.Transcendental {
 
