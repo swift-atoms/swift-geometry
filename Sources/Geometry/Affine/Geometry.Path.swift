@@ -334,7 +334,6 @@
         }
     }
 
-    // MARK: - Transforming
 
     extension Geometry.Path.Segment where Scalar: BinaryFloatingPoint & Numeric.Transcendental {
 
@@ -405,7 +404,6 @@
         }
     }
 
-    // MARK: - Flattening
 
     extension Geometry.Path.Subpath where Scalar: BinaryFloatingPoint & Numeric.Transcendental {
 
@@ -496,11 +494,14 @@
         }
     }
 
-    // MARK: - Winding
 
     extension Geometry.Path.Subpath where Scalar: BinaryFloatingPoint & Numeric.Transcendental {
 
         /// The signed number of times the subpath, closed by a straight line, turns around a finite point.
+        ///
+        /// A piece of a curve is replaced by its chord once the point is outside the box around it: for a Bézier
+        /// curve the box around its control points, for an arc the box around its two ends and the point where
+        /// the tangents at those ends meet.
         @inlinable
         func turns(around target: (x: Scalar, y: Scalar)) -> Int {
             var turns = 0
@@ -556,7 +557,6 @@
                 func piece(from: Scalar, to: Scalar, depth: Int) {
                     let end = point(at: to)
                     let middle = from / 2 + to / 2
-                    // The piece lies inside the triangle of its two ends and the point where their tangents meet.
                     let corner = point(at: middle, over: Scalar.cos((to - from) / 2))
                     if depth == 0 || clears([current, corner, end]) {
                         edge(to: end)
@@ -620,7 +620,6 @@
         }
     }
 
-    // MARK: - Stroking
 
     extension Geometry.Path.Subpath where Scalar: BinaryFloatingPoint & Numeric.Transcendental {
 
@@ -658,6 +657,9 @@
         }
 
         /// Appends the closed counterclockwise pieces whose union is this subpath stroked.
+        ///
+        /// The left normal of a direction is (−y, x). The body of a straight run goes out along its right side and
+        /// back along its left. A left turn opens the gap a join fills on the right side, a right turn on the left.
         @inlinable
         func outline(
             _ stroke: Geometry.Path.Stroke,
@@ -677,8 +679,8 @@
                 let length = (gap.x * gap.x + gap.y * gap.y).squareRoot()
                 if length > 0, length.isFinite {
                     vertices.append(vertex)
-                } else if !vertex.smooth {
-                    vertices[vertices.count - 1].smooth = false
+                } else if !vertex.smooth, let end = vertices.indices.last {
+                    vertices[end].smooth = false
                 }
             }
             if isClosed, vertices.count > 1, let first = vertices.first, let last = vertices.last {
@@ -691,10 +693,12 @@
                 switch stroke.cap {
                 case .butt:
                     break
+
                 case .round:
                     let center = Geometry.Point<2>([first.x, first.y])
                     let circle = Geometry.Arc.fullCircle(center: center, radius: Geometry.Radius(half))
                     pieces.append(Self(startPoint: circle.startPoint, segments: [.arc(circle)], isClosed: true))
+
                 case .square:
                     pieces.append(
                         Self.ring([
@@ -715,7 +719,6 @@
                 let gap = (x: to.x - from.x, y: to.y - from.y)
                 let length = (gap.x * gap.x + gap.y * gap.y).squareRoot()
                 directions.append((gap.x / length, gap.y / length))
-                // The left normal of the direction is (−y, x); the body runs right side out, left side back.
                 let offset = (x: -gap.y / length * half, y: gap.x / length * half)
                 pieces.append(
                     Self.ring([
@@ -734,7 +737,6 @@
                 let dot = incoming.x * outgoing.x + incoming.y * outgoing.y
                 let turn = Scalar.atan2(cross, dot)
                 guard turn != 0 else { continue }
-                // A left turn opens the gap on the right side, a right turn on the left side.
                 let side: Scalar = turn > 0 ? -1 : 1
                 let before = (x: -incoming.y * side, y: incoming.x * side)
                 let after = (x: -outgoing.y * side, y: outgoing.x * side)

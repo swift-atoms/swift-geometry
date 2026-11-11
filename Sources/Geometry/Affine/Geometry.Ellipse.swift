@@ -930,6 +930,7 @@
 
     extension Geometry.Ellipse.Arc where Scalar: BinaryFloatingPoint & Numeric.Transcendental {
 
+        /// The image of the two semi-axis vectors is split as rotation(outer) · diagonal(q + r, q − r) · rotation(inner).
         @inlinable
         public func transformed<Target>(
             by map: Matrix::Matrix<2, 3, Scalar>,
@@ -940,7 +941,6 @@
                 rows: [[frame.major.x, frame.minor.x], [frame.major.y, frame.minor.y]]
             )
             let image = map.linear.multiplied(by: axes)
-            // image = rotation(outer) · diagonal(q + r, q − r) · rotation(inner)
             let e = (image[0, 0] + image[1, 1]) / 2
             let f = (image[0, 0] - image[1, 1]) / 2
             let g = (image[1, 0] + image[0, 1]) / 2
@@ -993,12 +993,13 @@
         }
 
         /// How many equal steps keep every chord within `tolerance` of the arc, at most 65536.
+        ///
+        /// A chord of a quarter turn is already within a tolerance as long as the radius.
         @inlinable
         func steps(tolerance: Scalar) -> Int? {
             guard let quarters else { return nil }
             let radius = max(abs(semiMajor.underlying), abs(semiMinor.underlying))
             guard radius.isFinite else { return nil }
-            // A chord of a quarter turn is already within a tolerance as long as the radius.
             guard tolerance < radius else { return quarters }
             let step = 2 * Scalar.acos(1 - tolerance / radius)
             let demand = (abs(sweep.underlying) / step).rounded(.up)
