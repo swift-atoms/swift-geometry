@@ -60,6 +60,8 @@ let package = Package(
         .package(url: "https://github.com/swift-atoms/swift-angle.git", branch: "main"),
         .package(url: "https://github.com/swift-atoms/swift-trigonometry.git", branch: "main"),
         .package(url: "https://github.com/swift-atoms/swift-numeric.git", branch: "main"),
+        .package(url: "https://github.com/swift-atoms/swift-matrix.git", branch: "main"),
+        .package(url: "https://github.com/swift-atoms/swift-direction.git", branch: "main"),
     ],
     targets: [
         .target(
@@ -84,6 +86,8 @@ let package = Package(
                 .product(name: "Angle", package: "swift-angle", condition: .when(traits: ["Affine"])),
                 .product(name: "Trigonometry", package: "swift-trigonometry", condition: .when(traits: ["Affine"])),
                 .product(name: "Numeric", package: "swift-numeric", condition: .when(traits: ["Affine"])),
+                .product(name: "Matrix", package: "swift-matrix", condition: .when(traits: ["Affine"])),
+                .product(name: "Direction", package: "swift-direction", condition: .when(traits: ["Affine"])),
             ],
             path: "Sources/Geometry"
         ),
@@ -125,6 +129,7 @@ let package = Package(
                 .product(name: "Quantizer", package: "swift-quantizer", condition: .when(traits: ["Affine"])), .product(name: "Scale", package: "swift-scale", condition: .when(traits: ["Affine"])),
                 .product(name: "Displacement", package: "swift-displacement", condition: .when(traits: ["Affine"])),
                 .product(name: "Vector", package: "swift-vector", condition: .when(traits: ["Affine"])), .product(name: "Segment", package: "swift-segment", condition: .when(traits: ["Affine"])),
+                .product(name: "Matrix", package: "swift-matrix", condition: .when(traits: ["Affine"])), .product(name: "Direction", package: "swift-direction", condition: .when(traits: ["Affine"])),
             ],
             path: "Tests/Geometry Affine Integration Tests"
         ),

@@ -1,4 +1,5 @@
 #if Affine
+    public import Matrix
     public import Affine
     public import Displacement
     import Point
@@ -909,6 +910,101 @@
                 startAngle: Radian(_unchecked: try transform(startAngle.underlying)),
                 endAngle: Radian(_unchecked: try transform(endAngle.underlying))
             )
+        }
+    }
+
+    extension Geometry.Ellipse.Arc where Scalar: BinaryFloatingPoint {
+
+        @inlinable
+        public init(_ arc: Geometry.Arc) {
+            self.init(
+                center: arc.center,
+                semiMajor: arc.radius,
+                semiMinor: arc.radius,
+                rotation: .zero,
+                startAngle: arc.startAngle,
+                endAngle: arc.endAngle
+            )
+        }
+    }
+
+    extension Geometry.Ellipse.Arc where Scalar: BinaryFloatingPoint & Numeric.Transcendental {
+
+        @inlinable
+        public func transformed<Target>(
+            by map: Matrix::Matrix<2, 3, Scalar>,
+            to space: Target.Type
+        ) -> Geometry<Scalar, Target>.Ellipse.Arc {
+            let frame = self.frame
+            let axes = Matrix::Matrix<2, 2, Scalar>(
+                rows: [[frame.major.x, frame.minor.x], [frame.major.y, frame.minor.y]]
+            )
+            let image = map.linear.multiplied(by: axes)
+            // image = rotation(outer) · diagonal(q + r, q − r) · rotation(inner)
+            let e = (image[0, 0] + image[1, 1]) / 2
+            let f = (image[0, 0] - image[1, 1]) / 2
+            let g = (image[1, 0] + image[0, 1]) / 2
+            let h = (image[1, 0] - image[0, 1]) / 2
+            let q = (e * e + h * h).squareRoot()
+            let r = (f * f + g * g).squareRoot()
+            let first = Scalar.atan2(g, f)
+            let second = Scalar.atan2(h, e)
+            let inner = (second - first) / 2
+            let outer = (second + first) / 2
+            let minor = q - r
+            let sense: Scalar = minor < 0 ? -1 : 1
+            return Geometry<Scalar, Target>.Ellipse.Arc(
+                center: center.transformed(by: map, to: space),
+                semiMajor: Geometry<Scalar, Target>.Length(q + r),
+                semiMinor: Geometry<Scalar, Target>.Length(abs(minor)),
+                rotation: Radian(_unchecked: outer),
+                startAngle: Radian(_unchecked: sense * (startAngle.underlying + inner)),
+                endAngle: Radian(_unchecked: sense * (endAngle.underlying + inner))
+            )
+        }
+
+        @inlinable
+        public func transformed(by map: Matrix::Matrix<2, 3, Scalar>) -> Self {
+            transformed(by: map, to: Space.self)
+        }
+    }
+
+    extension Geometry.Ellipse.Arc where Scalar: BinaryFloatingPoint & Numeric.Transcendental {
+
+        /// The centre and the two semi-axis vectors: the point at angle t is `center + major · cos t + minor · sin t`.
+        @inlinable
+        var frame: (center: (x: Scalar, y: Scalar), major: (x: Scalar, y: Scalar), minor: (x: Scalar, y: Scalar)) {
+            let cosine = Scalar.cos(rotation.underlying)
+            let sine = Scalar.sin(rotation.underlying)
+            let a = semiMajor.underlying
+            let b = semiMinor.underlying
+            return ((center[0], center[1]), (a * cosine, a * sine), (-b * sine, b * cosine))
+        }
+
+        /// How many quarter turns the sweep starts, or `nil` where conversion to Bézier curves gives no segments.
+        @inlinable
+        var quarters: Int? {
+            let sweep = self.sweep.underlying
+            guard startAngle.underlying.isFinite, endAngle.underlying.isFinite, sweep.isFinite, sweep != 0
+            else { return nil }
+            let demand = (abs(sweep) / (Scalar.pi / 2)).rounded(.up)
+            guard demand <= Scalar(Geometry.arcBezierSegmentLimit) else { return nil }
+            return Int(demand)
+        }
+
+        /// How many equal steps keep every chord within `tolerance` of the arc, at most 65536.
+        @inlinable
+        func steps(tolerance: Scalar) -> Int? {
+            guard let quarters else { return nil }
+            let radius = max(abs(semiMajor.underlying), abs(semiMinor.underlying))
+            guard radius.isFinite else { return nil }
+            var step = Scalar.pi / 2
+            if tolerance < radius {
+                step = min(step, 2 * Scalar.acos(1 - tolerance / radius))
+            }
+            let demand = (abs(sweep.underlying) / step).rounded(.up)
+            guard demand < 65536 else { return 65536 }
+            return max(Int(demand), quarters)
         }
     }
 

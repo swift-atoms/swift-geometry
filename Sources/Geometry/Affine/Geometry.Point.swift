@@ -1,4 +1,5 @@
 #if Affine
+    public import Matrix
     @_exported public import Affine
     @_exported public import Point
     @_exported public import Displacement
@@ -128,4 +129,22 @@
         }
         public init(x: Geometry.X, y: Geometry.Y, z: Geometry.Z) { self.init([x.underlying, y.underlying, z.underlying]) }
     }
+
+    extension Geometry.Point where N == 2, Scalar: Swift::Numeric {
+
+        @inlinable
+        public func transformed<Target>(
+            by map: Matrix::Matrix<2, 3, Scalar>,
+            to space: Target.Type
+        ) -> Geometry<Scalar, Target>.Point<2> {
+            let image = map.applied(to: Vector::Vector([self[0], self[1]]))
+            return Geometry<Scalar, Target>.Point([image[0], image[1]])
+        }
+
+        @inlinable
+        public func transformed(by map: Matrix::Matrix<2, 3, Scalar>) -> Self {
+            transformed(by: map, to: Space.self)
+        }
+    }
+
 #endif

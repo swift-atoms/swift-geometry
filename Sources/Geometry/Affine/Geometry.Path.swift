@@ -1,4 +1,6 @@
 #if Affine
+    public import Direction
+    public import Matrix
     import Affine
     import Displacement
     import Point
@@ -329,6 +331,501 @@
                     try subpath.map(transform)
                 }
             )
+        }
+    }
+
+    // MARK: - Transforming
+
+    extension Geometry.Path.Segment where Scalar: BinaryFloatingPoint & Numeric.Transcendental {
+
+        @inlinable
+        public func transformed<Target>(
+            by map: Matrix::Matrix<2, 3, Scalar>,
+            to space: Target.Type
+        ) -> Geometry<Scalar, Target>.Path.Segment {
+            switch self {
+            case .line(let segment):
+                return .line(
+                    .init(
+                        start: segment.start.transformed(by: map, to: space),
+                        end: segment.end.transformed(by: map, to: space)
+                    )
+                )
+
+            case .bezier(let bezier):
+                return .bezier(bezier.transformed(by: map, to: space))
+
+            case .arc(let arc):
+                return .ellipticalArc(arc.transformed(by: map, to: space))
+
+            case .ellipticalArc(let arc):
+                return .ellipticalArc(arc.transformed(by: map, to: space))
+            }
+        }
+
+        @inlinable
+        public func transformed(by map: Matrix::Matrix<2, 3, Scalar>) -> Self {
+            transformed(by: map, to: Space.self)
+        }
+    }
+
+    extension Geometry.Path.Subpath where Scalar: BinaryFloatingPoint & Numeric.Transcendental {
+
+        @inlinable
+        public func transformed<Target>(
+            by map: Matrix::Matrix<2, 3, Scalar>,
+            to space: Target.Type
+        ) -> Geometry<Scalar, Target>.Path.Subpath {
+            .init(
+                startPoint: startPoint.transformed(by: map, to: space),
+                segments: segments.map { $0.transformed(by: map, to: space) },
+                isClosed: isClosed
+            )
+        }
+
+        @inlinable
+        public func transformed(by map: Matrix::Matrix<2, 3, Scalar>) -> Self {
+            transformed(by: map, to: Space.self)
+        }
+    }
+
+    extension Geometry.Path where Scalar: BinaryFloatingPoint & Numeric.Transcendental {
+
+        @inlinable
+        public func transformed<Target>(
+            by map: Matrix::Matrix<2, 3, Scalar>,
+            to space: Target.Type
+        ) -> Geometry<Scalar, Target>.Path {
+            .init(subpaths: subpaths.map { $0.transformed(by: map, to: space) })
+        }
+
+        @inlinable
+        public func transformed(by map: Matrix::Matrix<2, 3, Scalar>) -> Self {
+            transformed(by: map, to: Space.self)
+        }
+    }
+
+    // MARK: - Flattening
+
+    extension Geometry.Path.Subpath where Scalar: BinaryFloatingPoint & Numeric.Transcendental {
+
+        /// The subpath as one continuous run of vertices, curves made straight to within `tolerance`.
+        ///
+        /// `smooth` marks a vertex that flattening put inside a curve; every other vertex is a corner of the path.
+        @inlinable
+        func polyline(tolerance: Scalar) -> [(x: Scalar, y: Scalar, smooth: Bool)] {
+            var result: [(x: Scalar, y: Scalar, smooth: Bool)] = [(startPoint[0], startPoint[1], false)]
+
+            func bridge(to point: (x: Scalar, y: Scalar)) {
+                guard let last = result.last else { return }
+                let gap = (x: point.x - last.x, y: point.y - last.y)
+                if (gap.x * gap.x + gap.y * gap.y).squareRoot() > tolerance {
+                    result.append((point.x, point.y, false))
+                }
+            }
+
+            func run(along arc: Geometry.Ellipse.Arc) {
+                guard let steps = arc.steps(tolerance: tolerance) else { return }
+                let frame = arc.frame
+                let start = arc.startAngle.underlying
+                let sweep = arc.sweep.underlying
+                func point(at angle: Scalar) -> (x: Scalar, y: Scalar) {
+                    let cosine = Scalar.cos(angle)
+                    let sine = Scalar.sin(angle)
+                    return (
+                        frame.center.x + frame.major.x * cosine + frame.minor.x * sine,
+                        frame.center.y + frame.major.y * cosine + frame.minor.y * sine
+                    )
+                }
+                bridge(to: point(at: start))
+                var step = 1
+                while step < steps {
+                    let inside = point(at: start + sweep * Scalar(step) / Scalar(steps))
+                    result.append((inside.x, inside.y, true))
+                    step += 1
+                }
+                let end = point(at: arc.endAngle.underlying)
+                result.append((end.x, end.y, false))
+            }
+
+            for segment in segments {
+                switch segment {
+                case .line(let line):
+                    bridge(to: (line.start[0], line.start[1]))
+                    result.append((line.end[0], line.end[1], false))
+
+                case .bezier(let bezier):
+                    let points = bezier.controlPoints.map { (x: $0[0], y: $0[1]) }
+                    guard points.count > 1, let first = points.first, let last = points.last else { continue }
+                    bridge(to: first)
+                    if points.allSatisfy({ $0.x.isFinite && $0.y.isFinite }) {
+                        Geometry.Bezier.flatten(points, tolerance: tolerance, depth: 16, into: &result)
+                    }
+                    result.append((last.x, last.y, false))
+
+                case .arc(let arc):
+                    run(along: Geometry.Ellipse.Arc(arc))
+
+                case .ellipticalArc(let arc):
+                    run(along: arc)
+                }
+            }
+            return result
+        }
+
+        @inlinable
+        func flattened(tolerance: Scalar) -> Self {
+            var lines: [Geometry.Path.Segment] = []
+            var previous = startPoint
+            for vertex in polyline(tolerance: tolerance).dropFirst() {
+                let next = Geometry.Point<2>([vertex.x, vertex.y])
+                lines.append(.line(.init(start: previous, end: next)))
+                previous = next
+            }
+            return Self(startPoint: startPoint, segments: lines, isClosed: isClosed)
+        }
+    }
+
+    extension Geometry.Path where Scalar: BinaryFloatingPoint & Numeric.Transcendental {
+
+        @inlinable
+        public func flattened(tolerance: Geometry.Length) throws(Error) -> Self {
+            let allowance = tolerance.underlying
+            guard allowance.isFinite, allowance > 0 else { throw .tolerance }
+            return Self(subpaths: subpaths.map { $0.flattened(tolerance: allowance) })
+        }
+    }
+
+    // MARK: - Winding
+
+    extension Geometry.Path.Subpath where Scalar: BinaryFloatingPoint & Numeric.Transcendental {
+
+        /// The signed number of times the subpath, closed by a straight line, turns around a finite point.
+        @inlinable
+        func turns(around target: (x: Scalar, y: Scalar)) -> Int {
+            var turns = 0
+            let first = (x: startPoint[0], y: startPoint[1])
+            var current = first
+
+            func edge(to next: (x: Scalar, y: Scalar)) {
+                let side = (next.x - current.x) * (target.y - current.y) - (target.x - current.x) * (next.y - current.y)
+                if current.y <= target.y {
+                    if next.y > target.y, side > 0 { turns += 1 }
+                } else if next.y <= target.y, side < 0 {
+                    turns -= 1
+                }
+                current = next
+            }
+
+            /// Whether the target lies outside the box around the points, or the box is a single point.
+            func clears(_ points: [(x: Scalar, y: Scalar)]) -> Bool {
+                guard var low = points.first else { return true }
+                var high = low
+                for point in points {
+                    low = (min(low.x, point.x), min(low.y, point.y))
+                    high = (max(high.x, point.x), max(high.y, point.y))
+                }
+                if low.x == high.x, low.y == high.y { return true }
+                return target.x < low.x || target.x > high.x || target.y < low.y || target.y > high.y
+            }
+
+            func walk(_ points: [(x: Scalar, y: Scalar)], depth: Int) {
+                guard let last = points.last else { return }
+                if depth == 0 || clears(points) {
+                    edge(to: last)
+                    return
+                }
+                let halves = Geometry.Bezier.split(points)
+                walk(halves.left, depth: depth - 1)
+                walk(halves.right, depth: depth - 1)
+            }
+
+            func run(along arc: Geometry.Ellipse.Arc) {
+                guard let quarters = arc.quarters else { return }
+                let frame = arc.frame
+                let start = arc.startAngle.underlying
+                let sweep = arc.sweep.underlying
+                func point(at angle: Scalar, over scale: Scalar = 1) -> (x: Scalar, y: Scalar) {
+                    let cosine = Scalar.cos(angle) / scale
+                    let sine = Scalar.sin(angle) / scale
+                    return (
+                        frame.center.x + frame.major.x * cosine + frame.minor.x * sine,
+                        frame.center.y + frame.major.y * cosine + frame.minor.y * sine
+                    )
+                }
+                func piece(from: Scalar, to: Scalar, depth: Int) {
+                    let end = point(at: to)
+                    let middle = from / 2 + to / 2
+                    // The piece lies inside the triangle of its two ends and the point where their tangents meet.
+                    let corner = point(at: middle, over: Scalar.cos((to - from) / 2))
+                    if depth == 0 || clears([current, corner, end]) {
+                        edge(to: end)
+                        return
+                    }
+                    piece(from: from, to: middle, depth: depth - 1)
+                    piece(from: middle, to: to, depth: depth - 1)
+                }
+                edge(to: point(at: start))
+                var index = 0
+                while index < quarters {
+                    let from = index == 0 ? start : start + sweep * Scalar(index) / Scalar(quarters)
+                    let to = index + 1 == quarters ? arc.endAngle.underlying : start + sweep * Scalar(index + 1) / Scalar(quarters)
+                    piece(from: from, to: to, depth: 32)
+                    index += 1
+                }
+            }
+
+            for segment in segments {
+                switch segment {
+                case .line(let line):
+                    edge(to: (line.start[0], line.start[1]))
+                    edge(to: (line.end[0], line.end[1]))
+
+                case .bezier(let bezier):
+                    let points = bezier.controlPoints.map { (x: $0[0], y: $0[1]) }
+                    guard points.count > 1, let first = points.first, let last = points.last else { continue }
+                    edge(to: first)
+                    if points.allSatisfy({ $0.x.isFinite && $0.y.isFinite }) {
+                        walk(points, depth: 32)
+                    } else {
+                        edge(to: last)
+                    }
+
+                case .arc(let arc):
+                    run(along: Geometry.Ellipse.Arc(arc))
+
+                case .ellipticalArc(let arc):
+                    run(along: arc)
+                }
+            }
+            edge(to: first)
+            return turns
+        }
+    }
+
+    extension Geometry.Path where Scalar: BinaryFloatingPoint & Numeric.Transcendental {
+
+        @inlinable
+        public func winding(around point: Geometry.Point<2>) -> Direction::Winding.Number {
+            let target = (x: point[0], y: point[1])
+            guard target.x.isFinite, target.y.isFinite else { return .zero }
+            var turns = 0
+            for subpath in subpaths { turns += subpath.turns(around: target) }
+            return Direction::Winding.Number(turns)
+        }
+
+        @inlinable
+        public func contains(_ point: Geometry.Point<2>, rule: Direction::Winding.Rule) -> Bool {
+            rule.contains(winding(around: point))
+        }
+    }
+
+    // MARK: - Stroking
+
+    extension Geometry.Path.Subpath where Scalar: BinaryFloatingPoint & Numeric.Transcendental {
+
+        /// A closed counterclockwise or clockwise run of straight lines through the corners, as given.
+        @inlinable
+        static func ring(_ corners: [(x: Scalar, y: Scalar)]) -> Self {
+            let points = corners.map { Geometry.Point<2>([$0.x, $0.y]) }
+            var lines: [Geometry.Path.Segment] = []
+            for index in points.indices.dropFirst() {
+                lines.append(.line(.init(start: points[index - 1], end: points[index])))
+            }
+            return Self(startPoint: points[0], segments: lines, isClosed: true)
+        }
+
+        /// The pie slice around `center` that starts at `angle` and sweeps counterclockwise.
+        @inlinable
+        static func sector(
+            center: (x: Scalar, y: Scalar),
+            radius: Scalar,
+            from angle: Scalar,
+            sweep: Scalar
+        ) -> Self {
+            let middle = Geometry.Point<2>([center.x, center.y])
+            let arc = Geometry.Arc(
+                center: middle,
+                radius: Geometry.Radius(radius),
+                startAngle: Radian(_unchecked: angle),
+                endAngle: Radian(_unchecked: angle + sweep)
+            )
+            return Self(
+                startPoint: middle,
+                segments: [.line(.init(start: middle, end: arc.startPoint)), .arc(arc)],
+                isClosed: true
+            )
+        }
+
+        /// Appends the closed counterclockwise pieces whose union is this subpath stroked.
+        @inlinable
+        func outline(
+            _ stroke: Geometry.Path.Stroke,
+            half: Scalar,
+            tolerance: Scalar,
+            into pieces: inout [Self]
+        ) {
+            guard !segments.isEmpty else { return }
+
+            var vertices: [(x: Scalar, y: Scalar, smooth: Bool)] = []
+            for vertex in polyline(tolerance: tolerance) {
+                guard let last = vertices.last else {
+                    vertices.append(vertex)
+                    continue
+                }
+                let gap = (x: vertex.x - last.x, y: vertex.y - last.y)
+                let length = (gap.x * gap.x + gap.y * gap.y).squareRoot()
+                if length > 0, length.isFinite {
+                    vertices.append(vertex)
+                } else if !vertex.smooth {
+                    vertices[vertices.count - 1].smooth = false
+                }
+            }
+            if isClosed, vertices.count > 1, let first = vertices.first, let last = vertices.last {
+                let gap = (x: first.x - last.x, y: first.y - last.y)
+                if !((gap.x * gap.x + gap.y * gap.y).squareRoot() > tolerance) { vertices.removeLast() }
+            }
+            guard let first = vertices.first, let last = vertices.last else { return }
+
+            guard vertices.count > 1 else {
+                switch stroke.cap {
+                case .butt:
+                    break
+                case .round:
+                    let center = Geometry.Point<2>([first.x, first.y])
+                    let circle = Geometry.Arc.fullCircle(center: center, radius: Geometry.Radius(half))
+                    pieces.append(Self(startPoint: circle.startPoint, segments: [.arc(circle)], isClosed: true))
+                case .square:
+                    pieces.append(
+                        Self.ring([
+                            (first.x - half, first.y - half), (first.x + half, first.y - half),
+                            (first.x + half, first.y + half), (first.x - half, first.y + half),
+                        ])
+                    )
+                }
+                return
+            }
+
+            let count = vertices.count
+            let edges = isClosed ? count : count - 1
+            var directions: [(x: Scalar, y: Scalar)] = []
+            for index in vertices.indices.prefix(edges) {
+                let from = vertices[index]
+                let to = vertices[(index + 1) % count]
+                let gap = (x: to.x - from.x, y: to.y - from.y)
+                let length = (gap.x * gap.x + gap.y * gap.y).squareRoot()
+                directions.append((gap.x / length, gap.y / length))
+                // The left normal of the direction is (−y, x); the body runs right side out, left side back.
+                let offset = (x: -gap.y / length * half, y: gap.x / length * half)
+                pieces.append(
+                    Self.ring([
+                        (from.x - offset.x, from.y - offset.y), (to.x - offset.x, to.y - offset.y),
+                        (to.x + offset.x, to.y + offset.y), (from.x + offset.x, from.y + offset.y),
+                    ])
+                )
+            }
+
+            for index in vertices.indices {
+                if !isClosed, index == 0 || index == count - 1 { continue }
+                let vertex = vertices[index]
+                let incoming = directions[(index + edges - 1) % edges]
+                let outgoing = directions[index % edges]
+                let cross = incoming.x * outgoing.y - incoming.y * outgoing.x
+                let dot = incoming.x * outgoing.x + incoming.y * outgoing.y
+                let turn = Scalar.atan2(cross, dot)
+                guard turn != 0 else { continue }
+                // A left turn opens the gap on the right side, a right turn on the left side.
+                let side: Scalar = turn > 0 ? -1 : 1
+                let before = (x: -incoming.y * side, y: incoming.x * side)
+                let after = (x: -outgoing.y * side, y: outgoing.x * side)
+                let opening = turn > 0 ? before : after
+                let join: Geometry.Path.Stroke.Join = vertex.smooth ? .round : stroke.join
+                switch join {
+                case .round:
+                    pieces.append(
+                        Self.sector(
+                            center: (vertex.x, vertex.y),
+                            radius: half,
+                            from: Scalar.atan2(opening.y, opening.x),
+                            sweep: abs(turn)
+                        )
+                    )
+
+                case .bevel, .miter:
+                    let one = (x: vertex.x + before.x * half, y: vertex.y + before.y * half)
+                    let two = (x: vertex.x + after.x * half, y: vertex.y + after.y * half)
+                    var corners = [(x: vertex.x, y: vertex.y), turn > 0 ? one : two]
+                    if case .miter(let limit) = join, limit.value * ((1 + dot) / 2).squareRoot() >= 1 {
+                        let reach = half / (1 + dot)
+                        corners.append(
+                            (vertex.x + (before.x + after.x) * reach, vertex.y + (before.y + after.y) * reach)
+                        )
+                    }
+                    corners.append(turn > 0 ? two : one)
+                    pieces.append(Self.ring(corners))
+                }
+            }
+
+            guard !isClosed, let leading = directions.first, let trailing = directions.last else { return }
+            switch stroke.cap {
+            case .butt:
+                break
+
+            case .round:
+                pieces.append(
+                    Self.sector(
+                        center: (first.x, first.y),
+                        radius: half,
+                        from: Scalar.atan2(leading.x, -leading.y),
+                        sweep: Scalar.pi
+                    )
+                )
+                pieces.append(
+                    Self.sector(
+                        center: (last.x, last.y),
+                        radius: half,
+                        from: Scalar.atan2(-trailing.x, trailing.y),
+                        sweep: Scalar.pi
+                    )
+                )
+
+            case .square:
+                let back = (x: leading.x * half, y: leading.y * half)
+                let forth = (x: trailing.x * half, y: trailing.y * half)
+                pieces.append(
+                    Self.ring([
+                        (first.x + back.y, first.y - back.x), (first.x - back.y, first.y + back.x),
+                        (first.x - back.y - back.x, first.y + back.x - back.y),
+                        (first.x + back.y - back.x, first.y - back.x - back.y),
+                    ])
+                )
+                pieces.append(
+                    Self.ring([
+                        (last.x + forth.y, last.y - forth.x), (last.x + forth.y + forth.x, last.y - forth.x + forth.y),
+                        (last.x - forth.y + forth.x, last.y + forth.x + forth.y), (last.x - forth.y, last.y + forth.x),
+                    ])
+                )
+            }
+        }
+    }
+
+    extension Geometry.Path where Scalar: BinaryFloatingPoint & Numeric.Transcendental {
+
+        @inlinable
+        public func stroked(_ stroke: Stroke, tolerance: Geometry.Length) throws(Error) -> Self {
+            let allowance = tolerance.underlying
+            guard allowance.isFinite, allowance > 0 else { throw .tolerance }
+            let width = stroke.width.underlying
+            guard width.isFinite, width >= 0 else { throw .width }
+            if case .miter(let limit) = stroke.join {
+                guard limit.value.isFinite, limit.value >= 1 else { throw .limit }
+            }
+            var pieces: [Subpath] = []
+            guard width > 0 else { return Self(subpaths: pieces) }
+            for subpath in subpaths {
+                subpath.outline(stroke, half: width / 2, tolerance: allowance, into: &pieces)
+            }
+            return Self(subpaths: pieces)
         }
     }
 

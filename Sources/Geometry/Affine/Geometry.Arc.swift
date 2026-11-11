@@ -1,4 +1,5 @@
 #if Affine
+    public import Matrix
     public import Affine
     public import Displacement
     import Point
@@ -450,6 +451,22 @@
                 startAngle: Radian(_unchecked: try transform(startAngle.underlying)),
                 endAngle: Radian(_unchecked: try transform(endAngle.underlying))
             )
+        }
+    }
+
+    extension Geometry.Arc where Scalar: BinaryFloatingPoint & Numeric.Transcendental {
+
+        @inlinable
+        public func transformed<Target>(
+            by map: Matrix::Matrix<2, 3, Scalar>,
+            to space: Target.Type
+        ) -> Geometry<Scalar, Target>.Ellipse.Arc {
+            Geometry.Ellipse.Arc(self).transformed(by: map, to: space)
+        }
+
+        @inlinable
+        public func transformed(by map: Matrix::Matrix<2, 3, Scalar>) -> Geometry.Ellipse.Arc {
+            transformed(by: map, to: Space.self)
         }
     }
 

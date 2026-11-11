@@ -1,4 +1,5 @@
 #if Affine
+    public import Matrix
     public import Affine
     public import Displacement
     import Point
@@ -417,6 +418,81 @@
                 result.append(try point.map(transform))
             }
             return Geometry<Result, Space>.Bezier(controlPoints: result)
+        }
+    }
+
+    extension Geometry.Bezier where Scalar: Swift::Numeric {
+
+        @inlinable
+        public func transformed<Target>(
+            by map: Matrix::Matrix<2, 3, Scalar>,
+            to space: Target.Type
+        ) -> Geometry<Scalar, Target>.Bezier {
+            Geometry<Scalar, Target>.Bezier(
+                controlPoints: controlPoints.map { $0.transformed(by: map, to: space) }
+            )
+        }
+
+        @inlinable
+        public func transformed(by map: Matrix::Matrix<2, 3, Scalar>) -> Self {
+            transformed(by: map, to: Space.self)
+        }
+    }
+
+    extension Geometry.Bezier where Scalar: BinaryFloatingPoint {
+
+        /// Appends the vertices strictly inside the curve that make it straight to within `tolerance`.
+        @inlinable
+        static func flatten(
+            _ points: [(x: Scalar, y: Scalar)],
+            tolerance: Scalar,
+            depth: Int,
+            into result: inout [(x: Scalar, y: Scalar, smooth: Bool)]
+        ) {
+            guard depth > 0, let first = points.first, let last = points.last else { return }
+            let chord = (x: last.x - first.x, y: last.y - first.y)
+            let squared = chord.x * chord.x + chord.y * chord.y
+            var flat = true
+            for point in points.dropFirst().dropLast() {
+                let offset = (x: point.x - first.x, y: point.y - first.y)
+                var along: Scalar = 0
+                if squared > 0 {
+                    along = min(max((offset.x * chord.x + offset.y * chord.y) / squared, 0), 1)
+                }
+                let away = (x: offset.x - along * chord.x, y: offset.y - along * chord.y)
+                if (away.x * away.x + away.y * away.y).squareRoot() > tolerance { flat = false }
+            }
+            if flat { return }
+            let halves = split(points)
+            flatten(halves.left, tolerance: tolerance, depth: depth - 1, into: &result)
+            if let middle = halves.left.last { result.append((middle.x, middle.y, true)) }
+            flatten(halves.right, tolerance: tolerance, depth: depth - 1, into: &result)
+        }
+
+        /// The two halves of a curve cut at its middle parameter, by de Casteljau's construction.
+        @inlinable
+        static func split(
+            _ points: [(x: Scalar, y: Scalar)]
+        ) -> (left: [(x: Scalar, y: Scalar)], right: [(x: Scalar, y: Scalar)]) {
+            var work = points
+            var left: [(x: Scalar, y: Scalar)] = []
+            var right: [(x: Scalar, y: Scalar)] = []
+            var remaining = work.count
+            while remaining > 0 {
+                left.append(work[0])
+                right.append(work[remaining - 1])
+                remaining -= 1
+                var index = 0
+                while index < remaining {
+                    work[index] = (
+                        work[index].x / 2 + work[index + 1].x / 2,
+                        work[index].y / 2 + work[index + 1].y / 2
+                    )
+                    index += 1
+                }
+            }
+            right.reverse()
+            return (left, right)
         }
     }
 
