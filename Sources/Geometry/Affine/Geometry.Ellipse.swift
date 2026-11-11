@@ -998,10 +998,9 @@
             guard let quarters else { return nil }
             let radius = max(abs(semiMajor.underlying), abs(semiMinor.underlying))
             guard radius.isFinite else { return nil }
-            var step = Scalar.pi / 2
-            if tolerance < radius {
-                step = min(step, 2 * Scalar.acos(1 - tolerance / radius))
-            }
+            // A chord of a quarter turn is already within a tolerance as long as the radius.
+            guard tolerance < radius else { return quarters }
+            let step = 2 * Scalar.acos(1 - tolerance / radius)
             let demand = (abs(sweep.underlying) / step).rounded(.up)
             guard demand < 65536 else { return 65536 }
             return max(Int(demand), quarters)

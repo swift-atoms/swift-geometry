@@ -232,6 +232,7 @@
                     if case .line(let piece) = segment { reach = max(reach, piece.end[0]) }
                 }
                 #expect(reach > 2)
+                #expect(flat.subpaths[0].endPoint == at(1, 0))
             }
 
             @Test
@@ -257,6 +258,8 @@
             func `No chord spans more than a quarter turn however loose the tolerance`() throws {
                 let path = Geo.Path(subpaths: [circle(radius: 1)])
                 #expect(try path.flattened(tolerance: 100).segmentCount == 4)
+                // At this tolerance the sagitta alone would allow three chords for the whole circle.
+                #expect(try path.flattened(tolerance: 0.9).segmentCount == 4)
             }
 
             @Test
@@ -349,10 +352,15 @@
 
             @Test
             func `A gap between segments counts as a straight line`() {
-                let gapped = Geo.Path(subpaths: [.init(startPoint: at(0, 0), segments: [line(4, 0, 4, 4), line(0, 4, 0, 0)], isClosed: true)])
+                // The right side, from (4, 0) up to (4, 4), is a gap between the two segments.
+                let gapped = Geo.Path(subpaths: [.init(startPoint: at(0, 0), segments: [line(0, 0, 4, 0), line(4, 4, 0, 4)], isClosed: true)])
                 #expect(gapped.winding(around: at(2, 2)) == 1)
-                #expect(gapped.winding(around: at(2, 0.001)) == 1)
-                #expect(gapped.winding(around: at(2, -0.001)) == 0)
+                #expect(gapped.winding(around: at(3.999, 2)) == 1)
+                #expect(gapped.winding(around: at(4.001, 2)) == 0)
+                // Here the first segment starts away from the subpath's start, at the top of the left side.
+                let late = Geo.Path(subpaths: [.init(startPoint: at(0, 0), segments: [line(0, 4, 4, 4), line(4, 4, 4, 0)], isClosed: true)])
+                #expect(late.winding(around: at(2, 2)) == -1)
+                #expect(late.winding(around: at(-0.001, 2)) == 0)
             }
 
             @Test(arguments: [0.0, 0.3, 0.7853981633974483, 1.2, 2.5, 3.9, 5.5])
