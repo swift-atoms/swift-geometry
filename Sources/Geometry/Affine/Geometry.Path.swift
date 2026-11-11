@@ -677,11 +677,7 @@
                 }
                 let gap = (x: vertex.x - last.x, y: vertex.y - last.y)
                 let length = (gap.x * gap.x + gap.y * gap.y).squareRoot()
-                if length > 0, length.isFinite {
-                    vertices.append(vertex)
-                } else if !vertex.smooth, let end = vertices.indices.last {
-                    vertices[end].smooth = false
-                }
+                if length > 0, length.isFinite { vertices.append(vertex) }
             }
             if isClosed, vertices.count > 1, let first = vertices.first, let last = vertices.last {
                 let gap = (x: first.x - last.x, y: first.y - last.y)

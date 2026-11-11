@@ -238,6 +238,14 @@
             }
 
             @Test
+            func `A vertex at no finite distance from the one before is left out`() throws {
+                let stroke = pen(2, .miter(limit: 4), .square)
+                let plain = try run([(0, 0), (10, 0)]).stroked(stroke, tolerance: 0.01)
+                #expect(try run([(0, 0), (10, 0), (.infinity, 0)]).stroked(stroke, tolerance: 0.01) == plain)
+                #expect(try run([(0, 0), (.nan, 3), (10, 0)]).stroked(stroke, tolerance: 0.01) == plain)
+            }
+
+            @Test
             func `Subpaths are stroked one after another, in order`() throws {
                 let first = run([(0, 0), (10, 0), (10, 10)])
                 let second = run([(20, 0), (30, 0), (20, 10)], closed: true)
