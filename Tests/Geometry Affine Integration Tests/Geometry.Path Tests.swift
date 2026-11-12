@@ -126,9 +126,10 @@
                 #expect(path.contains(at(3, -1), rule: .nonzero) && path.contains(at(4.4, -2.4), rule: .nonzero))
                 #expect(!path.contains(at(4.5, -2.5), rule: .nonzero))
                 let flat = try path.flattened(tolerance: 0.001)
-                #expect(flat.subpaths[0].segments.compactMap(\.endPoint).allSatisfy { point in
-                    abs(((point[0] - 3) * (point[0] - 3) + (point[1] + 1) * (point[1] + 1)).squareRoot() - 2) < 1e-9
-                })
+                let distances = flat.subpaths[0].segments.compactMap(\.endPoint).map { point in
+                    ((point[0] - 3) * (point[0] - 3) + (point[1] + 1) * (point[1] + 1)).squareRoot()
+                }
+                #expect(distances.allSatisfy { abs($0 - 2) < 1e-9 })
             }
         }
     }
