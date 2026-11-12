@@ -56,6 +56,83 @@
 
     enum `Geometry.Path Tests` {}
 
+    // MARK: - Shapes as paths
+
+    extension `Geometry.Path Tests` {
+        @Suite
+        struct `A rectangle and a circle are paths of one closed subpath` {
+            @Test
+            func `A rectangle is its four sides from its lower-left corner, counterclockwise`() {
+                let path = Geo.Path(Geo.Rectangle(llx: 1, lly: 2, urx: 5, ury: 4))
+                #expect(path.subpaths.count == 1)
+                #expect(path.subpaths[0].isClosed)
+                #expect(path.subpaths[0].startPoint == at(1, 2))
+                #expect(path.subpaths[0].segments == [line(1, 2, 5, 2), line(5, 2, 5, 4), line(5, 4, 1, 4), line(1, 4, 1, 2)])
+                #expect(path.winding(around: at(3, 3)) == 1)
+                #expect(path == Geo.Path(Geo.Rectangle(llx: 1, lly: 2, urx: 5, ury: 4), radius: 0))
+                #expect(path == Geo.Path(Geo.Rectangle(llx: 1, lly: 2, urx: 5, ury: 4), radius: -3))
+                #expect(path == Geo.Path(Geo.Rectangle(llx: 1, lly: 2, urx: 5, ury: 4), radius: .init(Double.nan)))
+            }
+
+            @Test
+            func `A radius rounds each corner with a quarter circle that touches both sides`() throws {
+                let rectangle = Geo.Rectangle(llx: 0, lly: 0, urx: 10, ury: 6)
+                let path = Geo.Path(rectangle, radius: 2)
+                let subpath = try #require(path.subpaths.first)
+                #expect(path.subpaths.count == 1 && subpath.isClosed && subpath.segments.count == 8)
+                #expect(subpath.startPoint == at(2, 0))
+                var pen = subpath.startPoint
+                for segment in subpath.segments {
+                    #expect(near(try #require(segment.startPoint), pen))
+                    pen = try #require(segment.endPoint)
+                }
+                #expect(near(pen, subpath.startPoint))
+                let centres = [at(8, 2), at(8, 4), at(2, 4), at(2, 2)]
+                let arcs = subpath.segments.compactMap { segment -> Geo.Arc? in
+                    if case .arc(let arc) = segment { return arc }
+                    return nil
+                }
+                #expect(arcs.map(\.center) == centres)
+                #expect(arcs.allSatisfy { $0.radius == 2 && $0.isCounterClockwise && abs($0.sweep.underlying - Double.pi / 2) < 1e-12 })
+                let box = try #require(path.boundingBox)
+                #expect(near(at(box.llx.underlying, box.lly.underlying), at(0, 0)) && near(at(box.urx.underlying, box.ury.underlying), at(10, 6)))
+                #expect(path.contains(at(5, 3), rule: .nonzero))
+                #expect(path.contains(at(0.1, 3), rule: .nonzero) && path.contains(at(5, 5.9), rule: .nonzero))
+                #expect(path.contains(at(0.7, 0.7), rule: .nonzero))
+                #expect(!path.contains(at(0.5, 0.5), rule: .nonzero))
+                #expect(!path.contains(at(9.5, 5.5), rule: .nonzero) && !path.contains(at(9.5, 0.5), rule: .nonzero) && !path.contains(at(0.5, 5.5), rule: .nonzero))
+                #expect(Geo.Path(rectangle).contains(at(0.5, 0.5), rule: .nonzero))
+            }
+
+            @Test
+            func `A radius is held to half the shorter side`() throws {
+                let pill = Geo.Path(Geo.Rectangle(llx: 0, lly: 0, urx: 10, ury: 4), radius: 100)
+                #expect(pill == Geo.Path(Geo.Rectangle(llx: 0, lly: 0, urx: 10, ury: 4), radius: 2))
+                let flat = try pill.flattened(tolerance: 0.001)
+                let reach = flat.subpaths[0].segments.compactMap(\.endPoint).map { point -> Double in
+                    let x = Swift.min(Swift.max(point[0], 2), 8)
+                    return ((point[0] - x) * (point[0] - x) + (point[1] - 2) * (point[1] - 2)).squareRoot()
+                }
+                #expect(reach.allSatisfy { abs($0 - 2) < 0.002 })
+            }
+
+            @Test
+            func `A circle is its full arc from its rightmost point`() throws {
+                let path = Geo.Path(Geo.Circle(center: at(3, -1), radius: 2))
+                #expect(path.subpaths.count == 1)
+                #expect(path.subpaths[0].isClosed)
+                #expect(path.subpaths[0].startPoint == at(5, -1))
+                #expect(path.subpaths[0].segments == [.arc(.fullCircle(center: at(3, -1), radius: 2))])
+                #expect(path.contains(at(3, -1), rule: .nonzero) && path.contains(at(4.4, -2.4), rule: .nonzero))
+                #expect(!path.contains(at(4.5, -2.5), rule: .nonzero))
+                let flat = try path.flattened(tolerance: 0.001)
+                #expect(flat.subpaths[0].segments.compactMap(\.endPoint).allSatisfy { point in
+                    abs(((point[0] - 3) * (point[0] - 3) + (point[1] + 1) * (point[1] + 1)).squareRoot() - 2) < 1e-9
+                })
+            }
+        }
+    }
+
     // MARK: - Transforming
 
     extension `Geometry.Path Tests` {

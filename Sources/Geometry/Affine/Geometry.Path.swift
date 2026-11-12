@@ -276,6 +276,74 @@
         }
     }
 
+    extension Geometry.Path where Scalar: BinaryFloatingPoint {
+
+        @inlinable
+        public init(_ rectangle: Geometry.Rectangle, radius: Geometry.Radius = .init(0)) {
+            let left: Scalar = rectangle.llx.underlying
+            let lower: Scalar = rectangle.lly.underlying
+            let right: Scalar = rectangle.urx.underlying
+            let upper: Scalar = rectangle.ury.underlying
+            let limit: Scalar = Swift.min(right - left, upper - lower) / 2
+            let round: Scalar = Swift.min(radius.underlying, limit)
+
+            func at(_ x: Scalar, _ y: Scalar) -> Geometry.Point<2> {
+                Geometry.Point(x: Geometry.X(x), y: Geometry.Y(y))
+            }
+            func side(_ start: Geometry.Point<2>, _ end: Geometry.Point<2>) -> Segment {
+                .line(Geometry.Line.Segment(start: start, end: end))
+            }
+
+            guard round > 0 else {
+                let corners = [at(left, lower), at(right, lower), at(right, upper), at(left, upper)]
+                self.init(subpaths: [
+                    Subpath(
+                        startPoint: corners[0],
+                        segments: [
+                            side(corners[0], corners[1]), side(corners[1], corners[2]),
+                            side(corners[2], corners[3]), side(corners[3], corners[0]),
+                        ],
+                        isClosed: true
+                    )
+                ])
+                return
+            }
+
+            func corner(_ x: Scalar, _ y: Scalar, from start: Radian<Scalar>) -> Segment {
+                .arc(.quarterCircle(center: at(x, y), radius: Geometry.Radius(round), startAngle: start))
+            }
+            let quarter: Radian<Scalar> = .pi.half
+            self.init(subpaths: [
+                Subpath(
+                    startPoint: at(left + round, lower),
+                    segments: [
+                        side(at(left + round, lower), at(right - round, lower)),
+                        corner(right - round, lower + round, from: .zero - quarter),
+                        side(at(right, lower + round), at(right, upper - round)),
+                        corner(right - round, upper - round, from: .zero),
+                        side(at(right - round, upper), at(left + round, upper)),
+                        corner(left + round, upper - round, from: quarter),
+                        side(at(left, upper - round), at(left, lower + round)),
+                        corner(left + round, lower + round, from: quarter + quarter),
+                    ],
+                    isClosed: true
+                )
+            ])
+        }
+
+        @inlinable
+        public init(_ circle: Geometry.Circle) {
+            let right = Geometry.Point(x: Geometry.X(circle.center.x.underlying + circle.radius.underlying), y: circle.center.y)
+            self.init(subpaths: [
+                Subpath(
+                    startPoint: right,
+                    segments: [.arc(.fullCircle(center: circle.center, radius: circle.radius))],
+                    isClosed: true
+                )
+            ])
+        }
+    }
+
     extension Geometry.Path.Segment {
 
         @inlinable
