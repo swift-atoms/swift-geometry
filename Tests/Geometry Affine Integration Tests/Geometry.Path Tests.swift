@@ -553,4 +553,67 @@
             }
         }
     }
+
+    // MARK: - Trimming
+
+    extension `Geometry.Path Tests` {
+        @Suite
+        struct `A path trimmed to a share of its length` {
+            private func length(_ path: Geo.Path) -> Double {
+                path.subpaths.reduce(0) { $0 + $1.length().underlying }
+            }
+
+            @Test(arguments: parameters)
+            func `Each subpath keeps that share of its own length, from its start`(share: Double) {
+                let polyline = Geo.Path.Subpath(startPoint: at(0, 0), segments: [line(0, 0, 3, 0), line(3, 0, 3, 4)], isClosed: false)
+                let path = Geo.Path(subpaths: [polyline, square(0, 2), circle(radius: 2)])
+                let trimmed = path.trimmed(to: Scale(share))
+                #expect(trimmed.subpaths.count == 3)
+                zip(path.subpaths, trimmed.subpaths).forEach { whole, part in
+                    #expect(part.startPoint == whole.startPoint)
+                    #expect(abs(part.length().underlying - share * whole.length().underlying) < 1e-9)
+                }
+            }
+
+            @Test
+            func `Lines and arcs are cut exactly, and the closing line counts as a segment`() throws {
+                let polyline = Geo.Path.Subpath(startPoint: at(0, 0), segments: [line(0, 0, 3, 0), line(3, 0, 3, 4)], isClosed: false)
+                let half = polyline.prefix(length: 5)
+                #expect(half.segments.count == 2 && !half.isClosed)
+                #expect(near(try #require(half.endPoint), at(3, 2)))
+                let closed = square(0, 2).prefix(length: 7)
+                #expect(closed.segments.count == 4 && !closed.isClosed)
+                #expect(near(try #require(closed.endPoint), at(0, 1)))
+                let quarter = circle(radius: 2).prefix(length: .init(Double.pi))
+                #expect(near(try #require(quarter.endPoint), at(0, 2)))
+            }
+
+            @Test
+            func `A curve is cut where the length along it reaches the share`() throws {
+                let curve = Geo.Bezier(controlPoints: [at(0, 0), at(1, 3), at(4, 3), at(5, 0)])
+                let subpath = Geo.Path.Subpath(startPoint: at(0, 0), segments: [.bezier(curve)], isClosed: false)
+                let whole = subpath.length().underlying
+                let part = subpath.prefix(length: .init(whole * 0.3))
+                #expect(abs(part.length().underlying - whole * 0.3) < 1e-9)
+                let mirrored = subpath.prefix(length: .init(whole * 0.5))
+                #expect(near(try #require(mirrored.endPoint), at(2.5, 2.25), within: 1e-3))
+                let ellipse = Geo.Ellipse.Arc(center: at(0, 0), semiMajor: 3, semiMinor: 1, rotation: .zero, startAngle: .zero, endAngle: Radian(_unchecked: Double.pi))
+                let arc = Geo.Path.Subpath(startPoint: at(3, 0), segments: [.ellipticalArc(ellipse)], isClosed: false)
+                let top = arc.prefix(length: .init(arc.length().underlying / 2))
+                #expect(near(try #require(top.endPoint), at(0, 1), within: 1e-3))
+            }
+
+            @Test
+            func `No length leaves the start point, and the whole length or more the subpath itself`() {
+                let path = Geo.Path(subpaths: [square(0, 2), circle(radius: 1)])
+                #expect(path.trimmed(to: Scale(1)) == path)
+                #expect(path.trimmed(to: Scale(3)) == path)
+                let none = path.trimmed(to: Scale(0))
+                #expect(none.subpaths.allSatisfy { $0.segments.isEmpty && !$0.isClosed })
+                #expect(none.subpaths.map(\.startPoint) == path.subpaths.map(\.startPoint))
+                #expect(path.trimmed(to: Scale(-1)) == none)
+                #expect(length(path.trimmed(to: Scale(0.5))) > 0)
+            }
+        }
+    }
 #endif
