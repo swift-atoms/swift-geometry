@@ -11,10 +11,11 @@
         ///
         /// A closed subpath's closing line counts as its last segment. Lines and circular arcs are cut
         /// exactly; Bézier curves and elliptical arcs at the parameter where the length measured with
-        /// `bezierSegments` chords reaches the rest. At no length the result is the start point alone;
+        /// 100 chords, as `length()` measures it, reaches the rest. At no length the result is the start point alone;
         /// at the whole length or past it, the subpath itself.
         @inlinable
-        public func prefix(length: Geometry.ArcLength, bezierSegments: Int = 100) -> Self {
+        public func prefix(length: Geometry.ArcLength) -> Self {
+            let bezierSegments = 100
             var rest: Scalar = length.underlying
             guard rest < self.length(bezierSegments: bezierSegments).underlying else { return self }
             var pieces: [Geometry.Path.Segment] = segments
