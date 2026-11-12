@@ -352,7 +352,7 @@
         ) throws(E) -> Geometry<Result, Space>.Path.Segment {
             switch self {
             case .line(let seg):
-                return .line(try seg.map { (point) throws(E) in try point.map(transform) })
+                return .line(try seg.map { point throws(E) in try point.map(transform) })
 
             case .bezier(let bez):
                 return .bezier(try bez.map(transform))
