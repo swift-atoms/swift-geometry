@@ -6,6 +6,7 @@
     public import Tagged
     public import Scale
     import Angle
+    public import Direction
     import Trigonometry
 
     public import Space
@@ -393,6 +394,42 @@
                 result.append(try vertex.map(transform))
             }
             return Geometry<Result, Space>.Polygon(vertices: result)
+        }
+    }
+
+    extension Geometry.Path where Scalar: SignedNumeric & Comparable {
+
+        /// Many polygons as one path: each polygon of at least three vertices becomes a closed subpath of
+        /// straight edges from its first vertex, as `polygon(vertices:)` makes it, in the order given. A
+        /// polygon of fewer vertices encloses nothing and adds no subpath.
+        ///
+        /// With a `winding`, every polygon whose signed area has the other sign is walked backwards from
+        /// the same first vertex, and one of zero area is left as it is. Each simple polygon then winds
+        /// once around its inside in the same sense, so under `nonzero` the path fills the union of the
+        /// polygons, however they overlap; under `evenodd` the overlaps are holes.
+        @inlinable
+        public init(_ polygons: some Sequence<Geometry.Polygon>, winding: Direction::Winding? = nil) {
+            self.init(
+                subpaths: polygons.compactMap { polygon -> Subpath? in
+                    guard let first = polygon.vertices.first, polygon.isValid else { return nil }
+                    let reverse: Bool =
+                        switch winding {
+                        case nil: false
+
+                        case .counterclockwise: polygon.isClockwise
+
+                        case .clockwise: polygon.isCounterClockwise
+                        }
+                    let corners = reverse ? [first] + polygon.vertices.dropFirst().reversed() : polygon.vertices
+                    return Subpath(
+                        startPoint: first,
+                        segments: zip(corners, corners.dropFirst()).map { start, end in
+                            .line(Geometry.Line.Segment(start: start, end: end))
+                        },
+                        isClosed: true
+                    )
+                }
+            )
         }
     }
 
