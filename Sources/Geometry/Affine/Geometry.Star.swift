@@ -51,8 +51,9 @@
             /// Decodes a star, failing for fewer than two points.
             public init(from decoder: any Decoder) throws {
                 let container = try decoder.container(keyedBy: CodingKeys.self)
-                let points = Cardinal(try container.decode(UInt.self, forKey: .points))
+                let count = try container.decode(Int.self, forKey: .points)
                 guard
+                    let points = try? Cardinal(count),
                     let star = Self(
                         points: points,
                         outer: try container.decode(Geometry.Radius.self, forKey: .outer),
@@ -68,7 +69,7 @@
             public func encode(to encoder: any Encoder) throws {
                 var container = encoder.container(keyedBy: CodingKeys.self)
                 try container.encode(center, forKey: .center)
-                try container.encode(points.rawValue, forKey: .points)
+                try container.encode(Int(bitPattern: points), forKey: .points)
                 try container.encode(outer, forKey: .outer)
                 try container.encode(inner, forKey: .inner)
             }
@@ -92,7 +93,7 @@
         /// the turn, and is the same on either side of a point.
         @inlinable
         public func radius(at angle: Radian<Scalar>) -> Geometry.Radius {
-            let sector: Scalar = Scalar.pi / Scalar(points.rawValue)
+            let sector: Scalar = Scalar.pi / Scalar(Int(bitPattern: points))
             var within: Scalar = angle.underlying.truncatingRemainder(dividingBy: 2 * sector)
             if within < 0 { within += 2 * sector }
             if within > sector { within = 2 * sector - within }
@@ -108,9 +109,9 @@
         /// the point in the direction of the positive x axis; twice as many as it has points.
         @inlinable
         public var vertices: [Geometry.Point<2>] {
-            let corners = 2 * points.rawValue
+            let corners = 2 * Int(bitPattern: points)
             return (0..<corners).map { index in
-                let angle = Radian<Scalar>(Scalar.pi * Scalar(index) / Scalar(points.rawValue))
+                let angle = Radian<Scalar>(Scalar.pi * Scalar(index) / Scalar(Int(bitPattern: points)))
                 let distance: Scalar = index.isMultiple(of: 2) ? outer.underlying : inner.underlying
                 return Geometry.Point<2>([
                     center[0] + distance * angle.cos.value,

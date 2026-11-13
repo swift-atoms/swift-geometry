@@ -16,7 +16,7 @@
         @Test
         func `The edge is the outer radius toward a point and the inner toward a notch`() throws {
             let star = try #require(Geo.Star(points: 5, outer: 2, inner: 0.8))
-            for index in 0..<10 {
+            (0..<10).forEach { index in
                 let angle = Radian<Double>(Double.pi * Double(index) / 5)
                 let expected = index.isMultiple(of: 2) ? 2.0 : 0.8
                 #expect(abs(star.radius(at: angle).underlying - expected) < 1e-12)
@@ -27,7 +27,7 @@
         func `The edge lies on the straight line between a point and its notch`() throws {
             let star = try #require(Geo.Star(points: 6, outer: 1, inner: 0.6))
             let corners = star.vertices
-            for step in 1..<20 {
+            (1..<20).forEach { step in
                 let angle = Double.pi / 6 * Double(step) / 20
                 let reach = star.radius(at: Radian(angle)).underlying
                 let (x, y) = (reach * Double.cos(angle), reach * Double.sin(angle))
