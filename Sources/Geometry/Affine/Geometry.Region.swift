@@ -1,5 +1,5 @@
 #if Affine
-    import Direction
+    public import Direction
     public import Numeric
     import Point
     import Vector
@@ -59,7 +59,7 @@
             sample(point[0], point[1]).distance
         }
 
-        @usableFromInline
+        @inlinable
         func sample(_ x: Scalar, _ y: Scalar) -> Sample {
             switch self {
             case .ball(let circle):
@@ -137,7 +137,7 @@
             return Geometry.Rectangle(llx: .init(box.0), lly: .init(box.1), urx: .init(box.2), ury: .init(box.3))
         }
 
-        @usableFromInline
+        @inlinable
         var bounds: (Scalar, Scalar, Scalar, Scalar)? {
             switch self {
             case .ball(let circle):
