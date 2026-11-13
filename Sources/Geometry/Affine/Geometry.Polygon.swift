@@ -408,7 +408,7 @@
         /// once around its inside in the same sense, so under `nonzero` the path fills the union of the
         /// polygons, however they overlap; under `evenodd` the overlaps are holes.
         @inlinable
-        public init(_ polygons: some Sequence<Geometry.Polygon>, winding: Direction::Winding? = nil) {
+        public init(_ polygons: some Swift::Sequence<Geometry.Polygon>, winding: Direction::Winding? = nil) {
             self.init(
                 subpaths: polygons.compactMap { polygon -> Subpath? in
                     guard let first = polygon.vertices.first, polygon.isValid else { return nil }
