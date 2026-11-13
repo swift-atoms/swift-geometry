@@ -52,8 +52,13 @@
             public init(from decoder: any Decoder) throws {
                 let container = try decoder.container(keyedBy: CodingKeys.self)
                 let count = try container.decode(Int.self, forKey: .points)
+                let points: Cardinal
+                do throws(Cardinal.Error) {
+                    points = try Cardinal(count)
+                } catch {
+                    throw DecodingError.dataCorruptedError(forKey: .points, in: container, debugDescription: "A star's count of points is not negative")
+                }
                 guard
-                    let points = try? Cardinal(count),
                     let star = Self(
                         points: points,
                         outer: try container.decode(Geometry.Radius.self, forKey: .outer),

@@ -78,6 +78,8 @@
             #expect(try JSONDecoder().decode(Geo.Star.self, from: data) == star)
             let one = Data(#"{"center":[0,0],"points":1,"outer":1,"inner":0.5}"#.utf8)
             #expect(throws: DecodingError.self) { try JSONDecoder().decode(Geo.Star.self, from: one) }
+            let negative = Data(#"{"center":[0,0],"points":-3,"outer":1,"inner":0.5}"#.utf8)
+            #expect(throws: DecodingError.self) { try JSONDecoder().decode(Geo.Star.self, from: negative) }
         }
     }
 #endif
