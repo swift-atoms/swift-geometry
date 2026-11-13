@@ -194,6 +194,24 @@
                 }
                 #expect(Plane.Region.superellipse(.init(Self.box, radius: 15, exponent: 5)).boundingBox == Self.box)
             }
+
+            @Test
+            func `Its path runs along its boundary, every corner within the tolerance`() {
+                let shape = Plane.Superellipse(Self.box, radius: 15, exponent: 5)
+                let region = Plane.Region.superellipse(shape)
+                let path = Plane.Path(shape, tolerance: .init(0.05))
+                #expect(path.subpaths.count == 1 && path.subpaths[0].isClosed)
+                var pieces = 0
+                for segment in path.subpaths[0].segments {
+                    guard let start = segment.startPoint, let end = segment.endPoint else { continue }
+                    pieces += 1
+                    #expect(abs(region.distance(to: start)) < 1e-9)
+                    let middle = point((start.x.underlying + end.x.underlying) / 2, (start.y.underlying + end.y.underlying) / 2)
+                    #expect(region.distance(to: middle) <= 1e-9 && region.distance(to: middle) > -0.05)
+                }
+                #expect(pieces > 8)
+                #expect(Plane.Path(.init(Self.box, radius: 0, exponent: 5), tolerance: .init(0.05)).subpaths[0].segments.count == 4)
+            }
         }
     }
 #endif
