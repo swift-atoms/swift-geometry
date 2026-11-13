@@ -1,5 +1,7 @@
 #if Affine
+    import Cardinal
     import Direction
+    import Foundation
     @testable import Geometry
     import Geometry_Test_Support
     import Numeric
@@ -67,6 +69,15 @@
             #expect(path.contains(at(1, -1), rule: .nonzero))
             #expect(path.contains(at(2.9, -1), rule: .nonzero) && !path.contains(at(2.2, 0.2), rule: .nonzero))
             #expect(Geo.Star(points: 1, outer: 1, inner: 1) == nil)
+        }
+
+        @Test
+        func `A star round-trips through its encoding, and fewer than two points fail to decode`() throws {
+            let star = try #require(Geo.Star(points: 7, outer: 3, inner: 1.5, at: at(2, 5)))
+            let data = try JSONEncoder().encode(star)
+            #expect(try JSONDecoder().decode(Geo.Star.self, from: data) == star)
+            let one = Data(#"{"center":[0,0],"points":1,"outer":1,"inner":0.5}"#.utf8)
+            #expect(throws: DecodingError.self) { try JSONDecoder().decode(Geo.Star.self, from: one) }
         }
     }
 #endif

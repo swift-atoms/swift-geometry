@@ -1,5 +1,6 @@
 #if Affine
     public import Angle
+    public import Cardinal
     import Point
     import Trigonometry
 
@@ -17,7 +18,7 @@
             public var center: Point<2>
 
             /// How many points it has, at least two.
-            public var points: Int
+            public let points: Cardinal
 
             /// The distance from the center to each point.
             public var outer: Radius
@@ -27,7 +28,7 @@
 
             /// A star of `points` points, at least two, around a center; nil for fewer.
             @inlinable
-            public init?(points: Int, outer: Radius, inner: Radius, at center: Point<2>) {
+            public init?(points: Cardinal, outer: Radius, inner: Radius, at center: Point<2>) {
                 guard points >= 2 else { return nil }
                 self.center = center
                 self.points = points
@@ -42,14 +43,43 @@
     extension Geometry.Star: Hashable where Scalar: Hashable {}
 
     #if !hasFeature(Embedded)
-        extension Geometry.Star: Codable where Scalar: Codable {}
+        extension Geometry.Star: Codable where Scalar: Codable {
+            private enum CodingKeys: String, CodingKey {
+                case center, points, outer, inner
+            }
+
+            /// Decodes a star, failing for fewer than two points.
+            public init(from decoder: any Decoder) throws {
+                let container = try decoder.container(keyedBy: CodingKeys.self)
+                let points = Cardinal(try container.decode(UInt.self, forKey: .points))
+                guard
+                    let star = Self(
+                        points: points,
+                        outer: try container.decode(Geometry.Radius.self, forKey: .outer),
+                        inner: try container.decode(Geometry.Radius.self, forKey: .inner),
+                        at: try container.decode(Geometry.Point<2>.self, forKey: .center)
+                    )
+                else {
+                    throw DecodingError.dataCorruptedError(forKey: .points, in: container, debugDescription: "A star has at least two points")
+                }
+                self = star
+            }
+
+            public func encode(to encoder: any Encoder) throws {
+                var container = encoder.container(keyedBy: CodingKeys.self)
+                try container.encode(center, forKey: .center)
+                try container.encode(points.rawValue, forKey: .points)
+                try container.encode(outer, forKey: .outer)
+                try container.encode(inner, forKey: .inner)
+            }
+        }
     #endif
 
     extension Geometry.Star where Scalar: AdditiveArithmetic {
 
         /// A star of `points` points, at least two, around the origin; nil for fewer.
         @inlinable
-        public init?(points: Int, outer: Geometry.Radius, inner: Geometry.Radius) {
+        public init?(points: Cardinal, outer: Geometry.Radius, inner: Geometry.Radius) {
             self.init(points: points, outer: outer, inner: inner, at: .zero)
         }
     }
@@ -62,7 +92,7 @@
         /// the turn, and is the same on either side of a point.
         @inlinable
         public func radius(at angle: Radian<Scalar>) -> Geometry.Radius {
-            let sector: Scalar = Scalar.pi / Scalar(points)
+            let sector: Scalar = Scalar.pi / Scalar(points.rawValue)
             var within: Scalar = angle.underlying.truncatingRemainder(dividingBy: 2 * sector)
             if within < 0 { within += 2 * sector }
             if within > sector { within = 2 * sector - within }
@@ -78,8 +108,9 @@
         /// the point in the direction of the positive x axis; twice as many as it has points.
         @inlinable
         public var vertices: [Geometry.Point<2>] {
-            (0..<(2 * points)).map { index in
-                let angle = Radian<Scalar>(Scalar.pi * Scalar(index) / Scalar(points))
+            let corners = 2 * points.rawValue
+            return (0..<corners).map { index in
+                let angle = Radian<Scalar>(Scalar.pi * Scalar(index) / Scalar(points.rawValue))
                 let distance: Scalar = index.isMultiple(of: 2) ? outer.underlying : inner.underlying
                 return Geometry.Point<2>([
                     center[0] + distance * angle.cos.value,
@@ -99,8 +130,8 @@
                 subpaths: [
                     Subpath(
                         startPoint: corners[0],
-                        segments: corners.indices.map { index in
-                            .line(Geometry.Line.Segment(start: corners[index], end: corners[(index + 1) % corners.count]))
+                        segments: zip(corners, corners.dropFirst() + corners.prefix(1)).map { start, end in
+                            .line(Geometry.Line.Segment(start: start, end: end))
                         },
                         isClosed: true
                     )

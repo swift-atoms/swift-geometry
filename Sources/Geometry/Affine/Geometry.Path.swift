@@ -347,21 +347,19 @@
         /// half the chord from the vertex before it to the vertex after it. Nil for fewer than three vertices.
         @inlinable
         public static func loop(through vertices: [Geometry.Point<2>]) -> Self? {
-            let count = vertices.count
-            guard count >= 3 else { return nil }
-            func vertex(_ index: Int) -> (x: Scalar, y: Scalar) {
-                let point = vertices[(index % count + count) % count]
-                return (point[0], point[1])
-            }
+            guard vertices.count >= 3 else { return nil }
+            let next = Array(vertices.dropFirst() + vertices.prefix(1))
+            let before = Array(vertices.suffix(1) + vertices.dropLast())
+            let after = Array(next.dropFirst() + next.prefix(1))
             func at(_ x: Scalar, _ y: Scalar) -> Geometry.Point<2> { Geometry.Point<2>([x, y]) }
-            let segments = (0..<count).map { index -> Segment in
-                let (before, from, to, after) = (vertex(index - 1), vertex(index), vertex(index + 1), vertex(index + 2))
+            let segments = zip(zip(before, vertices), zip(next, after)).map { pair, ahead -> Segment in
+                let ((before, from), (to, after)) = (pair, ahead)
                 return .bezier(
                     .cubic(
-                        from: at(from.x, from.y),
-                        control1: at(from.x + (to.x - before.x) / 6, from.y + (to.y - before.y) / 6),
-                        control2: at(to.x - (after.x - from.x) / 6, to.y - (after.y - from.y) / 6),
-                        to: at(to.x, to.y)
+                        from: from,
+                        control1: at(from[0] + (to[0] - before[0]) / 6, from[1] + (to[1] - before[1]) / 6),
+                        control2: at(to[0] - (after[0] - from[0]) / 6, to[1] - (after[1] - from[1]) / 6),
+                        to: to
                     )
                 )
             }
