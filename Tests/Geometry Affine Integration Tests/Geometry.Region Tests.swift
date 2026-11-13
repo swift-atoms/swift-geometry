@@ -136,7 +136,7 @@
                 #expect(Plane.Region.union([], radius: 1).boundingBox == nil)
             }
         }
-    
+
         @Suite
         struct `Geometry.Region - Superellipse` {
             fileprivate static let box = Plane.Rectangle(llx: .init(-40), lly: .init(-20), urx: .init(40), ury: .init(20))
@@ -157,9 +157,9 @@
             func `Its boundary is the superellipse's quarter at each corner, and the sides are exact`() {
                 let n = 5.0
                 let shape = Plane.Region.superellipse(.init(Self.box, radius: 15, exponent: n))
-                for step in 1..<20 {
-                    let angle = Double.pi / 2 * Double(step) / 20
-                    let c = Double.cos(angle), s = Double.sin(angle)
+                for angle in (1..<20).map({ Double.pi / 2 * Double($0) / 20 }) {
+                    let c = Double.cos(angle)
+                    let s = Double.sin(angle)
                     let r = 15 / Double.exp(Double.log(Double.exp(n * Double.log(c)) + Double.exp(n * Double.log(s))) / n)
                     #expect(abs(shape.distance(to: point(25 + r * c, 5 + r * s))) < 1e-9)
                 }
@@ -173,9 +173,9 @@
                 let n = 5.0
                 let shape = Plane.Region.superellipse(.init(Self.box, radius: 15, exponent: n))
                 let step = 1e-6
-                for index in 1..<10 {
-                    let angle = Double.pi / 2 * Double(index) / 10
-                    let c = Double.cos(angle), s = Double.sin(angle)
+                for angle in (1..<10).map({ Double.pi / 2 * Double($0) / 10 }) {
+                    let c = Double.cos(angle)
+                    let s = Double.sin(angle)
                     let r = 15 / Double.exp(Double.log(Double.exp(n * Double.log(c)) + Double.exp(n * Double.log(s))) / n)
                     let (x, y) = (25 + r * c, 5 + r * s)
                     let sample = shape.sample(at: point(x, y))

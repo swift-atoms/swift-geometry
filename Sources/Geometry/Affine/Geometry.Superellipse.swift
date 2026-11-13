@@ -37,7 +37,8 @@
         /// the distance to the side exactly. In a corner it is f / |∇f| for f = ‖q‖ₙ − r, the n-norm of the point's
         /// place q from the corner's centre less the radius: zero exactly on the boundary, equal to the distance
         /// there to first order, and continuous with its gradient where the corner meets its sides. At an exponent
-        /// of 2 it is the exact distance of a rectangle with rounded corners.
+        /// of 2 it is the exact distance of a rectangle with rounded corners. The corner's gradient is
+        /// ∇f = (qx^(n−1), qy^(n−1)) / ‖q‖ₙ^(n−1).
         @inlinable
         public func sample(_ x: Scalar, _ y: Scalar) -> Geometry.Region.Sample {
             let left = Swift.min(rectangle.llx.underlying, rectangle.urx.underlying)
@@ -56,7 +57,6 @@
             guard qx > 0, qy > 0, round > 0 else {
                 return qx >= qy ? .init(distance: qx - round, x: sx, y: 0) : .init(distance: qy - round, x: 0, y: sy)
             }
-            // In the corner: f = ‖q‖ₙ − r, ∇f = (qx^(n−1), qy^(n−1)) / ‖q‖ₙ^(n−1).
             let scale = Swift.max(qx, qy)
             let ux = qx / scale
             let uy = qy / scale

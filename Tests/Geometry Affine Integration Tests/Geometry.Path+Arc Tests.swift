@@ -22,7 +22,7 @@
         )
     }
 
-    private func area(_ path: Geo.Path) throws -> Double {
+    private func area(_ path: Geo.Path) throws(Geo.Path.Error) -> Double {
         let flat = try path.flattened(tolerance: 1e-5)
         return flat.subpaths.reduce(0) { total, subpath in
             var points = [subpath.startPoint]
