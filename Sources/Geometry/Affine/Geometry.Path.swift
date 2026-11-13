@@ -278,15 +278,33 @@
 
     extension Geometry.Path where Scalar: BinaryFloatingPoint {
 
+        /// A rectangle's border as one closed subpath, counterclockwise from its lower-left corner, with
+        /// every corner a quarter circle of `radius`, held to half the shorter side.
         @inlinable
         public init(_ rectangle: Geometry.Rectangle, radius: Geometry.Radius = .init(0)) {
+            self.init(rectangle, lowerLeft: radius, lowerRight: radius, upperRight: radius, upperLeft: radius)
+        }
+
+        /// A rectangle's border as one closed subpath, counterclockwise from its lower-left corner, with
+        /// each corner a quarter circle of its own radius, held to half the shorter side. A corner whose
+        /// radius is not positive, or not a number, is square.
+        @inlinable
+        public init(
+            _ rectangle: Geometry.Rectangle,
+            lowerLeft: Geometry.Radius,
+            lowerRight: Geometry.Radius,
+            upperRight: Geometry.Radius,
+            upperLeft: Geometry.Radius
+        ) {
             let left: Scalar = rectangle.llx.underlying
             let lower: Scalar = rectangle.lly.underlying
             let right: Scalar = rectangle.urx.underlying
             let upper: Scalar = rectangle.ury.underlying
             let limit: Scalar = Swift.min(right - left, upper - lower) / 2
-            let round: Scalar = Swift.min(radius.underlying, limit)
 
+            func held(_ radius: Geometry.Radius) -> Scalar {
+                radius.underlying > 0 ? Swift.min(radius.underlying, limit) : 0
+            }
             func at(_ x: Scalar, _ y: Scalar) -> Geometry.Point<2> {
                 Geometry.Point(x: Geometry.X(x), y: Geometry.Y(y))
             }
@@ -294,41 +312,22 @@
                 .line(Geometry.Line.Segment(start: start, end: end))
             }
 
-            guard round > 0 else {
-                let corners = [at(left, lower), at(right, lower), at(right, upper), at(left, upper)]
-                self.init(subpaths: [
-                    Subpath(
-                        startPoint: corners[0],
-                        segments: [
-                            side(corners[0], corners[1]), side(corners[1], corners[2]),
-                            side(corners[2], corners[3]), side(corners[3], corners[0]),
-                        ],
-                        isClosed: true
-                    )
-                ])
-                return
-            }
-
-            func corner(_ x: Scalar, _ y: Scalar, from start: Radian<Scalar>) -> Segment {
-                .arc(.quarterCircle(center: at(x, y), radius: Geometry.Radius(round), startAngle: start))
-            }
+            let (ll, lr, ur, ul) = (held(lowerLeft), held(lowerRight), held(upperRight), held(upperLeft))
             let quarter: Radian<Scalar> = .pi.half
-            self.init(subpaths: [
-                Subpath(
-                    startPoint: at(left + round, lower),
-                    segments: [
-                        side(at(left + round, lower), at(right - round, lower)),
-                        corner(right - round, lower + round, from: .zero - quarter),
-                        side(at(right, lower + round), at(right, upper - round)),
-                        corner(right - round, upper - round, from: .zero),
-                        side(at(right - round, upper), at(left + round, upper)),
-                        corner(left + round, upper - round, from: quarter),
-                        side(at(left, upper - round), at(left, lower + round)),
-                        corner(left + round, lower + round, from: quarter + quarter),
-                    ],
-                    isClosed: true
-                )
-            ])
+            var segments: [Segment] = []
+            func corner(_ x: Scalar, _ y: Scalar, _ round: Scalar, from start: Radian<Scalar>) {
+                guard round > 0 else { return }
+                segments.append(.arc(.quarterCircle(center: at(x, y), radius: Geometry.Radius(round), startAngle: start)))
+            }
+            segments.append(side(at(left + ll, lower), at(right - lr, lower)))
+            corner(right - lr, lower + lr, lr, from: .zero - quarter)
+            segments.append(side(at(right, lower + lr), at(right, upper - ur)))
+            corner(right - ur, upper - ur, ur, from: .zero)
+            segments.append(side(at(right - ur, upper), at(left + ul, upper)))
+            corner(left + ul, upper - ul, ul, from: quarter)
+            segments.append(side(at(left, upper - ul), at(left, lower + ll)))
+            corner(left + ll, lower + ll, ll, from: quarter + quarter)
+            self.init(subpaths: [Subpath(startPoint: at(left + ll, lower), segments: segments, isClosed: true)])
         }
 
         @inlinable
@@ -341,6 +340,32 @@
                     isClosed: true
                 )
             ])
+        }
+
+        /// The closed smooth curve through the vertices in order and back to the first: the uniform
+        /// Catmull–Rom spline, one cubic Bézier from each vertex to the next, whose tangent at a vertex is
+        /// half the chord from the vertex before it to the vertex after it. Nil for fewer than three vertices.
+        @inlinable
+        public static func loop(through vertices: [Geometry.Point<2>]) -> Self? {
+            let count = vertices.count
+            guard count >= 3 else { return nil }
+            func vertex(_ index: Int) -> (x: Scalar, y: Scalar) {
+                let point = vertices[(index % count + count) % count]
+                return (point[0], point[1])
+            }
+            func at(_ x: Scalar, _ y: Scalar) -> Geometry.Point<2> { Geometry.Point<2>([x, y]) }
+            let segments = (0..<count).map { index -> Segment in
+                let (before, from, to, after) = (vertex(index - 1), vertex(index), vertex(index + 1), vertex(index + 2))
+                return .bezier(
+                    .cubic(
+                        from: at(from.x, from.y),
+                        control1: at(from.x + (to.x - before.x) / 6, from.y + (to.y - before.y) / 6),
+                        control2: at(to.x - (after.x - from.x) / 6, to.y - (after.y - from.y) / 6),
+                        to: at(to.x, to.y)
+                    )
+                )
+            }
+            return Self(subpaths: [Subpath(startPoint: vertices[0], segments: segments, isClosed: true)])
         }
     }
 

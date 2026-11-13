@@ -131,6 +131,80 @@
                 }
                 #expect(distances.allSatisfy { abs($0 - 2) < 1e-9 })
             }
+
+            @Test
+            func `Each corner can have its own radius, and a square corner has no arc`() throws {
+                let rectangle = Geo.Rectangle(llx: 0, lly: 0, urx: 10, ury: 6)
+                let path = Geo.Path(rectangle, lowerLeft: 2, lowerRight: 2, upperRight: 0, upperLeft: 0)
+                let subpath = try #require(path.subpaths.first)
+                #expect(path.subpaths.count == 1 && subpath.isClosed && subpath.segments.count == 6)
+                #expect(subpath.startPoint == at(2, 0))
+                #expect(subpath.segments[2] == line(10, 2, 10, 6))
+                #expect(subpath.segments[3] == line(10, 6, 0, 6))
+                #expect(subpath.segments[4] == line(0, 6, 0, 2))
+                var pen = subpath.startPoint
+                for segment in subpath.segments {
+                    #expect(near(try #require(segment.startPoint), pen))
+                    pen = try #require(segment.endPoint)
+                }
+                #expect(near(pen, subpath.startPoint))
+                #expect(!path.contains(at(0.5, 0.5), rule: .nonzero) && !path.contains(at(9.5, 0.5), rule: .nonzero))
+                #expect(path.contains(at(0.1, 5.9), rule: .nonzero) && path.contains(at(9.9, 5.9), rule: .nonzero))
+            }
+
+            @Test
+            func `One radius for every corner is the uniform rectangle, and corners are held to half the shorter side`() {
+                let rectangle = Geo.Rectangle(llx: 1, lly: 2, urx: 9, ury: 5)
+                for radius: Geo.Radius in [0, 1, 1.5, 100, -1, .init(Double.nan)] {
+                    let each = Geo.Path(rectangle, lowerLeft: radius, lowerRight: radius, upperRight: radius, upperLeft: radius)
+                    #expect(each == Geo.Path(rectangle, radius: radius))
+                }
+                let held = Geo.Path(rectangle, lowerLeft: 100, lowerRight: 0, upperRight: -2, upperLeft: .init(Double.nan))
+                #expect(held == Geo.Path(rectangle, lowerLeft: 1.5, lowerRight: 0, upperRight: 0, upperLeft: 0))
+            }
+
+            @Test
+            func `A loop is a closed cubic Bézier through each vertex in turn`() throws {
+                let vertices = [at(0, 0), at(4, 0), at(4, 3), at(1, 4)]
+                let path = try #require(Geo.Path.loop(through: vertices))
+                let subpath = try #require(path.subpaths.first)
+                #expect(path.subpaths.count == 1 && subpath.isClosed && subpath.startPoint == vertices[0])
+                #expect(subpath.segments.count == 4)
+                for (index, segment) in subpath.segments.enumerated() {
+                    #expect(segment.startPoint == vertices[index])
+                    #expect(segment.endPoint == vertices[(index + 1) % 4])
+                }
+                let first = Geo.Bezier.cubic(
+                    from: at(0, 0),
+                    control1: at((4 - 1) / 6.0, (0 - 4) / 6.0),
+                    control2: at(4 - (4 - 0) / 6.0, 0 - (3 - 0) / 6.0),
+                    to: at(4, 0)
+                )
+                #expect(subpath.segments[0] == .bezier(first))
+                #expect(Geo.Path.loop(through: [at(0, 0), at(1, 1)]) == nil)
+            }
+
+            @Test
+            func `A loop turns smoothly through each vertex`() throws {
+                let vertices = (0..<7).map { index -> Geo.Point<2> in
+                    let angle = 2 * Double.pi * Double(index) / 7
+                    return at(3 * Double.cos(angle), 2 * Double.sin(angle))
+                }
+                let segments = try #require(Geo.Path.loop(through: vertices)?.subpaths.first?.segments)
+                let curves = segments.compactMap { segment -> Geo.Bezier? in
+                    if case .bezier(let curve) = segment { return curve }
+                    return nil
+                }
+                #expect(curves.count == 7)
+                for index in curves.indices {
+                    let leaving = curves[(index + 1) % 7].controlPoints
+                    let arriving = curves[index].controlPoints
+                    let vertex = leaving[0]
+                    let outgoing = (leaving[1][0] - vertex[0], leaving[1][1] - vertex[1])
+                    let incoming = (vertex[0] - arriving[2][0], vertex[1] - arriving[2][1])
+                    #expect(abs(outgoing.0 - incoming.0) < 1e-12 && abs(outgoing.1 - incoming.1) < 1e-12)
+                }
+            }
         }
     }
 
