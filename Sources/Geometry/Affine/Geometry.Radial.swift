@@ -60,6 +60,24 @@
         }
     }
 
+    extension Geometry.Radial where Scalar: FloatingPoint & Sendable {
+
+        /// The curve turned counterclockwise by `angle` about its centre: its radius at θ is r(θ − angle),
+        /// so a turn by a whole turn is the curve itself, up to the rounding of the angle.
+        @inlinable
+        public func rotated(by angle: Radian<Scalar>) -> Self {
+            Self { direction in self.reach(Radian(_unchecked: direction.underlying - angle.underlying)) }
+        }
+
+        /// The curve scaled about its centre by `factor`: its radius at θ is `factor` × r(θ). A negative
+        /// factor puts every point on the far side of the centre.
+        @inlinable
+        public func scaled(by factor: Scale<1, Scalar>) -> Self {
+            let factor: Scalar = factor.value
+            return Self { direction in Geometry.Radius(self.reach(direction).underlying * factor) }
+        }
+    }
+
     extension Geometry.Radial where Scalar: BinaryFloatingPoint & Numeric.Transcendental & Sendable {
 
         /// The star's edge as a radial curve, `Geometry.Star.radius(at:)`, about whatever centre it is

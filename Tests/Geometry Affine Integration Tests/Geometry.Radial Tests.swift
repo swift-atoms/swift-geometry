@@ -66,6 +66,37 @@
         }
 
         @Test
+        func `Turning by a whole turn is the curve itself, and turns add`() throws {
+            let star = Geo.Radial(try #require(Geo.Star(points: 5, outer: 2, inner: 0.8)))
+            for angle in [0.0, 0.3, 1.1, 4.0, -2.5] {
+                let r = star.radius(at: Radian(angle)).underlying
+                #expect(abs(star.rotated(by: Radian(2 * Double.pi)).radius(at: Radian(angle)).underlying - r) < 1e-12)
+                let twice = star.rotated(by: Radian(0.4)).rotated(by: Radian(0.9)).radius(at: Radian(angle)).underlying
+                #expect(abs(twice - star.rotated(by: Radian(1.3)).radius(at: Radian(angle)).underlying) < 1e-12)
+            }
+        }
+
+        @Test
+        func `Turning moves the curve counterclockwise`() throws {
+            let star = try #require(Geo.Star(points: 4, outer: 2, inner: 1))
+            let turned = Geo.Radial(star).rotated(by: Radian(Double.pi / 4))
+            #expect(abs(turned.radius(at: Radian(Double.pi / 4)).underlying - 2) < 1e-12)
+            #expect(abs(turned.radius(at: Radian(0)).underlying - 1) < 1e-12)
+        }
+
+        @Test
+        func `Scaling multiplies the radius in every direction`() throws {
+            let star = Geo.Radial(try #require(Geo.Star(points: 6, outer: 1.5, inner: 0.9)))
+            let center = at(2, 3)
+            let corners = star.vertices(about: center, count: 12)
+            let scaled = star.scaled(by: Scale(2.5)).vertices(about: center, count: 12)
+            zip(corners, scaled).forEach { corner, far in
+                #expect(near(far, at(2 + 2.5 * (corner[0] - 2), 3 + 2.5 * (corner[1] - 3))))
+            }
+            #expect(star.scaled(by: Scale(1)).radius(at: Radian(0.7)) == star.radius(at: Radian(0.7)))
+        }
+
+        @Test
         func `A radial curve is Sendable, so a mixed one can cross into a task`() async {
             let mixed = Geo.Radial(radius: 1).mixed(to: Geo.Radial(radius: 3), at: Scale(0.5))
             let reach = await Task.detached { mixed.radius(at: Radian(1)).underlying }.value
