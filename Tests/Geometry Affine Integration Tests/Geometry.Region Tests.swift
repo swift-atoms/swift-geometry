@@ -1,5 +1,6 @@
 #if Affine
     @testable import Geometry
+    import Numeric
     import Testing
 
     private typealias Plane = Geometry<Double, Void>
@@ -133,6 +134,65 @@
                 #expect(rectangle.urx.underlying == 28)
                 #expect(rectangle.lly.underlying == -13)
                 #expect(Plane.Region.union([], radius: 1).boundingBox == nil)
+            }
+        }
+    
+        @Suite
+        struct `Geometry.Region - Superellipse` {
+            fileprivate static let box = Plane.Rectangle(llx: .init(-40), lly: .init(-20), urx: .init(40), ury: .init(20))
+
+            @Test
+            func `With an exponent of 2 it is the rectangle with rounded corners`() {
+                let shape = Plane.Region.superellipse(.init(Self.box, radius: 12, exponent: 2))
+                let rounded = Plane.Region.rectangle(Self.box, radius: 12)
+                for (x, y) in [(39.0, 19.0), (45.0, 25.0), (30.0, 10.0), (-38.0, 17.0), (0.0, 30.0), (50.0, 0.0)] {
+                    let a = shape.sample(at: point(x, y))
+                    let b = rounded.sample(at: point(x, y))
+                    #expect(close(a.distance, b.distance, 1e-9))
+                    #expect(close(a.gradient[0], b.gradient[0], 1e-9) && close(a.gradient[1], b.gradient[1], 1e-9))
+                }
+            }
+
+            @Test
+            func `Its boundary is the superellipse's quarter at each corner, and the sides are exact`() {
+                let n = 5.0
+                let shape = Plane.Region.superellipse(.init(Self.box, radius: 15, exponent: n))
+                for step in 1..<20 {
+                    let angle = Double.pi / 2 * Double(step) / 20
+                    let c = Double.cos(angle), s = Double.sin(angle)
+                    let r = 15 / Double.exp(Double.log(Double.exp(n * Double.log(c)) + Double.exp(n * Double.log(s))) / n)
+                    #expect(abs(shape.distance(to: point(25 + r * c, 5 + r * s))) < 1e-9)
+                }
+                #expect(close(shape.distance(to: point(0, 27)), 7))
+                #expect(close(shape.distance(to: point(-46, 0)), 6))
+                #expect(close(shape.distance(to: point(0, 0)), -20))
+            }
+
+            @Test
+            func `On the boundary its gradient is the distance's rate of change, the outline's normal`() {
+                let n = 5.0
+                let shape = Plane.Region.superellipse(.init(Self.box, radius: 15, exponent: n))
+                let step = 1e-6
+                for index in 1..<10 {
+                    let angle = Double.pi / 2 * Double(index) / 10
+                    let c = Double.cos(angle), s = Double.sin(angle)
+                    let r = 15 / Double.exp(Double.log(Double.exp(n * Double.log(c)) + Double.exp(n * Double.log(s))) / n)
+                    let (x, y) = (25 + r * c, 5 + r * s)
+                    let sample = shape.sample(at: point(x, y))
+                    let dx = (shape.distance(to: point(x + step, y)) - shape.distance(to: point(x - step, y))) / (2 * step)
+                    let dy = (shape.distance(to: point(x, y + step)) - shape.distance(to: point(x, y - step))) / (2 * step)
+                    #expect(close(sample.gradient[0], dx, 1e-4) && close(sample.gradient[1], dy, 1e-4))
+                    #expect(close(sample.gradient[0] * sample.gradient[0] + sample.gradient[1] * sample.gradient[1], 1, 1e-12))
+                }
+            }
+
+            @Test
+            func `The distance changes continuously where a corner meets its side`() {
+                let shape = Plane.Region.superellipse(.init(Self.box, radius: 15, exponent: 5))
+                for y in stride(from: -2.0, through: 30, by: 4) {
+                    #expect(abs(shape.distance(to: point(25 - 1e-9, y)) - shape.distance(to: point(25 + 1e-9, y))) < 1e-6)
+                }
+                #expect(Plane.Region.superellipse(.init(Self.box, radius: 15, exponent: 5)).boundingBox == Self.box)
             }
         }
     }

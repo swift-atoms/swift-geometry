@@ -1,0 +1,76 @@
+#if Affine
+    public import Numeric
+
+    extension Geometry {
+
+        /// A rectangle whose corners are quarters of a superellipse: within `radius` of each corner along both
+        /// sides the boundary is the quarter of |x|ⁿ + |y|ⁿ = rⁿ about the point `radius` in from both sides, for n
+        /// the `exponent`. With an exponent of 2 the corners are circular arcs; above 2 a corner meets its sides
+        /// with no curvature, so the outline's curvature grows from zero along the corner and back, the
+        /// continuous corner of industrial design (about 5 reads like it). The radius is held to 0 up to half the
+        /// shorter side, and an exponent below 1 counts as 1.
+        public struct Superellipse {
+
+            public var rectangle: Geometry.Rectangle
+
+            public var radius: Scalar
+
+            public var exponent: Scalar
+
+            @inlinable
+            public init(_ rectangle: Geometry.Rectangle, radius: Scalar, exponent: Scalar) {
+                self.rectangle = rectangle
+                self.radius = radius
+                self.exponent = exponent
+            }
+        }
+    }
+
+    extension Geometry.Superellipse: Sendable where Scalar: Sendable {}
+    extension Geometry.Superellipse: Equatable where Scalar: Equatable {}
+    extension Geometry.Superellipse: Hashable where Scalar: Hashable {}
+
+    extension Geometry.Superellipse where Scalar: BinaryFloatingPoint & Numeric.Transcendental {
+
+        /// The signed distance at a point, negative inside, and its gradient: the unit normal of the level set
+        /// through the point, which on the boundary is the distance's rate of change. Along the straight sides it is
+        /// the distance to the side exactly. In a corner it is f / |∇f| for f = ‖q‖ₙ − r, the n-norm of the point's
+        /// place q from the corner's centre less the radius: zero exactly on the boundary, equal to the distance
+        /// there to first order, and continuous with its gradient where the corner meets its sides. At an exponent
+        /// of 2 it is the exact distance of a rectangle with rounded corners.
+        @inlinable
+        public func sample(_ x: Scalar, _ y: Scalar) -> Geometry.Region.Sample {
+            let left = Swift.min(rectangle.llx.underlying, rectangle.urx.underlying)
+            let right = Swift.max(rectangle.llx.underlying, rectangle.urx.underlying)
+            let top = Swift.min(rectangle.lly.underlying, rectangle.ury.underlying)
+            let bottom = Swift.max(rectangle.lly.underlying, rectangle.ury.underlying)
+            let half = ((right - left) / 2, (bottom - top) / 2)
+            let round = Swift.min(Swift.max(radius.isNaN ? 0 : radius, 0), Swift.min(half.0, half.1))
+            let n = Swift.max(exponent.isNaN ? 2 : exponent, 1)
+            let dx = x - (left + right) / 2
+            let dy = y - (top + bottom) / 2
+            let sx: Scalar = dx < 0 ? -1 : 1
+            let sy: Scalar = dy < 0 ? -1 : 1
+            let qx = abs(dx) - (half.0 - round)
+            let qy = abs(dy) - (half.1 - round)
+            guard qx > 0, qy > 0, round > 0 else {
+                return qx >= qy ? .init(distance: qx - round, x: sx, y: 0) : .init(distance: qy - round, x: 0, y: sy)
+            }
+            // In the corner: f = ‖q‖ₙ − r, ∇f = (qx^(n−1), qy^(n−1)) / ‖q‖ₙ^(n−1).
+            let scale = Swift.max(qx, qy)
+            let ux = qx / scale
+            let uy = qy / scale
+            let px = Scalar.exp(n * Scalar.log(ux))
+            let py = Scalar.exp(n * Scalar.log(uy))
+            let norm = scale * Scalar.exp(Scalar.log(px + py) / n)
+            let gx = px / ux
+            let gy = py / uy
+            let ratio = Scalar.exp((n - 1) * Scalar.log(norm / scale))
+            let fx = gx / ratio
+            let fy = gy / ratio
+            let length = (fx * fx + fy * fy).squareRoot()
+            guard length > 0, length.isFinite else { return .init(distance: norm - round, x: 0, y: 0) }
+            return .init(distance: (norm - round) / length, x: sx * fx / length, y: sy * fy / length)
+        }
+    }
+#endif

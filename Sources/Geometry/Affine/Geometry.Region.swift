@@ -18,6 +18,9 @@
             /// side: a capsule at that half.
             case rectangle(Geometry.Rectangle, radius: Scalar)
 
+            /// The points of a rectangle whose corners are quarters of a superellipse.
+            case superellipse(Geometry.Superellipse)
+
             /// The points a path holds under the nonzero rule. Every segment counts as the line between its
             /// ends, so a path with curves is flattened first: `init(_:tolerance:)` does that.
             case path(Geometry.Path)
@@ -91,6 +94,9 @@
                 }
                 return qx >= qy ? Sample(distance: qx - round, x: sx, y: 0) : Sample(distance: qy - round, x: 0, y: sy)
 
+            case .superellipse(let shape):
+                return shape.sample(x, y)
+
             case .path(let path):
                 var best = Scalar.infinity
                 var foot = (x: x, y: y)
@@ -143,6 +149,11 @@
             case .ball(let circle):
                 let radius = abs(circle.radius.underlying)
                 return (circle.center[0] - radius, circle.center[1] - radius, circle.center[0] + radius, circle.center[1] + radius)
+            case .superellipse(let shape):
+                let rectangle = shape.rectangle
+                let xs = (rectangle.llx.underlying, rectangle.urx.underlying)
+                let ys = (rectangle.lly.underlying, rectangle.ury.underlying)
+                return (Swift.min(xs.0, xs.1), Swift.min(ys.0, ys.1), Swift.max(xs.0, xs.1), Swift.max(ys.0, ys.1))
             case .rectangle(let rectangle, _):
                 let xs = (rectangle.llx.underlying, rectangle.urx.underlying)
                 let ys = (rectangle.lly.underlying, rectangle.ury.underlying)
