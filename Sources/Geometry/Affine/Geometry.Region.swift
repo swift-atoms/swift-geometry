@@ -9,7 +9,7 @@
         /// A region of the plane known by its signed distance: how far a point lies outside its boundary,
         /// negative inside. A disc, a rectangle with rounded corners, the inside of a path, or a union of
         /// regions whose boundaries are joined by a rounded neck where they come close.
-        public indirect enum Region {
+        public enum Region {
 
             /// The points of a circle.
             case ball(Geometry.Circle)
