@@ -706,6 +706,40 @@
         public func contains(_ point: Geometry.Point<2>, rule: Direction::Winding.Rule) -> Bool {
             rule.contains(winding(around: point))
         }
+
+        /// The points of a square lattice that the path holds under a rule: of cells `spacing` wide, cell
+        /// (column, row) spanning column·spacing to (column + 1)·spacing in x and row·spacing to
+        /// (row + 1)·spacing in y, the point of every cell that the path's bounding box meets and that
+        /// `contains(_:rule:)` holds. A cell's point is `place(column, row)` of the way across and up it, its
+        /// centre unless `place` says otherwise. The points come row by row in increasing y, each row in
+        /// increasing x. A spacing that is not positive and finite, a path with no box, and a box more than
+        /// 2³¹ cells from the origin give none.
+        @inlinable
+        public func lattice(
+            spacing: Scalar,
+            rule: Direction::Winding.Rule,
+            place: (_ column: Int, _ row: Int) -> (x: Scalar, y: Scalar) = { _, _ in (0.5, 0.5) }
+        ) -> [Geometry.Point<2>] {
+            guard spacing > 0, spacing.isFinite, let box = boundingBox else { return [] }
+            let low = (column: (box.llx.underlying / spacing).rounded(.down), row: (box.lly.underlying / spacing).rounded(.down))
+            let high = (column: (box.urx.underlying / spacing).rounded(.down), row: (box.ury.underlying / spacing).rounded(.down))
+            let reach: Scalar = 0x1p31
+            guard abs(low.column) < reach, abs(low.row) < reach, abs(high.column) < reach, abs(high.row) < reach else { return [] }
+            guard low.column <= high.column, low.row <= high.row else { return [] }
+            var points: [Geometry.Point<2>] = []
+            var row = Int(low.row)
+            while row <= Int(high.row) {
+                var column = Int(low.column)
+                while column <= Int(high.column) {
+                    let share = place(column, row)
+                    let point = Geometry.Point<2>([(Scalar(column) + share.x) * spacing, (Scalar(row) + share.y) * spacing])
+                    if contains(point, rule: rule) { points.append(point) }
+                    column += 1
+                }
+                row += 1
+            }
+            return points
+        }
     }
 
     extension Geometry.Path.Subpath where Scalar: BinaryFloatingPoint & Numeric.Transcendental {

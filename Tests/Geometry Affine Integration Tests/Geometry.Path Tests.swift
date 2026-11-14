@@ -690,4 +690,59 @@
             }
         }
     }
+    // MARK: - Lattice
+
+    extension `Geometry.Path Tests` {
+        @Suite
+        struct `A lattice of the points a path holds` {
+            @Test
+            func `The centres of the cells inside, row by row in increasing y`() {
+                let path = Geo.Path(subpaths: [square(0, 2)])
+                #expect(path.lattice(spacing: 1, rule: .nonzero) == [at(0.5, 0.5), at(1.5, 0.5), at(0.5, 1.5), at(1.5, 1.5)])
+                let triangle = Geo.Path(subpaths: [polygon([(0, 0), (4, 0), (0, 4)])])
+                #expect(triangle.lattice(spacing: 1, rule: .nonzero).allSatisfy { $0[0] + $0[1] < 4 })
+                #expect(triangle.lattice(spacing: 1, rule: .nonzero).count == 6)
+            }
+
+            @Test
+            func `One corner of one cell is at the origin, whatever the path's place`() {
+                let path = Geo.Path(subpaths: [polygon([(-1.2, -0.7), (0.9, -0.7), (0.9, 1.1), (-1.2, 1.1)])])
+                let points = path.lattice(spacing: 0.5, rule: .nonzero)
+                #expect(
+                    points.allSatisfy { point in
+                        let column = (point[0] / 0.5 - 0.5)
+                        let row = (point[1] / 0.5 - 0.5)
+                        return column == column.rounded() && row == row.rounded()
+                    }
+                )
+                #expect(points.first == at(-0.75, -0.25) && points.last == at(0.75, 0.75))
+            }
+
+            @Test
+            func `A place puts each cell's point where it says, by the cell's column and row`() {
+                let path = Geo.Path(subpaths: [square(0, 2)])
+                let points = path.lattice(spacing: 1, rule: .nonzero) { column, row in
+                    (0.25 + 0.5 * Double(column), 0.125 + 0.25 * Double(row))
+                }
+                #expect(points == [at(0.25, 0.125), at(1.75, 0.125), at(0.25, 1.375), at(1.75, 1.375)])
+            }
+
+            @Test
+            func `The rule decides a hole`() {
+                let path = Geo.Path(subpaths: [square(0, 4), square(1, 3)])
+                #expect(path.lattice(spacing: 1, rule: .nonzero).count == 16)
+                #expect(path.lattice(spacing: 1, rule: .evenodd).count == 12)
+            }
+
+            @Test
+            func `No spacing, no box, or a box too far gives none`() {
+                let path = Geo.Path(subpaths: [square(0, 2)])
+                #expect(path.lattice(spacing: 0, rule: .nonzero).isEmpty)
+                #expect(path.lattice(spacing: -1, rule: .nonzero).isEmpty)
+                #expect(path.lattice(spacing: .infinity, rule: .nonzero).isEmpty)
+                #expect(Geo.Path(subpaths: []).lattice(spacing: 1, rule: .nonzero).isEmpty)
+                #expect(path.lattice(spacing: 1e-12, rule: .nonzero).isEmpty)
+            }
+        }
+    }
 #endif
