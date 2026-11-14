@@ -50,6 +50,7 @@ extension Geometry.Size: Hashable where Scalar: Hashable {
 
 extension Geometry.Size {
 
+    @inlinable
     public var dimensions: InlineArray<N, Scalar> {
         get { _storage.components }
         set { _storage.components = newValue }

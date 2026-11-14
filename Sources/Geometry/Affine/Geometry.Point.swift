@@ -24,6 +24,7 @@
             @inlinable public init(_ coordinates: InlineArray<N, Scalar>) {
                 position = .init(_unchecked: Point::Point(coordinates: Vector::Vector(coordinates)))
             }
+            @inlinable
             public init<U, E: Swift::Error>(_ other: Geometry<U, Space>.Point<N>, _ transform: (U) throws(E) -> Scalar) throws(E) {
                 let values: InlineArray<N, Scalar> = try InlineArray { (i: Int) throws(E) in try transform(other[i]) }
                 self.init(values)
@@ -32,11 +33,13 @@
     }
 
     extension Geometry.Point {
+        @inlinable
         public var coordinates: InlineArray<N, Scalar> {
             get { position.underlying.coordinates.components }
             set { position = .init(_unchecked: Point::Point(coordinates: Vector::Vector(newValue))) }
         }
 
+        @inlinable
         public subscript(index: Int) -> Scalar {
             get { position.underlying[index] }
             set {
@@ -46,10 +49,12 @@
             }
         }
 
+        @inlinable
         public func map<Result, E: Swift::Error>(_ transform: (Scalar) throws(E) -> Result) throws(E) -> Geometry<Result, Space>.Point<N> {
             try .init(self, transform)
         }
 
+        @inlinable
         public func translated<Failure: Swift::Error>(
             by offset: Displacement::Displacement<N, Scalar>,
             using relationship: Affine<Self, Displacement::Displacement<N, Scalar>, Failure>
@@ -73,8 +78,10 @@
         }
     #endif
     extension Geometry.Point where Scalar: AdditiveArithmetic {
+        @inlinable
         public static var zero: Self { .init(InlineArray(repeating: .zero)) }
         /// Explicitly chooses componentwise Cartesian addition on the canonical Point.
+        @inlinable
         public static var cartesian: Affine<Self, Displacement::Displacement<N, Scalar>, Never> {
             let canonical = Point::Point<N, Scalar>.cartesian
             return .init(
@@ -84,6 +91,7 @@
         }
     }
     extension Geometry.Point where Scalar: FloatingPoint {
+        @inlinable
         public func distance(to other: Self) -> Geometry.Length {
             var squared: Scalar = .zero
             (0..<N).forEach { i in
@@ -92,41 +100,51 @@
             }
             return Geometry.Length(squared.squareRoot())
         }
+        @inlinable
         public func lerp(to other: Self, t: Scale<1, Scalar>) -> Self {
             .init(InlineArray { self[$0] + (other[$0] - self[$0]) * t.value })
         }
     }
     extension Geometry.Point where N == 1 {
+        @inlinable
         public var x: Geometry.X {
             get { .init(_unchecked: self[0]) }
             set { self[0] = newValue.underlying }
         }
+        @inlinable
         public init(x: Geometry.X) { self.init([x.underlying]) }
     }
     extension Geometry.Point where N == 2 {
+        @inlinable
         public var x: Geometry.X {
             get { .init(_unchecked: self[0]) }
             set { self[0] = newValue.underlying }
         }
+        @inlinable
         public var y: Geometry.Y {
             get { .init(_unchecked: self[1]) }
             set { self[1] = newValue.underlying }
         }
+        @inlinable
         public init(x: Geometry.X, y: Geometry.Y) { self.init([x.underlying, y.underlying]) }
     }
     extension Geometry.Point where N == 3 {
+        @inlinable
         public var x: Geometry.X {
             get { .init(_unchecked: self[0]) }
             set { self[0] = newValue.underlying }
         }
+        @inlinable
         public var y: Geometry.Y {
             get { .init(_unchecked: self[1]) }
             set { self[1] = newValue.underlying }
         }
+        @inlinable
         public var z: Geometry.Z {
             get { .init(_unchecked: self[2]) }
             set { self[2] = newValue.underlying }
         }
+        @inlinable
         public init(x: Geometry.X, y: Geometry.Y, z: Geometry.Z) { self.init([x.underlying, y.underlying, z.underlying]) }
     }
 
