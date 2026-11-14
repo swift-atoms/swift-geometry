@@ -100,25 +100,28 @@
             case .path(let path):
                 var best = Scalar.infinity
                 var foot = (x: x, y: y)
+                func edge(from start: (x: Scalar, y: Scalar), to end: (x: Scalar, y: Scalar)) {
+                    let run = (x: end.x - start.x, y: end.y - start.y)
+                    let length = run.x * run.x + run.y * run.y
+                    var t: Scalar = 0
+                    if length > 0 { t = Swift.min(Swift.max(((x - start.x) * run.x + (y - start.y) * run.y) / length, 0), 1) }
+                    let near = (x: start.x + t * run.x, y: start.y + t * run.y)
+                    let distance = (x - near.x) * (x - near.x) + (y - near.y) * (y - near.y)
+                    if distance < best {
+                        best = distance
+                        foot = near
+                    }
+                }
                 for subpath in path.subpaths {
-                    var corners = [(x: subpath.startPoint[0], y: subpath.startPoint[1])]
-                    for segment in subpath.segments {
-                        guard let end = segment.endPoint else { continue }
-                        corners.append((end[0], end[1]))
+                    let first = (x: subpath.startPoint[0], y: subpath.startPoint[1])
+                    var previous = first
+                    for index in subpath.segments.indices {
+                        guard let end = subpath.segments[index].endPoint else { continue }
+                        let corner = (x: end[0], y: end[1])
+                        edge(from: previous, to: corner)
+                        previous = corner
                     }
-                    for (index, start) in corners.enumerated() {
-                        let end = corners[(index + 1) % corners.count]
-                        let run = (x: end.x - start.x, y: end.y - start.y)
-                        let length = run.x * run.x + run.y * run.y
-                        var t: Scalar = 0
-                        if length > 0 { t = Swift.min(Swift.max(((x - start.x) * run.x + (y - start.y) * run.y) / length, 0), 1) }
-                        let near = (x: start.x + t * run.x, y: start.y + t * run.y)
-                        let distance = (x - near.x) * (x - near.x) + (y - near.y) * (y - near.y)
-                        if distance < best {
-                            best = distance
-                            foot = near
-                        }
-                    }
+                    edge(from: previous, to: first)
                 }
                 guard best.isFinite else { return Sample(distance: .infinity, x: 0, y: 0) }
                 let length = best.squareRoot()

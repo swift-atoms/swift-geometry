@@ -1,5 +1,6 @@
 #if Affine
     @testable import Geometry
+    import Direction
     import Numeric
     import Testing
 
@@ -211,6 +212,110 @@
                 }
                 #expect(pieces > 8)
                 #expect(Plane.Path(.init(Self.box, radius: 0, exponent: 5), tolerance: .init(0.05)).subpaths[0].segments.count == 4)
+            }
+        }
+        @Suite
+        struct `Geometry.Region - Path sample` {
+            /// The path's sample as it was first written: the corners gathered into an array, then each side from
+            /// one corner to the next, the last back to the first. Other regions are sampled as they are.
+            fileprivate static func reference(_ region: Plane.Region, _ x: Double, _ y: Double) -> Plane.Region.Sample {
+                switch region {
+                case .path(let path):
+                    var best = Double.infinity
+                    var foot = (x: x, y: y)
+                    for subpath in path.subpaths {
+                        var corners = [(x: subpath.startPoint[0], y: subpath.startPoint[1])]
+                        for segment in subpath.segments {
+                            guard let end = segment.endPoint else { continue }
+                            corners.append((end[0], end[1]))
+                        }
+                        for (index, start) in corners.enumerated() {
+                            let end = corners[(index + 1) % corners.count]
+                            let run = (x: end.x - start.x, y: end.y - start.y)
+                            let length = run.x * run.x + run.y * run.y
+                            var t: Double = 0
+                            if length > 0 { t = Swift.min(Swift.max(((x - start.x) * run.x + (y - start.y) * run.y) / length, 0), 1) }
+                            let near = (x: start.x + t * run.x, y: start.y + t * run.y)
+                            let distance = (x - near.x) * (x - near.x) + (y - near.y) * (y - near.y)
+                            if distance < best {
+                                best = distance
+                                foot = near
+                            }
+                        }
+                    }
+                    guard best.isFinite else { return .init(distance: .infinity, x: 0, y: 0) }
+                    let length = best.squareRoot()
+                    let sign: Double = path.contains(point(x, y), rule: .nonzero) ? -1 : 1
+                    guard length > 0 else { return .init(distance: 0, x: 0, y: 0) }
+                    return .init(distance: sign * length, x: sign * (x - foot.x) / length, y: sign * (y - foot.y) / length)
+
+                case .union(let regions, let radius):
+                    guard var total = regions.first.map({ reference($0, x, y) }) else {
+                        return .init(distance: .infinity, x: 0, y: 0)
+                    }
+                    for region in regions.dropFirst() { total = total.joined(with: reference(region, x, y), radius: radius) }
+                    return total
+
+                default:
+                    return region.sample(at: point(x, y))
+                }
+            }
+
+            fileprivate static func ring(_ corners: [(Double, Double)]) -> Plane.Path.Subpath {
+                let points = corners.map { point($0.0, $0.1) }
+                return .init(
+                    startPoint: points[0],
+                    segments: zip(points, points.dropFirst()).map { .line(.init(start: $0, end: $1)) },
+                    isClosed: true
+                )
+            }
+
+            fileprivate static var regions: [Plane.Region] {
+                get throws {
+                    let outer = ring([(-20, -10), (20, -10), (20, 10), (-20, 10)])
+                    let hole = ring([(-5, -4), (-5, 4), (5, 4), (5, -4)])
+                    let curved = Plane.Path(subpaths: [
+                        .init(
+                            startPoint: point(-12, 0),
+                            segments: [
+                                .bezier(.cubic(from: point(-12, 0), control1: point(-12, 14), control2: point(12, 14), to: point(12, 0))),
+                                .bezier(.quadratic(from: point(12, 0), control: point(0, -9), to: point(-12, 0))),
+                            ],
+                            isClosed: true
+                        )
+                    ])
+                    let bare = Plane.Path(subpaths: [.init(startPoint: point(3, 3), segments: [], isClosed: false)])
+                    return [
+                        .rectangle(box, radius: 4),
+                        .superellipse(.init(box, radius: 6, exponent: 5)),
+                        .path(Plane.Path(subpaths: [outer])),
+                        .path(Plane.Path(subpaths: [outer, hole])),
+                        .path(curved),
+                        try Plane.Region(curved, tolerance: .init(0.05)),
+                        .path(bare),
+                        .path(Plane.Path(subpaths: [])),
+                        .union([.path(Plane.Path(subpaths: [outer, hole])), disc], radius: 5),
+                    ]
+                }
+            }
+
+            @Test
+            func `Walking the sides without gathering the corners gives the same bits`() throws {
+                var points: [(Double, Double)] = [
+                    (-20, -10), (20, 10), (0, -10), (-20, 0), (-5, 0), (5, 4), (0, 4), (-12, 0), (12, 0), (3, 3), (0, 0),
+                ]
+                for x in stride(from: -26.0, through: 26, by: 1.3) {
+                    for y in stride(from: -15.0, through: 15, by: 1.1) { points.append((x, y)) }
+                }
+                for region in try Self.regions {
+                    for (x, y) in points {
+                        let fast = region.sample(at: point(x, y))
+                        let plain = Self.reference(region, x, y)
+                        #expect(fast.distance.bitPattern == plain.distance.bitPattern)
+                        #expect(fast.gradient[0].bitPattern == plain.gradient[0].bitPattern)
+                        #expect(fast.gradient[1].bitPattern == plain.gradient[1].bitPattern)
+                    }
+                }
             }
         }
     }
