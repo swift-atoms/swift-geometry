@@ -12,6 +12,7 @@
     public import Space
     public import Linear
     public import Numeric
+    public import Cardinal
 
     extension Geometry {
 
@@ -168,6 +169,17 @@
         @inlinable
         public func point(at t: Radian<Scalar>) -> Geometry.Point<2> {
             Geometry.point(of: self, at: t)
+        }
+
+        /// Samples `count` evenly spaced vertices around the ellipse perimeter.
+        @inlinable
+        public func vertices(count: Cardinal) -> [Geometry.Point<2>] {
+            let total = Int(bitPattern: count)
+            guard total > 0 else { return [] }
+            return (0..<total).map { index in
+                let angle = Radian<Scalar>(_unchecked: 2 * Scalar.pi * Scalar(index) / Scalar(total))
+                return point(at: angle)
+            }
         }
 
         @inlinable
