@@ -196,15 +196,60 @@
         @inlinable
         public func toBeziers() -> [[Geometry.Bezier]] { .init(path: self) }
 
+        /// The union of the conservative boxes of the path's Béziers, in order, as `toBeziers()` gives them, a closing
+        /// line included; nil when the first has no control points. Lines and Béziers are read in place, so no Bézier
+        /// is made for them.
         @inlinable
         public var boundingBox: Geometry.Rectangle? {
+            var box: Geometry.Rectangle?
+            var started = false
+            for subpath in subpaths {
+                var last: Geometry.Point<2>?
+                for segment in subpath.segments {
+                    switch segment {
+                    case .line(let line):
+                        guard Self.include(Self.box(line.start, line.end), into: &box, started: &started) else { return nil }
+                        last = line.end
 
-            let allBeziers = toBeziers().flatMap { $0 }
-            guard let first = allBeziers.first?.boundingBoxConservative else { return nil }
-            return allBeziers.dropFirst().reduce(first) { rect, bez in
-                guard let bezRect = bez.boundingBoxConservative else { return rect }
-                return rect.union(bezRect)
+                    case .bezier(let bezier):
+                        guard Self.include(bezier.boundingBoxConservative, into: &box, started: &started) else { return nil }
+                        last = bezier.endPoint
+
+                    case .arc, .ellipticalArc:
+                        for bezier in segment.toBeziers() {
+                            guard Self.include(bezier.boundingBoxConservative, into: &box, started: &started) else { return nil }
+                            last = bezier.endPoint
+                        }
+                    }
+                }
+                if subpath.isClosed, let last, last != subpath.startPoint {
+                    guard Self.include(Self.box(last, subpath.startPoint), into: &box, started: &started) else { return nil }
+                }
             }
+            return box
+        }
+
+        /// The conservative box of the line from `start` to `end`, as `Bezier.linear(from:to:)` has it.
+        @inlinable
+        static func box(_ start: Geometry.Point<2>, _ end: Geometry.Point<2>) -> Geometry.Rectangle {
+            var minX = start.x
+            var maxX = start.x
+            var minY = start.y
+            var maxY = start.y
+            minX = .min(minX, end.x)
+            maxX = .max(maxX, end.x)
+            minY = .min(minY, end.y)
+            maxY = .max(maxY, end.y)
+            return Geometry.Rectangle(llx: minX, lly: minY, urx: maxX, ury: maxY)
+        }
+
+        /// Joins `next` to `box`; false when it is the path's first box and missing.
+        @inlinable
+        static func include(_ next: Geometry.Rectangle?, into box: inout Geometry.Rectangle?, started: inout Bool) -> Bool {
+            defer { started = true }
+            guard let next else { return started }
+            box = box.map { $0.union(next) } ?? next
+            return true
         }
     }
 
