@@ -99,8 +99,8 @@
         @Test
         func `A radial curve is Sendable, so a mixed one can cross into a task`() async {
             let mixed = Geo.Radial(radius: 1).mixed(to: Geo.Radial(radius: 3), at: Scale(0.5))
-            let reach = await Task.detached { mixed.radius(at: Radian(1)).underlying }.value
-            #expect(reach == 2)
+            async let reach = mixed.radius(at: Radian(1)).underlying
+            #expect(await reach == 2)
         }
 
         @Test
