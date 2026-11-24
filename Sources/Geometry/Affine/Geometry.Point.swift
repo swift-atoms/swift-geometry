@@ -90,6 +90,13 @@
             )
         }
     }
+    extension Geometry.Point where N == 2, Scalar: AdditiveArithmetic {
+        /// The point moved by `x` along the first axis and `y` along the second, componentwise as ``cartesian``.
+        @inlinable
+        public func translated(x: Scalar, y: Scalar) -> Self {
+            .init([self[0] + x, self[1] + y])
+        }
+    }
     extension Geometry.Point where Scalar: FloatingPoint {
         @inlinable
         public func distance(to other: Self) -> Geometry.Length {
