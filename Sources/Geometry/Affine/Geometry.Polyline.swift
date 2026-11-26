@@ -140,4 +140,57 @@
             return distances
         }
     }
+
+    extension Geometry.Polyline where Scalar: BinaryFloatingPoint {
+
+        /// The point at a length along `points`, measured over its straight pieces from the first point: exact
+        /// within the piece it falls in, the first point at or before 0, the last at or beyond the whole length;
+        /// nil for no points.
+        @inlinable
+        public static func point(at length: Scalar, along points: [Geometry.Point<2>]) -> Geometry.Point<2>? {
+            guard let first = points.first else { return nil }
+            guard length > 0 else { return first }
+            var walked: Scalar = 0
+            for index in points.indices.dropFirst() {
+                let dx = points[index][0] - points[index - 1][0]
+                let dy = points[index][1] - points[index - 1][1]
+                let piece = (dx * dx + dy * dy).squareRoot()
+                if piece > 0, walked + piece >= length {
+                    let share = (length - walked) / piece
+                    return Geometry.Point<2>([points[index - 1][0] + dx * share, points[index - 1][1] + dy * share])
+                }
+                walked += piece
+            }
+            return points.last
+        }
+
+        /// `point(at:along:)` at a share of the whole length, held to 0…1.
+        @inlinable
+        public static func point(atShare share: Scalar, along points: [Geometry.Point<2>]) -> Geometry.Point<2>? {
+            let total = lengths(of: points).last ?? 0
+            return point(at: Swift.min(Swift.max(share.isNaN ? 0 : share, 0), 1) * total, along: points)
+        }
+
+        /// The points of `points` up to a length along them, the last one cut exactly where the length ends within
+        /// its piece: a line drawn on as far as a pen has gone. Empty for no points or a length that is not positive.
+        @inlinable
+        public static func prefix(_ points: [Geometry.Point<2>], length: Scalar) -> [Geometry.Point<2>] {
+            guard let first = points.first, length > 0 else { return [] }
+            var kept = [first]
+            var walked: Scalar = 0
+            for index in points.indices.dropFirst() {
+                let dx = points[index][0] - points[index - 1][0]
+                let dy = points[index][1] - points[index - 1][1]
+                let piece = (dx * dx + dy * dy).squareRoot()
+                if walked + piece >= length {
+                    let share = piece > 0 ? (length - walked) / piece : 0
+                    kept.append(Geometry.Point<2>([points[index - 1][0] + dx * share, points[index - 1][1] + dy * share]))
+                    return kept
+                }
+                kept.append(points[index])
+                walked += piece
+            }
+            return kept
+        }
+    }
 #endif

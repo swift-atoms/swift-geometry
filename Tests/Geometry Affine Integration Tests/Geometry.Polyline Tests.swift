@@ -9,6 +9,17 @@
         private typealias Plane = Geometry<Double, Void>
 
         @Test
+        func `a point along a polyline is exact within its piece, and a prefix ends where the length does`() {
+            let points = [Plane.Point<2>([0, 0]), Plane.Point<2>([4, 0]), Plane.Point<2>([4, 4])]
+            #expect(Plane.Polyline.point(at: 6, along: points) == Plane.Point<2>([4, 2]))
+            #expect(Plane.Polyline.point(atShare: 0.25, along: points) == Plane.Point<2>([2, 0]))
+            #expect(Plane.Polyline.point(at: 99, along: points) == Plane.Point<2>([4, 4]))
+            #expect(Plane.Polyline.point(at: -1, along: points) == Plane.Point<2>([0, 0]))
+            #expect(Plane.Polyline.prefix(points, length: 5) == [Plane.Point<2>([0, 0]), Plane.Point<2>([4, 0]), Plane.Point<2>([4, 1])])
+            #expect(Plane.Polyline.prefix(points, length: 0).isEmpty)
+        }
+
+        @Test
         func `subdivided inserts intermediate points along open and closed polylines`() {
             let open = Plane.Polyline.subdivided(
                 [Plane.Point<2>([0, 0]), Plane.Point<2>([10, 0])],
