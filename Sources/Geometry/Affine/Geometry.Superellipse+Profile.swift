@@ -20,8 +20,9 @@
         }
 
         /// How fast `height(_:thickness:rim:exponent:)` rises going in: `thickness / rim` · vᵖ⁻¹ · (1 − vᵖ)^(1/p − 1);
-        /// 0 from the rim on and infinite at the foot. Within a hundredth of the rim from the foot, 1 − vᵖ is taken as
-        /// p · inward / rim, its first order, since the difference itself loses its digits there.
+        /// 0 from the rim on and infinite at the foot. Closer to the foot than the square root of the number type's
+        /// precision, as a share of the rim, 1 − vᵖ is taken as p · inward / rim, its first order, which is as close
+        /// there as the difference itself, whose digits are lost.
         @inlinable
         @inline(__always)
         public static func slope(_ inward: Scalar, thickness: Scalar, rim: Scalar, exponent: Scalar) -> Scalar {
@@ -31,7 +32,8 @@
             let v = 1 - inward / rim
             let power = Scalar._pow(v, p)
             let tiny: Scalar = 1e-12
-            let rest = Swift.max(inward < rim / 100 ? p * inward / rim : 1 - power, tiny)
+            let share = inward / rim
+            let rest = Swift.max(share < Scalar.ulpOfOne.squareRoot() ? p * share : 1 - power, tiny)
             return thickness / rim * power / Swift.max(v, tiny) * Scalar._pow(rest, 1 / p - 1)
         }
 

@@ -69,12 +69,14 @@
 
         /// A polygon's sample at a point under the nonzero rule: the distance to its nearest edge, negative inside,
         /// and the direction away from that edge's nearest point. `edges` calls its visitor with each edge's ends;
-        /// a polygon with no edges is infinitely far.
+        /// a polygon with no edges is infinitely far. Whether the point is inside is counted from the edges, unless
+        /// `inside` says it, as a path whose sides curve between the edges' ends does.
         @inlinable
         @inline(__always)
         public static func polygon(
             _ x: Scalar,
             _ y: Scalar,
+            inside: Bool? = nil,
             edges: (_ visit: (_ fromX: Scalar, _ fromY: Scalar, _ toX: Scalar, _ toY: Scalar) -> Void) -> Void
         ) -> Self {
             var best = Scalar.infinity
@@ -104,7 +106,7 @@
             guard best.isFinite else { return Self(distance: .infinity, x: 0, y: 0) }
             let length = best.squareRoot()
             guard length > 0 else { return Self(distance: 0, x: 0, y: 0) }
-            let sign: Scalar = turns != 0 ? -1 : 1
+            let sign: Scalar = (inside ?? (turns != 0)) ? -1 : 1
             return Self(distance: sign * length, x: sign * (x - footX) / length, y: sign * (y - footY) / length)
         }
     }

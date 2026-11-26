@@ -79,7 +79,7 @@
                 return shape.sample(x, y)
 
             case .path(let path):
-                return .polygon(x, y) { visit in
+                return .polygon(x, y, inside: path.contains(Geometry.Point<2>([x, y]), rule: .nonzero)) { visit in
                     for subpath in path.subpaths {
                         let first = (x: subpath.startPoint[0], y: subpath.startPoint[1])
                         var previous = first
