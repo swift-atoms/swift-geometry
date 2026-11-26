@@ -20,6 +20,17 @@
         }
 
         @Test
+        func `a point along a polyline from a first point always has a value`() {
+            let first = Plane.Point<2>([0, 0])
+            let rest = [Plane.Point<2>([4, 0]), Plane.Point<2>([4, 4])]
+            #expect(Plane.Polyline.point(at: 6, from: first, through: rest) == Plane.Point<2>([4, 2]))
+            #expect(Plane.Polyline.point(atShare: 0.25, from: first, through: rest) == Plane.Point<2>([2, 0]))
+            #expect(Plane.Polyline.point(atShare: 2, from: first, through: rest) == Plane.Point<2>([4, 4]))
+            #expect(Plane.Polyline.point(atShare: 0.5, from: first, through: []) == first)
+            #expect(Plane.Polyline.point(at: 3, from: first, through: []) == first)
+        }
+
+        @Test
         func `a ribbon goes out along one side and back along the other, as wide as asked`() {
             let points = [Plane.Point<2>([0, 0]), Plane.Point<2>([10, 0])]
             let outline = Plane.Polyline.ribbon(points) { along, total in along < total / 2 ? 1 : 2 }

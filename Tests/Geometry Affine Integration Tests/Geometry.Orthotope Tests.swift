@@ -38,4 +38,21 @@
             }
         }
     }
+
+    extension `Geometry.Orthotope Tests` {
+        @Suite
+        struct `Geometry.Orthotope - Points at fractions` {
+            private typealias Plane = Geometry<Double, Void>
+
+            @Test
+            func `A point at fractions of the extents runs from the least corner, and beyond it`() {
+                let rect = Plane.Rectangle(llx: 10, lly: 20, urx: 50, ury: 120)
+                #expect(rect.point(at: Scale(x: 0, y: 0)) == Plane.Point<2>([10, 20]))
+                #expect(rect.point(at: Scale(x: 1, y: 1)) == Plane.Point<2>([50, 120]))
+                #expect(rect.point(at: Scale(x: 0.5, y: 0.5)) == rect.center)
+                #expect(rect.point(at: Scale(x: 0.25, y: 1.5)) == Plane.Point<2>([20, 170]))
+                #expect(rect.point(at: Scale(x: -0.5, y: 0)) == Plane.Point<2>([-10, 20]))
+            }
+        }
+    }
 #endif

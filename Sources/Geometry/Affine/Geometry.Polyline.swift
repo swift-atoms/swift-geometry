@@ -171,6 +171,26 @@
             return point(at: Swift.min(Swift.max(share.isNaN ? 0 : share, 0), 1) * total, along: points)
         }
 
+        /// `point(at:along:)` of the polyline from `first` through `rest`, which always has a point.
+        @inlinable
+        public static func point(
+            at length: Scalar,
+            from first: Geometry.Point<2>,
+            through rest: some Swift.Sequence<Geometry.Point<2>>
+        ) -> Geometry.Point<2> {
+            point(at: length, along: [first] + rest) ?? first
+        }
+
+        /// `point(atShare:along:)` of the polyline from `first` through `rest`, which always has a point.
+        @inlinable
+        public static func point(
+            atShare share: Scalar,
+            from first: Geometry.Point<2>,
+            through rest: some Swift.Sequence<Geometry.Point<2>>
+        ) -> Geometry.Point<2> {
+            point(atShare: share, along: [first] + rest) ?? first
+        }
+
         /// The points of `points` up to a length along them, the last one cut exactly where the length ends within
         /// its piece: a line drawn on as far as a pen has gone. Empty for no points or a length that is not positive.
         @inlinable

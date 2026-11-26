@@ -432,6 +432,17 @@
         }
     }
 
+    extension Geometry.Orthotope where Scalar: FloatingPoint {
+
+        /// The point at fractions of the extents along each axis, measured from the corner of least coordinates:
+        /// the lower left of a rectangle, which is the top left of a raster whose y axis runs down. 0 is that
+        /// corner's coordinate and 1 the far side's, and a fraction outside 0…1 lies outside the orthotope.
+        @inlinable
+        public func point(at fractions: Scale<N, Scalar>) -> Geometry.Point<N> {
+            .init(InlineArray { center[$0] - halfExtents[$0] + 2 * halfExtents[$0] * fractions[$0] })
+        }
+    }
+
     extension Geometry.Orthotope {
 
         @inlinable
