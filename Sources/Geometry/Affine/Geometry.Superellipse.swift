@@ -45,32 +45,14 @@
             let right = Swift.max(rectangle.llx.underlying, rectangle.urx.underlying)
             let top = Swift.min(rectangle.lly.underlying, rectangle.ury.underlying)
             let bottom = Swift.max(rectangle.lly.underlying, rectangle.ury.underlying)
-            let half = ((right - left) / 2, (bottom - top) / 2)
-            let round = Swift.min(Swift.max(radius.isNaN ? 0 : radius, 0), Swift.min(half.0, half.1))
-            let n = Swift.max(exponent.isNaN ? 2 : exponent, 1)
-            let dx = x - (left + right) / 2
-            let dy = y - (top + bottom) / 2
-            let sx: Scalar = dx < 0 ? -1 : 1
-            let sy: Scalar = dy < 0 ? -1 : 1
-            let qx = abs(dx) - (half.0 - round)
-            let qy = abs(dy) - (half.1 - round)
-            guard qx > 0, qy > 0, round > 0 else {
-                return qx >= qy ? .init(distance: qx - round, x: sx, y: 0) : .init(distance: qy - round, x: 0, y: sy)
-            }
-            let scale = Swift.max(qx, qy)
-            let ux = qx / scale
-            let uy = qy / scale
-            let px = Scalar.exp(n * Scalar.log(ux))
-            let py = Scalar.exp(n * Scalar.log(uy))
-            let norm = scale * Scalar.exp(Scalar.log(px + py) / n)
-            let gx = px / ux
-            let gy = py / uy
-            let ratio = Scalar.exp((n - 1) * Scalar.log(norm / scale))
-            let fx = gx / ratio
-            let fy = gy / ratio
-            let length = (fx * fx + fy * fy).squareRoot()
-            guard length > 0, length.isFinite else { return .init(distance: norm - round, x: 0, y: 0) }
-            return .init(distance: (norm - round) / length, x: sx * fx / length, y: sy * fy / length)
+            return .box(
+                x - (left + right) / 2,
+                y - (top + bottom) / 2,
+                halfX: (right - left) / 2,
+                halfY: (bottom - top) / 2,
+                radius: radius,
+                exponent: exponent
+            )
         }
     }
 

@@ -66,69 +66,31 @@
         func sample(_ x: Scalar, _ y: Scalar) -> Sample {
             switch self {
             case .ball(let circle):
-                let dx = x - circle.center[0]
-                let dy = y - circle.center[1]
-                let length = (dx * dx + dy * dy).squareRoot()
-                let radius = circle.radius.underlying
-                guard length > 0 else { return Sample(distance: -radius, x: 0, y: 0) }
-                return Sample(distance: length - radius, x: dx / length, y: dy / length)
+                return .ball(x - circle.center[0], y - circle.center[1], radius: circle.radius.underlying)
 
             case .rectangle(let rectangle, let radius):
                 let left = Swift.min(rectangle.llx.underlying, rectangle.urx.underlying)
                 let right = Swift.max(rectangle.llx.underlying, rectangle.urx.underlying)
                 let top = Swift.min(rectangle.lly.underlying, rectangle.ury.underlying)
                 let bottom = Swift.max(rectangle.lly.underlying, rectangle.ury.underlying)
-                let half = ((right - left) / 2, (bottom - top) / 2)
-                let round = Swift.min(Swift.max(radius.isNaN ? 0 : radius, 0), Swift.min(half.0, half.1))
-                let dx = x - (left + right) / 2
-                let dy = y - (top + bottom) / 2
-                let sx: Scalar = dx < 0 ? -1 : 1
-                let sy: Scalar = dy < 0 ? -1 : 1
-                let qx = abs(dx) - (half.0 - round)
-                let qy = abs(dy) - (half.1 - round)
-                if qx > 0 || qy > 0 {
-                    let ox = Swift.max(qx, 0)
-                    let oy = Swift.max(qy, 0)
-                    let length = (ox * ox + oy * oy).squareRoot()
-                    return Sample(distance: length - round, x: sx * ox / length, y: sy * oy / length)
-                }
-                return qx >= qy ? Sample(distance: qx - round, x: sx, y: 0) : Sample(distance: qy - round, x: 0, y: sy)
+                return .box(x - (left + right) / 2, y - (top + bottom) / 2, halfX: (right - left) / 2, halfY: (bottom - top) / 2, radius: radius)
 
             case .superellipse(let shape):
                 return shape.sample(x, y)
 
             case .path(let path):
-                var best = Scalar.infinity
-                var foot = (x: x, y: y)
-                func edge(from start: (x: Scalar, y: Scalar), to end: (x: Scalar, y: Scalar)) {
-                    let run = (x: end.x - start.x, y: end.y - start.y)
-                    let length = run.x * run.x + run.y * run.y
-                    var t: Scalar = 0
-                    if length > 0 { t = Swift.min(Swift.max(((x - start.x) * run.x + (y - start.y) * run.y) / length, 0), 1) }
-                    let near = (x: start.x + t * run.x, y: start.y + t * run.y)
-                    let distance = (x - near.x) * (x - near.x) + (y - near.y) * (y - near.y)
-                    if distance < best {
-                        best = distance
-                        foot = near
+                return .polygon(x, y) { visit in
+                    for subpath in path.subpaths {
+                        let first = (x: subpath.startPoint[0], y: subpath.startPoint[1])
+                        var previous = first
+                        for index in subpath.segments.indices {
+                            guard let end = subpath.segments[index].endPoint else { continue }
+                            visit(previous.x, previous.y, end[0], end[1])
+                            previous = (end[0], end[1])
+                        }
+                        visit(previous.x, previous.y, first.x, first.y)
                     }
                 }
-                for subpath in path.subpaths {
-                    let first = (x: subpath.startPoint[0], y: subpath.startPoint[1])
-                    var previous = first
-                    for index in subpath.segments.indices {
-                        guard let end = subpath.segments[index].endPoint else { continue }
-                        let corner = (x: end[0], y: end[1])
-                        edge(from: previous, to: corner)
-                        previous = corner
-                    }
-                    edge(from: previous, to: first)
-                }
-                guard best.isFinite else { return Sample(distance: .infinity, x: 0, y: 0) }
-                let length = best.squareRoot()
-                let inside = path.contains(Geometry.Point<2>([x, y]), rule: .nonzero)
-                let sign: Scalar = inside ? -1 : 1
-                guard length > 0 else { return Sample(distance: 0, x: 0, y: 0) }
-                return Sample(distance: sign * length, x: sign * (x - foot.x) / length, y: sign * (y - foot.y) / length)
 
             case .union(let regions, let radius):
                 guard var total = regions.first?.sample(x, y) else { return Sample(distance: .infinity, x: 0, y: 0) }
