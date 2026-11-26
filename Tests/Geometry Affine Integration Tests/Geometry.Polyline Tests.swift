@@ -20,6 +20,14 @@
         }
 
         @Test
+        func `a ribbon goes out along one side and back along the other, as wide as asked`() {
+            let points = [Plane.Point<2>([0, 0]), Plane.Point<2>([10, 0])]
+            let outline = Plane.Polyline.ribbon(points) { along, total in along < total / 2 ? 1 : 2 }
+            #expect(outline == [Plane.Point<2>([0, 1]), Plane.Point<2>([10, 2]), Plane.Point<2>([10, -2]), Plane.Point<2>([0, -1])])
+            #expect(Plane.Polyline.ribbon([Plane.Point<2>([0, 0])]) { _, _ in 1 }.isEmpty)
+        }
+
+        @Test
         func `subdivided inserts intermediate points along open and closed polylines`() {
             let open = Plane.Polyline.subdivided(
                 [Plane.Point<2>([0, 0]), Plane.Point<2>([10, 0])],

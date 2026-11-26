@@ -193,4 +193,33 @@
             return kept
         }
     }
+
+    extension Geometry.Polyline where Scalar: BinaryFloatingPoint {
+
+        /// The outline of a band of varying width along `points`, as the vertices of one closed polygon: each point
+        /// moved out along its normal (`normals(of:)`) by its half width on one side, then back along the other.
+        /// `halfWidth` gives the half width at each point from its length along the band and the band's whole
+        /// length, so a pen's pressure and taper are written once. Empty for fewer than two points.
+        @inlinable
+        public static func ribbon(
+            _ points: [Geometry.Point<2>],
+            halfWidth: (_ along: Scalar, _ total: Scalar) -> Scalar
+        ) -> [Geometry.Point<2>] {
+            guard points.count >= 2 else { return [] }
+            let normals = normals(of: points)
+            let lengths = lengths(of: points)
+            let total = lengths.last ?? 0
+            var left: [Geometry.Point<2>] = []
+            var right: [Geometry.Point<2>] = []
+            left.reserveCapacity(points.count)
+            right.reserveCapacity(points.count)
+            for index in points.indices {
+                let half = halfWidth(lengths[index], total)
+                let normal = normals[index]
+                left.append(Geometry.Point<2>([points[index][0] + normal[0] * half, points[index][1] + normal[1] * half]))
+                right.append(Geometry.Point<2>([points[index][0] - normal[0] * half, points[index][1] - normal[1] * half]))
+            }
+            return left + right.reversed()
+        }
+    }
 #endif
