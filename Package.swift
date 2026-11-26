@@ -16,8 +16,10 @@ let package = Package(
         .library(name: "Geometry Standard Library Integration", targets: ["Geometry Standard Library Integration"]),
         .library(name: "Geometry Foundation Library Integration", targets: ["Geometry Foundation Library Integration"]),
         .library(name: "Geometry Test Support", targets: ["Geometry Test Support"]),
+        .library(name: "Geometry Boundary", targets: ["Geometry Boundary"]),
     ],
     traits: [
+        .trait(name: "Boundary", description: "Boundary integration", enabledTraits: ["Affine"]),
         .trait(name: "Affine", description: "Affine integration")
     ],
     dependencies: [
@@ -63,6 +65,7 @@ let package = Package(
         .package(url: "https://github.com/swift-atoms/swift-matrix.git", branch: "main"),
         .package(url: "https://github.com/swift-atoms/swift-direction.git", branch: "main"),
         .package(url: "https://github.com/swift-atoms/swift-cardinal.git", branch: "main"),
+        .package(url: "https://github.com/swift-atoms/swift-boundary.git", branch: "main"),
     ],
     targets: [
         .target(
@@ -135,6 +138,23 @@ let package = Package(
                 .product(name: "Cardinal", package: "swift-cardinal", condition: .when(traits: ["Affine"])),
             ],
             path: "Tests/Geometry Affine Integration Tests"
+        ),
+        .target(
+            name: "Geometry Boundary",
+            dependencies: [
+                .target(name: "Geometry"),
+                .product(name: "Boundary", package: "swift-boundary", condition: .when(traits: ["Boundary"])),
+            ]
+        ),
+        .testTarget(
+            name: "Geometry Boundary Tests",
+            dependencies: [
+                .target(name: "Geometry Boundary"),
+                .target(name: "Geometry"),
+                .product(name: "Boundary", package: "swift-boundary", condition: .when(traits: ["Boundary"])),
+                .product(name: "Affine", package: "swift-affine", condition: .when(traits: ["Boundary"])),
+                .product(name: "Tagged", package: "swift-tagged", condition: .when(traits: ["Boundary"])),
+            ]
         ),
     ],
     swiftLanguageModes: [.v6]
